@@ -1,0 +1,6 @@
+F:\_VS.NET\Vazor\Vazor\obj\Debug\netcoreapp2.1\Vazor.vbprojAssemblyReference.cache
+F:\_VS.NET\Vazor\Vazor\obj\Debug\netcoreapp2.1\Vazor.vbproj.CoreCompileInputs.cache
+F:\_VS.NET\Vazor\Vazor\obj\Debug\netcoreapp2.1\Vazor.AssemblyInfoInputs.cache
+F:\_VS.NET\Vazor\Vazor\obj\Debug\netcoreapp2.1\Vazor.AssemblyInfo.vb
+F:\_VS.NET\Vazor\Vazor\bin\Debug\netcoreapp2.1\Vazor.deps.json
+F:\_VS.NET\Vazor\Vazor\bin\Debug\netcoreapp2.1\Vazor.dll

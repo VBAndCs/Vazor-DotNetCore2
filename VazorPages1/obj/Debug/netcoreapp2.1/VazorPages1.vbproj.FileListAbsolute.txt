@@ -1,0 +1,4 @@
+F:\_VS.NET\Vazor\VazorPages1\obj\Debug\netcoreapp2.1\VazorPages1.vbprojAssemblyReference.cache
+F:\_VS.NET\Vazor\VazorPages1\obj\Debug\netcoreapp2.1\VazorPages1.vbproj.CoreCompileInputs.cache
+F:\_VS.NET\Vazor\VazorPages1\obj\Debug\netcoreapp2.1\VazorPages1.AssemblyInfoInputs.cache
+F:\_VS.NET\Vazor\VazorPages1\obj\Debug\netcoreapp2.1\VazorPages1.AssemblyInfo.vb
