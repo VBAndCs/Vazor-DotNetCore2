@@ -1,9 +1,10 @@
 ﻿Partial Public Class IndexView
+
     Protected Function GetVbXml() As XElement
         Return _
  _
         <vbxml>
-            <h3> Browse Students</h3>
+            <h3 fff=""> Browse Students</h3>
             <p>Select from <%= Students.Count() %> students:</p>
             <ul>
                 <%= (Iterator Function()
@@ -12,6 +13,7 @@
                          Next
                      End Function)() %>
             </ul>
+
             <p>Students details:</p>
             <ul>
                 <li ForEach="m">
@@ -22,7 +24,8 @@
             </ul>
             <script>
                  var x = 5;
-                 document.writeln("students count = <%= Students.Count() %>");
+                document.writeln("students count = <%= Students.Count() %>");
+                
         </script>
         </vbxml>
 

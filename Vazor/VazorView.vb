@@ -21,5 +21,4 @@
 
     Public MustOverride ReadOnly Property Content() As Byte()
 
-
 End Class
