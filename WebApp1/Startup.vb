@@ -53,7 +53,7 @@ Public Class Startup
 
         app.UseCookiePolicy()
 
-        Vazor.VazorViewMapper.AddStatic(New LayoutView())
+        LayoutView.CreateNew()
 
     End Sub
 End Class
