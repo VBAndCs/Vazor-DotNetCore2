@@ -9,15 +9,24 @@ I welcome all contributions to enhance this works and create a project template.
 
 
 # Project and Item Templates
+
 Download this file:
-https://github.com/VBAndCs/Vazor/blob/master/VazorTemplateSetup.zip
-the unzip it. Double-click the file VazorTemplateSetup.vsix to setuo the Vazor templates:
+
+https://github.com/VBAndCs/Vazor/blob/master/VazorTemplateSetup.zip?raw=true
+then unzip it. Double-click the file VazorTemplateSetup.vsix to setuo the Vazor templates:
+
 1- A Vazor project template for ASP.NET MVC Core 2.2 .
+
 2- A Vazor project template for ASP.NET MVC Core 3.0 .
+
 3- A Vazor project template for ASP.NET Web Pages Core 2.2 .
+
 4- A Vazor project template for ASP.NET Web Pages Core 3.0 .
+
 5- A VazorView item template to add a new vazor view (.vazor and .vbxml files) to the MVC project.
+
 6- A VazorPage item template to add a new vazor page (.cshtml, .cshtml.vb, .vazor and .vbxml files) to the Razor Pages project.
+
 After installation, open .net and create a new project. In the search box, write Vazor, and choose one of the 4 vazor project templates. In the project created, right-click a folder in solution explorer and select Add/New Item. From the dialoge box select VazorView (if this is an MVC project) or VazorPage (if this is a Razor Pages project).
 
 
