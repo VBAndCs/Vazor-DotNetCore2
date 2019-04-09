@@ -1,4 +1,5 @@
 ﻿Imports Microsoft.AspNetCore.Mvc.RazorPages
+Imports Vazor
 
 Public Class IndexModel : Inherits PageModel
 
@@ -7,7 +8,8 @@ Public Class IndexModel : Inherits PageModel
 
     Public ReadOnly Property ViewName As String
         Get
-            Return IndexView.CreateNew(Students, ViewData)
+            Dim html = GetVbXml(Students, ViewData).ParseTemplate(Students)
+            Return VazorPage.CreateNew("Index", "Pages", "Vazor MVC", html)
         End Get
     End Property
 
