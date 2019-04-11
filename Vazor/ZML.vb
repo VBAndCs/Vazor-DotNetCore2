@@ -23,20 +23,35 @@ Public Module ZML
     Function ParseZml(xml As XElement) As String
         ParsePage(xml)
         ParseModel(xml)
+        ParseViewData(xml)
         PsrseSetters(xml)
         PsrseConditions(xml)
         PsrseLoops(xml)
-        Return xml.ToString().
+        Return xml.ToString(SaveOptions.DisableFormatting).
             Replace("<zml>", "").Replace("</zml>", "").
             Replace("__OfStart__", "<").Replace("__OfEnd__", ">")
     End Function
+
+    Private Sub ParseViewData(xml As XElement)
+        Dim viewdata = (From elm In xml.Descendants()
+                        Where elm.Name = "viewdata")?.FirstOrDefault
+
+        If viewdata IsNot Nothing Then
+            Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
+            For Each key In viewdata.Attributes
+                sb.AppendLine($"ViewData['{key.Name}'] = '{key.Value}';")
+            Next
+            sb.AppendLine("}" + vbCrLf)
+            viewdata.ReplaceWith(GetXml(sb.ToString().Replace("'", """").Trim()))
+        End If
+    End Sub
 
     Private Sub ParsePage(xml As XElement)
         Dim page = (From elm In xml.Descendants()
                     Where elm.Name = "page")?.FirstOrDefault
 
         If page IsNot Nothing Then
-            Dim x = "@page"
+            Dim x = "@page" + vbCrLf
             page.ReplaceWith(GetXml(x))
         End If
     End Sub
@@ -123,7 +138,7 @@ Public Module ZML
             x += vbCrLf + "{" + vbCrLf + "    " + _elseif.InnerXML + vbCrLf + "}"
             sb.AppendLine(x)
         Next
-
+        sb.AppendLine("")
         Return sb.ToString()
     End Function
 
