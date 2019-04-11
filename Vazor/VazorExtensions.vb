@@ -1,7 +1,12 @@
-﻿Imports System.Reflection
+﻿' ZML Parser: Converts ZML tags to C# Razor statements.
+' Copyright (c) 2019 Mohammad Hamdy Ghanem
+
+
+Imports System.Reflection
 Imports System.Runtime.CompilerServices
 
 Public Module VazorExtensions
+
     <Extension>
     Public Function ToHtmlString(x As XElement, ParamArray tagsToRemove() As String) As String
         Dim html = x.ToString(SaveOptions.DisableFormatting).

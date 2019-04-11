@@ -6,12 +6,12 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.2": {
-      "Vazor/1.0.0": {
+      "Vazor1.5/1.5.0": {
         "dependencies": {
           "Microsoft.Extensions.FileProviders.Abstractions": "2.2.0"
         },
         "runtime": {
-          "Vazor.dll": {}
+          "Vazor1.5.dll": {}
         }
       },
       "Microsoft.Extensions.FileProviders.Abstractions/2.2.0": {
@@ -49,7 +49,7 @@
     }
   },
   "libraries": {
-    "Vazor/1.0.0": {
+    "Vazor1.5/1.5.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

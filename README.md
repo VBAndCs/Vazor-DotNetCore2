@@ -1,12 +1,11 @@
-﻿# Vazor 1.1
+﻿# Vazor 1.5
 Copyright (c) 2019 Mohammad Hamdy Ghanem
 These are a few lines of code for a programmer, but a giant leap for VB.NET apps!
 
 Vazor stands for VB.NET Razor. It allows you to write ASP.NET (both MVC Core and Razor Pages) applications with VB.NET including designing the views with vb.net code imbedded in XML literals which VB.NET supports!
 
-Till now, there is no project template for that, so, you need to clone this repo to your PC, and modify WebApp1 or VazorPages1 to build your web app. 
-I welcome all contributions to enhance this works and create a project template.
-
+# Vazor Ver 1.5
+Suppors ZML (Razor XML) views, where languge statements are written as xml tags.
 
 # Project and Item Templates
 

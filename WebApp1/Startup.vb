@@ -55,5 +55,6 @@ Public Class Startup
 
         LayoutView.CreateNew()
 
+
     End Sub
 End Class

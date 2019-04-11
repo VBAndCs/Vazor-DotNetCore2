@@ -21,7 +21,7 @@
           "Microsoft.AspNetCore.App": "2.2.0",
           "Microsoft.AspNetCore.Razor.Design": "2.2.0",
           "Microsoft.NETCore.App": "2.2.0",
-          "Vazor": "1.0.0"
+          "Vazor1.5": "1.5.0"
         },
         "runtime": {
           "WebApp1.dll": {}
@@ -30,15 +30,15 @@
           "WebApp1.dll": {}
         }
       },
-      "Vazor/1.0.0": {
+      "Vazor1.5/1.5.0": {
         "dependencies": {
           "Microsoft.Extensions.FileProviders.Abstractions": "2.2.0"
         },
         "runtime": {
-          "Vazor.dll": {}
+          "Vazor1.5.dll": {}
         },
         "compile": {
-          "Vazor.dll": {}
+          "Vazor1.5.dll": {}
         }
       },
       "Microsoft.AspNet.WebApi.Client/5.2.6": {
@@ -3243,7 +3243,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Vazor/1.0.0": {
+    "Vazor1.5/1.5.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

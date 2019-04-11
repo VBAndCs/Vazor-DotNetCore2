@@ -15,7 +15,9 @@ Partial Public Class IndexView
 
         Return _
  _
-        <vbxml>
+        <zml>
+            <model type="List(Of WebApp1.Student)"/>
+
             <h3 fff=""> Browse Students</h3>
             <p>Select from <%= Students.Count() %> students:</p>
             <ul>
@@ -26,22 +28,23 @@ Partial Public Class IndexView
                          Next
                      End Function)() %>
             </ul>
-
+            <!--Or use ZML tags directly-->
             <p>Students details:</p>
             <ul>
-                <!--Use my ForEach item template to generate html tags for each elemnt in the data model-->
-                <li ForEach="m">
-                Id: <m.Id/><br/>
-                Name: <m.Name/><br/>
-                    <p>Grade: <m.Grade/></p>
-                </li>
+                <foreach var="m" in="Model">
+                    <li>
+                        Id: @m.Id<br/>
+                        Name: @m.Name<br/>
+                        <p>Grade: @m.Grade</p>
+                    </li>
+                </foreach>
             </ul>
             <script>
                  var x = 5;
-                document.writeln("students count = <%= Students.Count() %>");
+                document.writeln("students count = @Model.Count");
                 
         </script>
-        </vbxml>
+        </zml>
 
     End Function
 
