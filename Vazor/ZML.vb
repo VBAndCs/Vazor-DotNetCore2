@@ -21,6 +21,7 @@ Public Module ZML
 
     <Extension>
     Function ParseZml(xml As XElement) As String
+        ParsePage(xml)
         ParseModel(xml)
         PsrseSetters(xml)
         PsrseConditions(xml)
@@ -29,6 +30,16 @@ Public Module ZML
             Replace("<zml>", "").Replace("</zml>", "").
             Replace("__OfStart__", "<").Replace("__OfEnd__", ">")
     End Function
+
+    Private Sub ParsePage(xml As XElement)
+        Dim page = (From elm In xml.Descendants()
+                    Where elm.Name = "page")?.FirstOrDefault
+
+        If page IsNot Nothing Then
+            Dim x = "@page"
+            page.ReplaceWith(GetXml(x))
+        End If
+    End Sub
 
     Private Sub ParseModel(xml As XElement)
         Dim model = (From elm In xml.Descendants()
