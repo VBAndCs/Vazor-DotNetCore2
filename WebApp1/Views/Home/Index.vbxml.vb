@@ -30,16 +30,18 @@ Partial Public Class IndexView
                      End Function)() %>
             </ul>
             <!--Or use ZML tags directly-->
-            <p>Students details:</p>
-            <ul>
-                <foreach var="m" in="Model">
-                    <li>
+            <if condition="Model.Count > 1 andalso not (Model.Count >= 10)">
+                <p>Students details:</p>
+                <ul>
+                    <foreach var="m" in="Model">
+                        <li>
                         Id: @m.Id<br/>
                         Name: @m.Name<br/>
-                        <p>Grade: @m.Grade</p>
-                    </li>
-                </foreach>
-            </ul>
+                            <p>Grade: @m.Grade</p>
+                        </li>
+                    </foreach>
+                </ul>
+            </if>
             <script>
                  var x = 5;
                 document.writeln("students count = @Model.Count");

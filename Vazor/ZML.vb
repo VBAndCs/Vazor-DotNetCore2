@@ -24,13 +24,27 @@ Public Module ZML
         ParsePage(xml)
         ParseModel(xml)
         ParseViewData(xml)
+        ParseTitle(xml)
         PsrseSetters(xml)
         PsrseConditions(xml)
         PsrseLoops(xml)
+
         Return xml.ToString(SaveOptions.DisableFormatting).
             Replace("<zml>", "").Replace("</zml>", "").
-            Replace("__OfStart__", "<").Replace("__OfEnd__", ">")
+            Replace("__ltn__", "<").Replace("__gtn__", ">").
+            Replace("__amp__", "&")
     End Function
+
+    Private Sub ParseTitle(xml As XElement)
+        Dim pageTitle = (From elm In xml.Descendants()
+                         Where elm.Name = "pagetitle")?.FirstOrDefault
+
+        If pageTitle IsNot Nothing Then
+            Dim title = $"ViewData['Title'] = '{pageTitle.Value}';".Replace("'", """")
+
+            pageTitle.ReplaceWith(GetXml(title))
+        End If
+    End Sub
 
     Private Sub ParseViewData(xml As XElement)
         Dim viewdata = (From elm In xml.Descendants()
@@ -43,7 +57,9 @@ Public Module ZML
             Next
             sb.AppendLine("}" + vbCrLf)
             viewdata.ReplaceWith(GetXml(sb.ToString().Replace("'", """").Trim()))
+            ParseViewData(xml)
         End If
+
     End Sub
 
     Private Sub ParsePage(xml As XElement)
@@ -62,7 +78,7 @@ Public Module ZML
 
         If model IsNot Nothing Then
             Dim x = "@model " + $"{model.Attribute("type").Value}"
-            x = x.Replace("(Of ", "__OfStart__").Replace("of ", "__OfStart__").Replace(")", "__OfEnd__") + vbCrLf
+            x = x.Replace("(Of ", "__ltn__").Replace("of ", "__ltn__").Replace(")", "__gtn__") + vbCrLf
             model.ReplaceWith(GetXml(x))
         End If
     End Sub
@@ -76,7 +92,7 @@ Public Module ZML
             x += vbCrLf + "{" + vbCrLf + "    " + foreach.InnerXML + vbCrLf + "}"
             foreach.ReplaceWith(GetXml(x))
 
-            PsrseConditions(xml)
+            PsrseLoops(xml)
         End If
     End Sub
 
@@ -103,7 +119,7 @@ Public Module ZML
                 Dim children = _if.Nodes
                 Dim firstChild As XElement = children(0)
                 If firstChild.Name = "then" Then
-                    Dim _then = "@if (" + _if.Attribute("condition").Value + ")"
+                    Dim _then = "@if (" + convLog(_if.Attribute("condition").Value) + ")"
                     _then += vbCrLf + "{" + vbCrLf + "    " + firstChild.InnerXML + vbCrLf + "}" + vbCrLf
 
                     Dim _elseifs = PsrseElseIfs(_if)
@@ -117,7 +133,7 @@ Public Module ZML
                     _if.ReplaceWith(GetXml(_then + vbCrLf + _elseifs + vbCrLf + _else))
 
                 Else
-                    Dim x = "@if (" + _if.Attribute("condition").Value + ")"
+                    Dim x = "@if (" + convLog(_if.Attribute("condition").Value) + ")"
                     x += vbCrLf + "{" + vbCrLf + "    " + firstChild.ToString() + vbCrLf + "}"
                     _if.ReplaceWith(GetXml(x))
                 End If
@@ -128,13 +144,25 @@ Public Module ZML
 
     End Sub
 
+    Private Function convLog(value As String) As String
+        Return value.Replace(" And ", " __amp__ ").Replace(" and ", " __amp__ ").
+            Replace(" AndAlso ", " __amp____amp__ ").Replace(" andalso ", " __amp____amp__ ").
+            Replace(" Or ", " | ").Replace(" or ", " | ").
+            Replace(" OrElse ", " || ").Replace(" orelse ", " || ").
+            Replace(" Not ", " !").Replace(" not ", " !").
+            Replace(" Xor ", " ^ ").Replace(" xor ", " ^ ").
+            Replace(" = ", " == ").Replace(" <> ", " != ").
+            Replace(" IsNot ", " != ").Replace(" isnot ", " != ").
+            Replace(">", "__gtn__").Replace(">", "__ltn__")
+    End Function
+
     Private Function PsrseElseIfs(xml As XElement) As String
         Dim _elseifs = (From elm In xml.Descendants()
                         Where elm.Name = "elseif")
 
         Dim sb As New Text.StringBuilder()
         For Each _elseif In _elseifs
-            Dim x = "else if (" + _elseif.Attribute("condition").Value + ")"
+            Dim x = "else if (" + convLog(_elseif.Attribute("condition").Value) + ")"
             x += vbCrLf + "{" + vbCrLf + "    " + _elseif.InnerXML + vbCrLf + "}"
             sb.AppendLine(x)
         Next
