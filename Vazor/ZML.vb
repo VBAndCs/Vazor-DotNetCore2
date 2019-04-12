@@ -30,6 +30,7 @@ Public Module ZML
         ParseViewData(xml)
         ParseTitle(xml)
         PsrseSetters(xml)
+        PsrseGetters(xml)
         PsrseConditions(xml)
         PsrseLoops(xml)
         FixTagHelpers(xml)
@@ -66,10 +67,18 @@ Public Module ZML
                          Where elm.Name = "viewtitle")?.FirstOrDefault
 
         If viewTitle IsNot Nothing Then
-            Dim title = $"ViewData['Title'] = '{viewTitle.Value}';".Replace("'", """")
+            Dim title = ""
+            If viewTitle.Value = "" Then
+                title = $"@ViewData['Title']"
+            Else
+                title = "@{ " & $"ViewData['Title'] = '{viewTitle.Value}';" & " }"
+            End If
 
-            viewTitle.ReplaceWith(GetXml(title))
+            viewTitle.ReplaceWith(GetXml(title.Replace("'", """")))
+
+            ParseTitle(xml)
         End If
+
     End Sub
 
     Private Sub ParseViewData(xml As XElement)
@@ -77,12 +86,19 @@ Public Module ZML
                         Where elm.Name = "viewdata")?.FirstOrDefault
 
         If viewdata IsNot Nothing Then
-            Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
-            For Each key In viewdata.Attributes
-                sb.AppendLine($"ViewData['{key.Name}'] = '{key.Value}';")
-            Next
-            sb.AppendLine("}" + vbCrLf)
-            viewdata.ReplaceWith(GetXml(sb.ToString().Replace("'", """").Trim()))
+            Dim getKey = viewdata.Attribute("key")
+            If getKey Is Nothing Then
+                Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
+                For Each key In viewdata.Attributes
+                    sb.AppendLine($"ViewData['{key.Name}'] = '{key.Value}';")
+                Next
+                sb.AppendLine("}" + vbCrLf)
+                viewdata.ReplaceWith(GetXml(sb.ToString().Replace("'", """").Trim()))
+            Else
+                Dim x = $"@ViewData['{getKey.Value }']".Replace("'", """")
+                viewdata.ReplaceWith(GetXml(x))
+            End If
+
             ParseViewData(xml)
         End If
 
@@ -111,7 +127,10 @@ Public Module ZML
                 x += $"{type.Value}"
             End If
 
-            x = x.Replace("(Of ", "__ltn__").Replace("of ", "__ltn__").Replace(")", "__gtn__") + vbCrLf
+            x = x.Replace("(Of ", "__ltn__").Replace("of ", "__ltn__").
+                 Replace(")", "__gtn__") + vbCrLf + vbCrLf +
+                 "<!--This file is auto generated from the .zml file. Don't make any changes here.-->" + vbCrLf + vbCrLf
+
             model.ReplaceWith(GetXml(x))
         End If
     End Sub
@@ -135,10 +154,39 @@ Public Module ZML
                       Where elm.Name = "set").FirstOrDefault
 
         If setter IsNot Nothing Then
-            Dim x = "@{ " + $"{setter.Attribute("object").Value} = '{setter.Attribute("value").Value}';" + " }"
-            x = x.Replace("(", "[").Replace(")", "]").Replace("'", ChrW(34)) + vbCrLf
+            Dim key = setter.Attribute("key")
+            Dim x = ""
+            If key Is Nothing Then
+                x = "@{ " + $"{setter.Attribute("object").Value} = '{setter.Attribute("value").Value}';" + " }"
+                x = x.Replace("(", "[").Replace(")", "]").Replace("'", """") + vbCrLf
+            Else
+                x = "@{ " + $"{setter.Attribute("object").Value}['{key.Value}'] = '{setter.Attribute("value").Value}';" + " }"
+                x = x.Replace("'", """") + vbCrLf
+            End If
             setter.ReplaceWith(x)
             PsrseSetters(xml)
+        End If
+
+    End Sub
+
+    Private Sub PsrseGetters(xml As XElement)
+
+        Dim getter = (From elm In xml.Descendants()
+                      Where elm.Name = "get").FirstOrDefault
+
+        If getter IsNot Nothing Then
+            Dim key = getter.Attribute("key")
+            Dim x = ""
+            If key Is Nothing Then
+                x = $"@{getter.Attribute("object").Value}"
+                x = x.Replace("(", "[").Replace(")", "]").Replace("'", """") + vbCrLf
+            Else
+                x = $"@{getter.Attribute("object").Value}['{key.Value}']"
+                x = x.Replace("'", """") + vbCrLf
+            End If
+            getter.ReplaceWith(x)
+
+            PsrseGetters(xml)
         End If
 
     End Sub

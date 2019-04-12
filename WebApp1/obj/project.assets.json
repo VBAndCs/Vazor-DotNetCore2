@@ -4439,17 +4439,17 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "Vazor1.5/1.5.0": {
+      "Vazor1.6/1.6.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.2",
         "dependencies": {
           "Microsoft.Extensions.FileProviders.Abstractions": "2.2.0"
         },
         "compile": {
-          "bin/placeholder/Vazor1.5.dll": {}
+          "bin/placeholder/Vazor1.6.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Vazor1.5.dll": {}
+          "bin/placeholder/Vazor1.6.dll": {}
         }
       }
     }
@@ -12076,7 +12076,7 @@
         "system.xml.xpath.xdocument.nuspec"
       ]
     },
-    "Vazor1.5/1.5.0": {
+    "Vazor1.6/1.6.0": {
       "type": "project",
       "path": "../Vazor/Vazor.vbproj",
       "msbuildProject": "../Vazor/Vazor.vbproj"
@@ -12087,7 +12087,7 @@
       "Microsoft.AspNetCore.App >= 2.2.0",
       "Microsoft.AspNetCore.Razor.Design >= 2.2.0",
       "Microsoft.NETCore.App >= 2.2.0",
-      "Vazor1.5 >= 1.5.0"
+      "Vazor1.6 >= 1.6.0"
     ]
   },
   "packageFolders": {

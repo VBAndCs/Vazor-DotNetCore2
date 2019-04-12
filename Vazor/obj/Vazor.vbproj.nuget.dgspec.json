@@ -5,10 +5,10 @@
   },
   "projects": {
     "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj": {
-      "version": "1.5.0",
+      "version": "1.6.0",
       "restore": {
         "projectUniqueName": "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj",
-        "projectName": "Vazor1.5",
+        "projectName": "Vazor1.6",
         "projectPath": "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj",
         "packagesPath": "C:\\Users\\MHG\\.nuget\\packages\\",
         "outputPath": "F:\\_VS.NET\\Vazor\\Vazor\\obj\\",

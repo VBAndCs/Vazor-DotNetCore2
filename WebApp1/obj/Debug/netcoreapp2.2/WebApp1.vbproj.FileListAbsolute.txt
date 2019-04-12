@@ -10,5 +10,5 @@ F:\_VS.NET\Vazor\WebApp1\obj\Debug\netcoreapp2.2\WebApp1.vbproj.CopyComplete
 F:\_VS.NET\Vazor\WebApp1\bin\Debug\netcoreapp2.2\WebApp1.pdb
 F:\_VS.NET\Vazor\WebApp1\obj\Debug\netcoreapp2.2\WebApp1.dll
 F:\_VS.NET\Vazor\WebApp1\obj\Debug\netcoreapp2.2\WebApp1.pdb
-F:\_VS.NET\Vazor\WebApp1\bin\Debug\netcoreapp2.2\Vazor1.5.dll
-F:\_VS.NET\Vazor\WebApp1\bin\Debug\netcoreapp2.2\Vazor1.5.pdb
+F:\_VS.NET\Vazor\WebApp1\bin\Debug\netcoreapp2.2\Vazor1.6.dll
+F:\_VS.NET\Vazor\WebApp1\bin\Debug\netcoreapp2.2\Vazor1.6.pdb

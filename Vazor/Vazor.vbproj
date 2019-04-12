@@ -3,10 +3,11 @@
   <PropertyGroup>
     <RootNamespace>Vazor</RootNamespace>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AssemblyName>Vazor1.5</AssemblyName>
-    <Version>1.5.0</Version>
+    <AssemblyName>Vazor1.6</AssemblyName>
+    <Version>1.6.0</Version>
     <Authors>Mohammed Hamdy Ghanem</Authors>
-    <Description>VB.NET and ZML Razor</Description>
+    <Description>An vbxml Vazor for VB.NET And an zml Eazor for VB.NET, C# and all languages.
+</Description>
     <PackageProjectUrl>https://github.com/VBAndCs/Vazor-DotNetCore2</PackageProjectUrl>
     <RepositoryUrl>https://github.com/VBAndCs/Vazor-DotNetCore2</RepositoryUrl>
     <PackageTags>VB.NET Razor ASP.NET Core</PackageTags>
