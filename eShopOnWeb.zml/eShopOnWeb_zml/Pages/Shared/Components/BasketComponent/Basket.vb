@@ -23,9 +23,7 @@ Namespace Pages.Shared.Components.BasketComponent
         Public Async Function InvokeAsync(ByVal userName As String) As Task(Of IViewComponentResult)
             Dim vm = New BasketComponentViewModel()
             vm.ItemsCount = (Await GetBasketViewModelAsync()).Items.Sum(Function(i) i.Quantity)
-            ViewData("Title") = "My Basket"
-            Dim html = GetVbXml(vm).ToHtmlString()
-            Return View(VazorPage.CreateNew("Default", "Pages.Shared.Components.BasketComponent", "", html))
+            Return View(vm)
         End Function
 
         Private Async Function GetBasketViewModelAsync() As Task(Of BasketViewModel)

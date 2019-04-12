@@ -95,11 +95,7 @@ Public Class Startup
                                                      config.Path = "/allservices"
                                                  End Sub)
 
-            services.Configure(Of RazorViewEngineOptions)(
-                             Sub(options) options.FileProviders.Add(New Vazor.VazorViewProvider())
-                       )
-
-            _services = services
+        _services = services
         End Sub
 
         Private Shared Sub CreateIdentityIfNotCreated(ByVal services As IServiceCollection)

@@ -13329,11 +13329,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\_VS.NET\\Vazor\\eShopOnWeb.zml\\eShopOnWeb_Vazor\\eShopOnWeb_zml.vbproj",
+      "projectUniqueName": "F:\\_VS.NET\\Vazor\\eShopOnWeb.zml\\eShopOnWeb_zml\\eShopOnWeb_zml.vbproj",
       "projectName": "eShopOnWeb_zml",
-      "projectPath": "F:\\_VS.NET\\Vazor\\eShopOnWeb.zml\\eShopOnWeb_Vazor\\eShopOnWeb_zml.vbproj",
+      "projectPath": "F:\\_VS.NET\\Vazor\\eShopOnWeb.zml\\eShopOnWeb_zml\\eShopOnWeb_zml.vbproj",
       "packagesPath": "C:\\Users\\MHG\\.nuget\\packages\\",
-      "outputPath": "F:\\_VS.NET\\Vazor\\eShopOnWeb.zml\\eShopOnWeb_Vazor\\obj\\",
+      "outputPath": "F:\\_VS.NET\\Vazor\\eShopOnWeb.zml\\eShopOnWeb_zml\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
