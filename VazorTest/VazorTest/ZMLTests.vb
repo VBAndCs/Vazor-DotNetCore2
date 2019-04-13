@@ -39,18 +39,33 @@ Namespace VazorTest
 
         <TestMethod>
         Sub TestViewTitle()
+            ' Set string title
             Dim x = <zml><viewtitle>test</viewtitle></zml>
             Dim y = x.ParseZml()
             Dim z = "@{ " & $"ViewData[{Qt}Title{Qt}] = {Qt}test{Qt};" & " }"
             Assert.IsTrue(y.Contains(z))
 
+            ' Set string title
             x = <zml><viewtitle value="test"/></zml>
             y = x.ParseZml()
             Assert.IsTrue(y.Contains(z))
 
+            ' Get string title
             x = <zml><viewtitle/></zml>
             y = x.ParseZml()
             z = $"@ViewData[{Qt }Title{Qt }]"
+            Assert.IsTrue(y.Contains(z))
+
+            ' Set title from variable
+            x = <zml><viewtitle>@Title</viewtitle></zml>
+            y = x.ParseZml()
+            z = "@{ " & $"ViewData[{Qt}Title{Qt}] = Title;" & " }"
+            Assert.IsTrue(y.Contains(z))
+
+            ' Set title from model property
+            x = <zml><viewtitle value="@Model.Title"/></zml>
+            y = x.ParseZml()
+            z = "@{ " & $"ViewData[{Qt}Title{Qt}] = Model.Title;" & " }"
             Assert.IsTrue(y.Contains(z))
         End Sub
 

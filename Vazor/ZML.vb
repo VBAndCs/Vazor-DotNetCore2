@@ -39,20 +39,40 @@ Public Module ZML
         Return GetXml(zml).ParseZml()
     End Function
 
+    ' Qute string values, except objects (starting with @) and chars (quted by ' ')
+    Function Quote(value As String) As String
+        If value.StartsWith("@") Then
+            Return value.Substring(1) ' value is object
+        ElseIf value.StartsWith(SnglQt) AndAlso value.EndsWith(SnglQt) Then
+            Return value ' value is char
+        Else
+            Return Qt + value.Trim(Qt) + Qt ' value is string
+        End If
+    End Function
+
+    ' vars are always objects. Erase @ and qoutes
+    Function At(value As String) As String
+        If value.StartsWith("@") Then
+            Return value.Substring(1)
+        Else
+            Return value.Trim(Qt).Trim(SnglQt)
+        End If
+    End Function
+
     <Extension>
     Function ParseZml(zml As XElement) As String
         Dim xml = New XElement(zml)
-        ParsePage(Xml)
-        ParseModel(Xml)
-        ParseViewData(Xml)
-        ParseTitle(Xml)
-        PsrseSetters(Xml)
-        PsrseGetters(Xml)
-        PsrseConditions(Xml)
-        PsrseLoops(Xml)
-        FixTagHelpers(Xml)
+        ParsePage(xml)
+        ParseModel(xml)
+        ParseViewData(xml)
+        ParseTitle(xml)
+        PsrseSetters(xml)
+        PsrseGetters(xml)
+        PsrseConditions(xml)
+        PsrseLoops(xml)
+        FixTagHelpers(xml)
 
-        Return Xml.ToString(SaveOptions.DisableFormatting).
+        Return xml.ToString(SaveOptions.DisableFormatting).
             Replace(
                             (TempRootStart, ""), (TempRootEnd, ""),
                             (LessThan, "<"), (GreaterThan, ">"),
@@ -89,7 +109,7 @@ Public Module ZML
             If value = "" Then 'Read Title
                 title = $"@ViewData[{Qt }Title{Qt }]"
             Else ' Set Title
-                title = "@{ " & $"ViewData[{Qt}Title{Qt}] = {Qt & value & Qt};" & " }"
+                title = "@{ " & $"ViewData[{Qt}Title{Qt}] = {Quote(value)};" & " }"
             End If
 
             viewTitle.ReplaceWith(GetXml(title))
@@ -114,23 +134,25 @@ Public Module ZML
 
                 Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
                 For Each o In setter.Attributes
-                    sb.AppendLine($"{o.Name} = {o.Value};")
+                    sb.AppendLine($"{At(o.Name.ToString())} = {Quote(o.Value)};")
                 Next
                 sb.AppendLine("}" + vbCrLf)
                 x = sb.ToString()
 
             Else ' Set single value 
                 Dim key = setter.Attribute("key")
+                Dim value = Quote(setter.Attribute("value").Value)
+
                 If key Is Nothing Then
                     ' Set single value without key
                     ' <set obj="arr">new string(){}</set>
 
-                    x = "@{ " + $"{obj.Value} = {setter.Attribute("value").Value};" + " }"
+                    x = "@{ " + $"{At(obj.Value)} = {value};" + " }"
                     x = x.Replace(("(", "["), (")", "]")) + vbCrLf
                 Else ' Set single value with key
                     ' <set obj="dect" key="Name">"Ali"</set>
 
-                    x = "@{ " + $"{obj.Value}[{Qt}{key.Value}{Qt}] = {setter.Attribute("value").Value};" + " }" + vbCrLf
+                    x = "@{ " + $"{At(obj.Value)}[{key.Value}] = {value};" + " }" + vbCrLf
                 End If
             End If
             setter.ReplaceWith(x)
@@ -146,13 +168,13 @@ Public Module ZML
 
         If getter IsNot Nothing Then
             Dim key = getter.Attribute("key")
+            Dim obj = At(getter.Attribute("object").Value)
             Dim x = ""
-            Dim obj = getter.Attribute("object").Value
 
             If key Is Nothing Then
                 x = $"@{obj}" + vbCrLf
             Else
-                x = $"@{obj}[{key.Value}]" + vbCrLf
+                x = $"@{obj}[{Quote(key.Value)}]" + vbCrLf
             End If
             getter.ReplaceWith(x)
 
@@ -166,16 +188,16 @@ Public Module ZML
                         Where elm.Name = "viewdata")?.FirstOrDefault
 
         If viewdata IsNot Nothing Then
-            Dim strKey = viewdata.Attribute("key")
-            Dim value = viewdata.Attribute("value")
+            Dim keyAttr = viewdata.Attribute("key")
+            Dim value = If(viewdata.Attribute("value")?.Value, viewdata.Value)
 
-            If strKey Is Nothing Then
+            If keyAttr Is Nothing Then
                 ' Write miltiple values to ViewData
                 ' <viewdata Name="'Ali'" Age= "15"/>
 
                 Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
                 For Each key In viewdata.Attributes
-                    sb.AppendLine($"ViewData[{Qt }{key.Name}{Qt}] = {key.Value};")
+                    sb.AppendLine($"ViewData[{At(key.Name.ToString())}] = {Quote(key.Value)};")
                 Next
                 sb.AppendLine("}" + vbCrLf)
                 viewdata.ReplaceWith(GetXml(sb.ToString()))
@@ -185,13 +207,13 @@ Public Module ZML
                 ' <viewdata key="Age" value="15"/>
                 ' or <viewdata key="Age">15</viewdata>
 
-                Dim x = $"ViewData[{strKey.Value}] = {value.Value};"
+                Dim x = $"ViewData[{At(keyAttr.Value)}] = {Quote(value)};"
                 viewdata.ReplaceWith(GetXml(x))
 
             Else ' Read from ViewData
                 ' <vewdata key="Age"/>
 
-                Dim x = $"@ViewData[{strKey.Value }]"
+                Dim x = $"@ViewData[{At(keyAttr.Value)}]"
                 viewdata.ReplaceWith(GetXml(x))
             End If
 
@@ -218,13 +240,13 @@ Public Module ZML
             Dim x = "@model "
             Dim type = model.Attribute("type")
             If type Is Nothing Then
-                x += $"{model.Value}"
+                x += $"{At(model.Value)}"
             Else
-                x += $"{type.Value}"
+                x += $"{At(type.Value)}"
             End If
 
-            x = x.Replace("(Of ", LessThan).Replace("of ", LessThan).
-                 Replace(")", GreaterThan) + vbCrLf + vbCrLf +
+            x = x.Replace(("(Of ", LessThan), ("of ", LessThan),
+                 (")", GreaterThan)) + vbCrLf + vbCrLf +
                  "<!--This file is auto generated from the .zml file. Don't make any changes here.-->" + vbCrLf + vbCrLf
 
             model.ReplaceWith(GetXml(x))
@@ -236,8 +258,11 @@ Public Module ZML
                        Where elm.Name = "foreach")?.FirstOrDefault
 
         If foreach IsNot Nothing Then
-            Dim x = $"@foreach (var {foreach.Attribute("var").Value} in {foreach.Attribute("in").Value.Replace("@Model.", "Model.")} )"
-            x += vbCrLf + "{" + vbCrLf + "    " + foreach.InnerXML + vbCrLf + "}"
+            Dim _var = At(foreach.Attribute("var").Value)
+            Dim _in = foreach.Attribute("in").Value.Replace("@Model.", "Model.")
+            Dim x = $"@foreach (var {_var} in {_in} )" + vbCrLf + "{" + vbCrLf +
+                       "    " + foreach.InnerXML + vbCrLf + "}"
+
             foreach.ReplaceWith(GetXml(x))
 
             PsrseLoops(xml)
@@ -278,7 +303,7 @@ Public Module ZML
 
     End Sub
 
-    Private Function convLog(value As String) As String
+    Private Function ConvLog(value As String) As String
         Return value.Replace(
             ("@Model.", "Model."),
             (" And ", $" {Ampersand} "), (" and ", $" {Ampersand} "),
