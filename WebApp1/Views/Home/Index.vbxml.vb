@@ -17,7 +17,7 @@ Partial Public Class IndexView
  _
         <zml>
             <model type="List(Of WebApp1.Student)"/>
-            <viewdata Title="test" Message="OK" Key="value"/>
+            <viewdata Title='"test"' Message='"OK"' Key='"value"'/>
 
             <h3 fff=""> Browse Students</h3>
             <p>Select from <%= Students.Count() %> students:</p>

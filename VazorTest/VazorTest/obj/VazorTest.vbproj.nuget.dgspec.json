@@ -1,0 +1,132 @@
+{
+  "format": 1,
+  "restore": {
+    "F:\\_VS.NET\\Vazor\\VazorTest\\VazorTest\\VazorTest.vbproj": {}
+  },
+  "projects": {
+    "F:\\_VS.NET\\Vazor\\VazorTest\\VazorTest\\VazorTest.vbproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "F:\\_VS.NET\\Vazor\\VazorTest\\VazorTest\\VazorTest.vbproj",
+        "projectName": "VazorTest",
+        "projectPath": "F:\\_VS.NET\\Vazor\\VazorTest\\VazorTest\\VazorTest.vbproj",
+        "packagesPath": "C:\\Users\\MHG\\.nuget\\packages\\",
+        "outputPath": "F:\\_VS.NET\\Vazor\\VazorTest\\VazorTest\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\MHG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Program Files\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {
+              "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj": {
+                "projectPath": "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "MSTest.TestAdapter": {
+              "target": "Package",
+              "version": "[1.4.0, )"
+            },
+            "MSTest.TestFramework": {
+              "target": "Package",
+              "version": "[1.4.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.0.1, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    },
+    "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj": {
+      "version": "1.6.0",
+      "restore": {
+        "projectUniqueName": "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj",
+        "projectName": "Vazor1.6",
+        "projectPath": "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj",
+        "packagesPath": "C:\\Users\\MHG\\.nuget\\packages\\",
+        "outputPath": "F:\\_VS.NET\\Vazor\\Vazor\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\MHG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Program Files\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "Microsoft.Extensions.FileProviders.Abstractions": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}
