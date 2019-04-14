@@ -1,6 +1,6 @@
 ﻿<page />
 <model type="IndexModel" />
-<viewtitle> Catalog</viewtitle>
+<viewtitle>Catalog</viewtitle>
 
 <section class="esh-catalog-hero">
     <div class="container">

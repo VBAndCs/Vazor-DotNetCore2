@@ -43,7 +43,7 @@ Public Module ZML
 
 
     ' Qute string values, except objects (starting with @) and chars (quted by ' ')
-    Function Quote(value As String) As String
+    Private Function Quote(value As String) As String
         If value.StartsWith("@") Then
             Return value.Substring(1) ' value is object
         ElseIf value.StartsWith(SnglQt) AndAlso value.EndsWith(SnglQt) Then
@@ -58,7 +58,7 @@ Public Module ZML
     End Function
 
     ' vars are always objects. Erase @ and qoutes
-    Function At(value As String) As String
+    Private Function At(value As String) As String
         If value.StartsWith("@") Then
             Return value.Substring(1)
         Else
@@ -181,7 +181,7 @@ Public Module ZML
 
         If getter IsNot Nothing Then
             Dim key = getter.Attribute("key")
-            Dim obj = At(getter.Attribute("object").Value)
+            Dim obj = At(If(getter.Attribute("object")?.Value, getter.Value))
             Dim x = ""
 
             If key Is Nothing Then
@@ -240,7 +240,10 @@ Public Module ZML
                     Where elm.Name = "page")?.FirstOrDefault
 
         If page IsNot Nothing Then
-            Dim x = "@page"
+            Dim route = If(page.Attribute("route")?.Value, page.Value)
+            Dim x = "@page "
+            If route <> "" Then x += Qt + route + Qt
+
             page.ReplaceWith(GetXml(x))
         End If
     End Sub
@@ -250,17 +253,15 @@ Public Module ZML
                      Where elm.Name = "model")?.FirstOrDefault
 
         If model IsNot Nothing Then
-            Dim x = "@model "
-            Dim type = model.Attribute("type")
-            If type Is Nothing Then
-                x += $"{At(model.Value)}"
-            Else
-                x += $"{At(type.Value)}"
-            End If
-
-            x = x.Replace(("(Of ", LessThan), ("of ", LessThan),
+            Dim type = If(model.Attribute("type")?.Value, model.Value)
+            Dim x = "@model " + type.
+                Replace(("(Of ", LessThan), ("of ", LessThan),
                  (")", GreaterThan)) + vbCrLf + vbCrLf +
-                 "<!--This file is auto generated from the .zml file. Don't make any changes here.-->" + vbCrLf + vbCrLf
+                 "<!--This file is auto generated from the .zml file." + vbCrLf +
+                 "Make cahnges only to the .zml file, and don't make any changes here," + vbCrLf +
+                 "because they will be overwritten when the .zml file changes." + vbCrLf +
+                 "If you want to format this file to review some blocks," + vbCrLf +
+                 "use the Edit\Advanced\Format Document from main menus. -->" + vbCrLf + vbCrLf
 
             model.ReplaceWith(GetXml(x))
         End If

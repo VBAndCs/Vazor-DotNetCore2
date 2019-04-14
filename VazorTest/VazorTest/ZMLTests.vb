@@ -114,6 +114,61 @@ Namespace VazorTest
 
         End Sub
 
+        <TestMethod>
+        Sub TestGetters()
+            Dim x = <zml><get>X</get></zml>
+            Dim y = x.ParseZml().ToXml()
+            Dim z = y.Value.Trim()
+            Assert.AreEqual(z, "@X")
+
+            x = <zml><get object="X"/></zml>
+            y = x.ParseZml().ToXml()
+            z = y.Value.Trim()
+            Assert.AreEqual(z, "@X")
+
+            x = <zml><get object="X" key="@i"/></zml>
+            y = x.ParseZml().ToXml()
+            z = y.Value.Trim()
+            Assert.AreEqual(z, "@X[i]")
+
+            x = <zml><get object="X" key="name"/></zml>
+            y = x.ParseZml().ToXml()
+            z = y.Value.Trim()
+            Assert.AreEqual(z, $"@X[{Qt}name{Qt}]")
+
+        End Sub
+
+        <TestMethod>
+        Sub TestPage()
+            Dim x = <zml><page/></zml>
+            Dim y = x.ParseZml().ToXml()
+            Dim z = y.Value.Trim()
+            Assert.AreEqual(z, "@page")
+
+            x = <zml><page>Pages/Home</page></zml>
+            y = x.ParseZml().ToXml()
+            z = y.Value.Trim()
+            Assert.AreEqual(z, $"@page {Qt}Pages/Home{Qt}")
+
+            x = <zml><page route="Pages/Home"/></zml>
+            y = x.ParseZml().ToXml()
+            z = y.Value.Trim()
+            Assert.AreEqual(z, $"@page {Qt}Pages/Home{Qt}")
+
+        End Sub
+
+        <TestMethod>
+        Sub TestModel()
+            Dim x = <zml><model>IndexModel</model></zml>
+            Dim y = x.ParseZml()
+            Assert.IsTrue(y.Contains("@model IndexModel"))
+
+            x = <zml><model type="IndexModel"/></zml>
+            y = x.ParseZml()
+            Assert.IsTrue(y.Contains("@model IndexModel"))
+
+        End Sub
+
     End Class
 End Namespace
 
