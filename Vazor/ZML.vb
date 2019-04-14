@@ -4,6 +4,7 @@
 
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
+Imports System.Xml
 
 Public Module ZML
 
@@ -22,6 +23,15 @@ Public Module ZML
             sb.Replace(x.repStr, x.repWithStr)
         Next
         Return sb.ToString()
+    End Function
+
+    <Extension>
+    Public Function ToXml(x As String) As XElement
+        Try
+            Return XElement.Parse(x)
+        Catch
+            Return GetXml(x)
+        End Try
     End Function
 
     Private Function GetXml(xml As String) As XElement
@@ -45,6 +55,10 @@ Public Module ZML
             Return value.Substring(1) ' value is object
         ElseIf value.StartsWith(SnglQt) AndAlso value.EndsWith(SnglQt) Then
             Return value ' value is char
+        ElseIf value.StartsWith("#") AndAlso value.EndsWith("#") Then
+            Return $"DateTime.Parse({Qt}{value.Trim("#")}{Qt})"
+        ElseIf Double.TryParse(value, New Double()) Then
+            Return value ' value is numeric       
         Else
             Return Qt + value.Trim(Qt) + Qt ' value is string
         End If
@@ -72,12 +86,29 @@ Public Module ZML
         PsrseLoops(xml)
         FixTagHelpers(xml)
 
-        Return xml.ToString(SaveOptions.DisableFormatting).
+        Return GetStr(xml).
             Replace(
+                            (TempRootStart & vbCrLf, ""), (vbCrLf & TempRootEnd, ""),
                             (TempRootStart, ""), (TempRootEnd, ""),
                             (LessThan, "<"), (GreaterThan, ">"),
                             (Ampersand, "&")
                          )
+    End Function
+
+    Private Function GetStr(xml As XElement) As String
+        Dim settings = New XmlWriterSettings With
+            {
+              .OmitXmlDeclaration = True,
+              .NewLineChars = vbCrLf,
+              .NewLineHandling = NewLineHandling.Replace
+          }
+
+        Using sw As New IO.StringWriter()
+            Using xw = XmlWriter.Create(sw, settings)
+                xml.WriteTo(xw)
+            End Using
+            Return sw.ToString()
+        End Using
     End Function
 
     Private Sub FixTagHelpers(xml As XElement)
@@ -130,7 +161,6 @@ Public Module ZML
             Dim obj = setter.Attribute("object")
             If obj Is Nothing Then
                 ' Set multiple values
-                ' <set x="3" y="arr[3]" z='dict["key"]' myChar="'a'" name="'student'"  obj = "Student" />
 
                 Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
                 For Each o In setter.Attributes
@@ -141,20 +171,17 @@ Public Module ZML
 
             Else ' Set single value 
                 Dim key = setter.Attribute("key")
-                Dim value = Quote(setter.Attribute("value").Value)
+                Dim value = Quote(If(setter.Attribute("value")?.Value, setter.Value))
 
                 If key Is Nothing Then
                     ' Set single value without key
-                    ' <set obj="arr">new string(){}</set>
+                    x = "@{ " + $"{At(obj.Value)} = {value};" + " }" + vbCrLf
 
-                    x = "@{ " + $"{At(obj.Value)} = {value};" + " }"
-                    x = x.Replace(("(", "["), (")", "]")) + vbCrLf
                 Else ' Set single value with key
-                    ' <set obj="dect" key="Name">"Ali"</set>
-
-                    x = "@{ " + $"{At(obj.Value)}[{key.Value}] = {value};" + " }" + vbCrLf
+                    x = "@{ " + $"{At(obj.Value)}[{Quote(key.Value)}] = {value};" + " }" + vbCrLf
                 End If
             End If
+
             setter.ReplaceWith(x)
             PsrseSetters(xml)
         End If
@@ -278,7 +305,7 @@ Public Module ZML
                 Dim children = _if.Nodes
                 Dim firstChild As XElement = children(0)
                 If firstChild.Name = "then" Then
-                    Dim _then = "@if (" + convLog(_if.Attribute("condition").Value) + ")"
+                    Dim _then = "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
                     _then += vbCrLf + "{" + vbCrLf + "    " + firstChild.InnerXML + vbCrLf + "}" + vbCrLf
 
                     Dim _elseifs = PsrseElseIfs(_if)
@@ -292,7 +319,7 @@ Public Module ZML
                     _if.ReplaceWith(GetXml(_then + vbCrLf + _elseifs + vbCrLf + _else))
 
                 Else
-                    Dim x = "@if (" + convLog(_if.Attribute("condition").Value) + ")"
+                    Dim x = "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
                     x += vbCrLf + "{" + vbCrLf + "    " + firstChild.ToString() + vbCrLf + "}"
                     _if.ReplaceWith(GetXml(x))
                 End If
@@ -323,7 +350,7 @@ Public Module ZML
 
         Dim sb As New Text.StringBuilder()
         For Each _elseif In _elseifs
-            Dim x = "else if (" + convLog(_elseif.Attribute("condition").Value) + ")"
+            Dim x = "else if (" + ConvLog(_elseif.Attribute("condition").Value) + ")"
             x += vbCrLf + "{" + vbCrLf + "    " + _elseif.InnerXML + vbCrLf + "}"
             sb.AppendLine(x)
         Next

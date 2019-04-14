@@ -5,11 +5,6 @@ Namespace VazorTest
     <TestClass>
     Public Class UnitTest1
 
-        Private Function GetXml(xml As String) As XElement
-            Return XElement.Parse(TempRootStart + xml + TempRootEnd)
-        End Function
-
-
         <TestMethod>
         Sub TestReplace()
             Dim x = "Test multiple replacements in string"
@@ -28,8 +23,7 @@ Namespace VazorTest
                         />
                     </zml>
 
-            Dim y = GetXml(x.ParseZml())
-            Dim p As XElement = y.FirstNode
+            Dim p = x.ParseZml().ToXml()
             Assert.AreEqual(p.Attribute("asp-a").Value, "@Model.students")
             Assert.AreEqual(p.Attribute("asp-b").Value, "@students")
             Assert.AreEqual(p.Attribute("asp-c").Value, "@Model.students")
@@ -67,6 +61,57 @@ Namespace VazorTest
             y = x.ParseZml()
             z = "@{ " & $"ViewData[{Qt}Title{Qt}] = Model.Title;" & " }"
             Assert.IsTrue(y.Contains(z))
+        End Sub
+
+        <TestMethod>
+        Sub TestSetters()
+            Dim x = <zml>
+                        <set
+                            d="4/1/2019"
+                            d2="#4/1/2019#"
+                            n="3"
+                            s='"3"'
+                            y="@arr[3]"
+                            z='@dict["key"]'
+                            myChar="'a'"
+                            name="student"
+                            obj="@Student"/>
+                    </zml>
+
+            Dim y = x.ParseZml().ToXml()
+            Dim s = y.Value.Trim()
+            Assert.IsTrue(s.StartsWith("@{") And s.EndsWith("}"))
+            Dim lines = s.Trim("@", "{", "}", vbCr, vbLf).Replace(vbCrLf, vbLf).Split(vbLf, StringSplitOptions.RemoveEmptyEntries)
+            Assert.AreEqual(lines(0), $"d = {Qt}4/1/2019{Qt};")
+            Assert.AreEqual(lines(1), $"d2 = DateTime.Parse({Qt}4/1/2019{Qt});")
+            Assert.AreEqual(lines(2), "n = 3;")
+            Assert.AreEqual(lines(3), $"s = {Qt}3{Qt};")
+            Assert.AreEqual(lines(4), "y = arr[3];")
+            Assert.AreEqual(lines(5), $"z = dict[{Qt}key{Qt}];")
+            Assert.AreEqual(lines(6), "myChar = 'a';")
+            Assert.AreEqual(lines(7), $"name = {Qt}student{Qt};")
+            Assert.AreEqual(lines(8), "obj = Student;")
+
+            x = <zml><set object="arr" value="new String(){}"/></zml>
+            Dim z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ arr = {Qt}new String(){{}}{Qt}; }}")
+
+            x = <zml><set object="arr" value="@new String[]{}"/></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ arr = new String[]{{}}; }}")
+
+            x = <zml><set object="dect" key="Name">Adam</set></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ dect[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
+
+            x = <zml><set object="dect" key="Name" value="Adam"/></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ dect[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
+
+            x = <zml><set object="dect" key="@Name">@Adam</set></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ dect[Name] = Adam; }}")
+
         End Sub
 
     End Class
