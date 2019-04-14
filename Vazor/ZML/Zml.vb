@@ -1,46 +1,67 @@
-﻿' ZML Parser: Converts ZML tags to C# Razor statements.
-' Copyright (c) Mohammad Hamdy Ghanem 2019
+﻿Public Class Zml
+    Private AddComment As Boolean = True
 
+    Const comment = "<!--This file is auto generated from the .zml file." + Ln +
+                 "Make cahnges only to the .zml file, and don't make any changes here," + Ln +
+                 "because they will be overwritten when the .zml file changes." + Ln +
+                 "If you want to format this file to review some blocks," + Ln +
+                 "use the Edit\Advanced\Format Document from main menus. -->"
 
-Imports System.Reflection
-Imports System.Runtime.CompilerServices
-Imports System.Xml
+    Dim CsCode As New List(Of String)
+    Dim BlockStart, BlockEnd As String
 
-Public Module ZML
+    Public Sub New(Optional addComment As Boolean = True)
+        Me.AddComment = addComment
+    End Sub
 
-    Public Const Ampersand = "__amp__"
-    Public Const GreaterThan = "__gtn__"
-    Public Const LessThan = "__ltn__"
-    Public Const TempRootStart = "<zml>"
-    Public Const TempRootEnd = "</zml>"
-    Public Const SnglQt = "'"
-    Public Const Qt = """"
+    Function ParseZml(zml As XElement) As String
+        BlockStart = AddToCsList("{")
+        BlockEnd = AddToCsList("}")
 
-    <Extension>
-    Function Replace(s As String, ParamArray repPairs() As (repStr As String, repWithStr As String)) As String
-        Dim sb As New Text.StringBuilder(s)
-        For Each x In repPairs
-            sb.Replace(x.repStr, x.repWithStr)
+        Dim xml = New XElement(zml)
+        ParsePage(xml)
+        ParseModel(xml)
+        ParseViewData(xml)
+        ParseTitle(xml)
+        FixTagHelpers(xml)
+        PsrseSetters(xml)
+        PsrseGetters(xml)
+        PsrseConditions(xml)
+        PsrseLoops(xml)
+
+        Dim sb As New Text.StringBuilder(xml.ToString())
+
+        For n = 0 To CsCode.Count - 1
+            sb.Replace($"<zmlitem{n} />", CsCode(n))
         Next
-        Return sb.ToString()
-    End Function
 
-    <Extension>
-    Public Function ToXml(x As String) As XElement
-        Try
-            Return XElement.Parse(x)
-        Catch
-            Return GetXml(x)
-        End Try
-    End Function
+        sb.Replace(
+                            (TempRootStart, ""), (TempRootEnd, ""),
+                            (LessThan, "<"), (GreaterThan, ">"),
+                            (Ampersand, "&")
+                         )
 
-    <Extension>
-    Public Function InnerXML(el As XElement) As String
-        Dim X = <zml/>
-        X.Add(el.Nodes)
-        Return vbCrLf + X.ToString() + vbCrLf
-    End Function
+        Dim x = sb.ToString().Trim(" ", vbCr, vbLf)
+        sb.Clear()
+        Dim lines = x.Split(vbCrLf)
 
+        For Each line In lines
+            If line = "  " Then
+                sb.AppendLine("")
+            ElseIf line.Trim <> "" Then
+                If AddComment AndAlso Not line.Trim.StartsWith("@") Then
+                    AddComment = False
+                    sb.AppendLine(Ln + comment + Ln)
+                End If
+                If line.StartsWith("  ") Then
+                    sb.AppendLine(line.Substring(2))
+                Else
+                    sb.AppendLine(line)
+                End If
+            End If
+        Next
+        Return sb.ToString().Trim(" ", vbCr, vbLf)
+    End Function
 
     ' Qute string values, except objects (starting with @) and chars (quted by ' ')
     Private Function Quote(value As String) As String
@@ -66,35 +87,12 @@ Public Module ZML
         End If
     End Function
 
-    Friend Function ParseZml(zml As String) As String
-        Return GetXml(zml).ParseZml()
-    End Function
-
-    <Extension>
-    Function ParseZml(zml As XElement) As String
-        Dim xml = New XElement(zml)
-        ParsePage(xml)
-        ParseModel(xml)
-        ParseViewData(xml)
-        ParseTitle(xml)
-        PsrseSetters(xml)
-        PsrseGetters(xml)
-        PsrseConditions(xml)
-        PsrseLoops(xml)
-        FixTagHelpers(xml)
-
-        Return xml.ToString().
-             Replace(
-                            (TempRootStart & vbCrLf, ""),
-                            (TempRootEnd & vbCrLf, ""),
-                            (TempRootStart, ""), (TempRootEnd, ""),
-                            (LessThan, "<"), (GreaterThan, ">"),
-                            (Ampersand, "&")
-                         ).Trim(" ", vbCr, vbLf)
-    End Function
-
     Private Function GetXml(xml As String) As XElement
-        Return XElement.Parse(TempRootStart + vbCrLf + xml + vbCrLf + TempRootEnd)
+        Try
+            Return XElement.Parse(xml)
+        Catch
+            Return XElement.Parse(TempRootStart + vbCrLf + xml + vbCrLf + TempRootEnd)
+        End Try
     End Function
 
     Private Sub FixTagHelpers(xml As XElement)
@@ -129,12 +127,20 @@ Public Module ZML
                 title = "@{ " & $"ViewData[{Qt}Title{Qt}] = {Quote(value)};" & " }"
             End If
 
+            title = AddToCsList(title)
+
             viewTitle.ReplaceWith(GetXml(title))
 
             ParseTitle(xml)
         End If
 
     End Sub
+
+    Private Function AddToCsList(item As String) As String
+        CsCode.Add(item)
+        Dim zmlKey = "zmlitem" & CsCode.Count - 1
+        Return $"<{zmlKey}/>"
+    End Function
 
     Private Sub PsrseSetters(xml As XElement)
 
@@ -148,11 +154,11 @@ Public Module ZML
             If obj Is Nothing Then
                 ' Set multiple values
 
-                Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
+                Dim sb As New Text.StringBuilder(Ln + "@{" + Ln)
                 For Each o In setter.Attributes
                     sb.AppendLine($"{At(o.Name.ToString())} = {Quote(o.Value)};")
                 Next
-                sb.AppendLine("}" + vbCrLf)
+                sb.AppendLine("}" + Ln)
                 x = sb.ToString()
 
             Else ' Set single value 
@@ -161,14 +167,15 @@ Public Module ZML
 
                 If key Is Nothing Then
                     ' Set single value without key
-                    x = "@{ " + $"{At(obj.Value)} = {value};" + " }" + vbCrLf
+                    x = "@{ " + $"{At(obj.Value)} = {value};" + " }" + Ln
 
                 Else ' Set single value with key
-                    x = "@{ " + $"{At(obj.Value)}[{Quote(key.Value)}] = {value};" + " }" + vbCrLf
+                    x = "@{ " + $"{At(obj.Value)}[{Quote(key.Value)}] = {value};" + " }" + Ln
                 End If
             End If
 
-            setter.ReplaceWith(x)
+            x = AddToCsList(x)
+            setter.ReplaceWith(GetXml(x))
             PsrseSetters(xml)
         End If
 
@@ -185,11 +192,13 @@ Public Module ZML
             Dim x = ""
 
             If key Is Nothing Then
-                x = $"@{obj}" + vbCrLf
+                x = $"@{obj}" + Ln
             Else
-                x = $"@{obj}[{Quote(key.Value)}]" + vbCrLf
+                x = $"@{obj}[{Quote(key.Value)}]" + Ln
             End If
-            getter.ReplaceWith(x)
+
+            x = AddToCsList(x)
+            getter.ReplaceWith(GetXml(x))
 
             PsrseGetters(xml)
         End If
@@ -208,12 +217,14 @@ Public Module ZML
                 ' Write miltiple values to ViewData
                 ' <viewdata Name="'Ali'" Age="15"/>
 
-                Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
+                Dim sb As New Text.StringBuilder(Ln + "@{" + Ln)
                 For Each key In viewdata.Attributes
                     sb.AppendLine($"ViewData[{At(key.Name.ToString())}] = {Quote(key.Value)};")
                 Next
-                sb.AppendLine("}" + vbCrLf)
-                viewdata.ReplaceWith(GetXml(sb.ToString()))
+                sb.AppendLine("}" + Ln)
+
+                Dim x = AddToCsList(sb.ToString())
+                viewdata.ReplaceWith(GetXml(x))
 
             ElseIf value IsNot Nothing Then
                 ' Write one value to ViewData
@@ -221,12 +232,14 @@ Public Module ZML
                 ' or <viewdata key="Age">15</viewdata>
 
                 Dim x = $"ViewData[{At(keyAttr.Value)}] = {Quote(value)};"
+                x = AddToCsList(x)
                 viewdata.ReplaceWith(GetXml(x))
 
             Else ' Read from ViewData
                 ' <vewdata key="Age"/>
 
                 Dim x = $"@ViewData[{At(keyAttr.Value)}]"
+                x = AddToCsList(x)
                 viewdata.ReplaceWith(GetXml(x))
             End If
 
@@ -244,6 +257,7 @@ Public Module ZML
             Dim x = "@page "
             If route <> "" Then x += Qt + route + Qt
 
+            x = AddToCsList(x)
             page.ReplaceWith(GetXml(x))
         End If
     End Sub
@@ -256,13 +270,9 @@ Public Module ZML
             Dim type = If(model.Attribute("type")?.Value, model.Value)
             Dim x = "@model " + type.
                 Replace(("(Of ", LessThan), ("of ", LessThan),
-                 (")", GreaterThan)) + vbCrLf + vbCrLf +
-                 "<!--This file is auto generated from the .zml file." + vbCrLf +
-                 "Make cahnges only to the .zml file, and don't make any changes here," + vbCrLf +
-                 "because they will be overwritten when the .zml file changes." + vbCrLf +
-                 "If you want to format this file to review some blocks," + vbCrLf +
-                 "use the Edit\Advanced\Format Document from main menus. -->" + vbCrLf + vbCrLf
+                 (")", GreaterThan))
 
+            x = AddToCsList(x)
             model.ReplaceWith(GetXml(x))
         End If
     End Sub
@@ -274,8 +284,12 @@ Public Module ZML
         If foreach IsNot Nothing Then
             Dim _var = At(foreach.Attribute("var").Value)
             Dim _in = foreach.Attribute("in").Value.Replace("@Model.", "Model.")
-            Dim x = TempRootStart + $"@foreach (var {_var} in {_in} )" + vbCrLf + "{" + vbCrLf +
-                       "    " + TempRootEnd + foreach.InnerXML + TempRootStart + vbCrLf + "}" + vbCrLf + TempRootEnd
+            Dim st = $"@foreach (var {_var} in {_in})"
+            st = AddToCsList(st)
+            Dim x = st + Ln +
+                         BlockStart +
+                         foreach.InnerXML +
+                         BlockEnd
 
             foreach.ReplaceWith(GetXml(x))
 
@@ -288,28 +302,37 @@ Public Module ZML
                    Where elm.Name = "if")?.FirstOrDefault
 
         If _if IsNot Nothing Then
+            Dim st = ""
+
             If _if.Nodes.Count > 0 Then
                 Dim children = _if.Nodes
                 Dim firstChild As XElement = children(0)
                 If firstChild.Name = "then" Then
-                    Dim _then = TempRootStart + "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
-                    _then += vbCrLf + "{" + vbCrLf + "    " + TempRootEnd + firstChild.InnerXML + TempRootStart + vbCrLf + "}" + vbCrLf + TempRootEnd
+                    st = "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
+                    st = AddToCsList(st)
+
+                    Dim _then = st + Ln +
+                            BlockStart + firstChild.InnerXML + BlockEnd
 
                     Dim _elseifs = PsrseElseIfs(_if)
 
                     Dim _else = ""
                     Dim lastChild As XElement = children(children.Count - 1)
                     If lastChild.Name = "else" Then
-                        _else = TempRootStart + "else" + vbCrLf + "{" + vbCrLf + "    " + TempRootEnd +
-                                 lastChild.InnerXML + TempRootStart + vbCrLf + "}" + vbCrLf + TempRootEnd
+                        st = AddToCsList("else")
+                        _else = st + Ln +
+                                    BlockStart + lastChild.InnerXML + BlockEnd
+
                     End If
 
                     _if.ReplaceWith(GetXml(_then + _elseifs + _else))
 
                 Else
-                    Dim x = TempRootStart + "@if (" + ConvLog(_if.Attribute("condition").Value) + ")" +
-                             vbCrLf + "{" + vbCrLf + "    " + TempRootEnd +
-                             firstChild.ToString() + TempRootStart + vbCrLf + "}" + TempRootEnd
+                    st = "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
+                    st = AddToCsList(st)
+                    Dim x = st + Ln +
+                                  BlockStart + firstChild.ToString() + BlockEnd
+
                     _if.ReplaceWith(GetXml(x))
                 End If
             End If
@@ -339,13 +362,16 @@ Public Module ZML
 
         Dim sb As New Text.StringBuilder()
         Dim x = ""
+        Dim st = ""
+
         For Each _elseif In _elseifs
-            x = TempRootStart + "else if (" + ConvLog(_elseif.Attribute("condition").Value) + ")" +
-                       vbCrLf + "{" + vbCrLf + "    " + TempRootEnd +
-                       _elseif.InnerXML + TempRootStart + vbCrLf + "}" + TempRootEnd
+            st = "else if (" + ConvLog(_elseif.Attribute("condition").Value) + ")"
+            st = AddToCsList(st)
+            x = st + Ln +
+                BlockStart + _elseif.InnerXML + BlockEnd
             sb.AppendLine(x)
         Next
         Return sb.ToString()
     End Function
 
-End Module
+End Class

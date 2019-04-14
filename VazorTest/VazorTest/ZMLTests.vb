@@ -169,6 +169,47 @@ Namespace VazorTest
 
         End Sub
 
+        <TestMethod>
+        Sub TestLoops()
+            Dim lp = <zml>
+                         <foreach var="i" in='"abcd"'>
+                             <p>@i</p>
+                         </foreach>
+                     </zml>
+
+
+            Dim y = lp.ParseZml()
+            Dim z =
+$"@foreach (var i in {Qt}abcd{Qt})
+  {{
+    <p>@i</p>
+  }}"
+            Assert.AreEqual(y, z)
+
+            lp = <zml>
+                     <foreach var="country" in="Model.Countries">
+                         <h1>Country: @country</h1>
+                         <foreach var="city" in="country.Cities">
+                             <p>City: @city</p>
+                         </foreach>
+                     </foreach>
+                 </zml>
+
+
+            y = lp.ParseZml()
+            z =
+"@foreach (var country in Model.Countries)
+  {
+    <h1>Country: @country</h1>
+      @foreach (var city in country.Cities)
+      {
+        <p>City: @city</p>
+      }
+  }"
+
+            Assert.AreEqual(y, z)
+        End Sub
+
     End Class
 End Namespace
 
