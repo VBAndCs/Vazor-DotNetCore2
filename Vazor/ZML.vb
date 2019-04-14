@@ -17,7 +17,7 @@ Public Module ZML
     Public Const Qt = """"
 
     <Extension>
-    Function Replace(s As String, ParamArray repPairs() As (repStr As String, repWithStr As String))
+    Function Replace(s As String, ParamArray repPairs() As (repStr As String, repWithStr As String)) As String
         Dim sb As New Text.StringBuilder(s)
         For Each x In repPairs
             sb.Replace(x.repStr, x.repWithStr)
@@ -34,20 +34,13 @@ Public Module ZML
         End Try
     End Function
 
-    Private Function GetXml(xml As String) As XElement
-        Return XElement.Parse(TempRootStart + xml + TempRootEnd)
-    End Function
-
     <Extension>
     Public Function InnerXML(el As XElement) As String
-        Dim reader = el.CreateReader()
-        reader.MoveToContent()
-        Return reader.ReadInnerXml()
+        Dim X = <zml/>
+        X.Add(el.Nodes)
+        Return vbCrLf + X.ToString() + vbCrLf
     End Function
 
-    Friend Function ParseZml(zml As String) As String
-        Return GetXml(zml).ParseZml()
-    End Function
 
     ' Qute string values, except objects (starting with @) and chars (quted by ' ')
     Function Quote(value As String) As String
@@ -73,6 +66,10 @@ Public Module ZML
         End If
     End Function
 
+    Friend Function ParseZml(zml As String) As String
+        Return GetXml(zml).ParseZml()
+    End Function
+
     <Extension>
     Function ParseZml(zml As XElement) As String
         Dim xml = New XElement(zml)
@@ -86,29 +83,18 @@ Public Module ZML
         PsrseLoops(xml)
         FixTagHelpers(xml)
 
-        Return GetStr(xml).
-            Replace(
-                            (TempRootStart & vbCrLf, ""), (vbCrLf & TempRootEnd & vbCrLf, "vbCrLf"),
+        Return xml.ToString().
+             Replace(
+                            (TempRootStart & vbCrLf, ""),
+                            (TempRootEnd & vbCrLf, ""),
                             (TempRootStart, ""), (TempRootEnd, ""),
                             (LessThan, "<"), (GreaterThan, ">"),
                             (Ampersand, "&")
-                         )
+                         ).Trim(" ", vbCr, vbLf)
     End Function
 
-    Private Function GetStr(xml As XElement) As String
-        Dim settings = New XmlWriterSettings With
-            {
-              .OmitXmlDeclaration = True,
-              .NewLineChars = vbCrLf,
-              .NewLineHandling = NewLineHandling.Replace
-          }
-
-        Using sw As New IO.StringWriter()
-            Using xw = XmlWriter.Create(sw, settings)
-                xml.WriteTo(xw)
-            End Using
-            Return sw.ToString()
-        End Using
+    Private Function GetXml(xml As String) As XElement
+        Return XElement.Parse(TempRootStart + vbCrLf + xml + vbCrLf + TempRootEnd)
     End Function
 
     Private Sub FixTagHelpers(xml As XElement)
@@ -220,7 +206,7 @@ Public Module ZML
 
             If keyAttr Is Nothing Then
                 ' Write miltiple values to ViewData
-                ' <viewdata Name="'Ali'" Age= "15"/>
+                ' <viewdata Name="'Ali'" Age="15"/>
 
                 Dim sb As New Text.StringBuilder(vbCrLf + "@{" + vbCrLf)
                 For Each key In viewdata.Attributes
@@ -254,7 +240,7 @@ Public Module ZML
                     Where elm.Name = "page")?.FirstOrDefault
 
         If page IsNot Nothing Then
-            Dim x = "@page" + vbCrLf
+            Dim x = "@page"
             page.ReplaceWith(GetXml(x))
         End If
     End Sub
@@ -287,8 +273,8 @@ Public Module ZML
         If foreach IsNot Nothing Then
             Dim _var = At(foreach.Attribute("var").Value)
             Dim _in = foreach.Attribute("in").Value.Replace("@Model.", "Model.")
-            Dim x = $"@foreach (var {_var} in {_in} )" + vbCrLf + "{" + vbCrLf +
-                       "    " + foreach.InnerXML + vbCrLf + "}"
+            Dim x = TempRootStart + $"@foreach (var {_var} in {_in} )" + vbCrLf + "{" + vbCrLf +
+                       "    " + TempRootEnd + foreach.InnerXML + TempRootStart + vbCrLf + "}" + vbCrLf + TempRootEnd
 
             foreach.ReplaceWith(GetXml(x))
 
@@ -305,22 +291,24 @@ Public Module ZML
                 Dim children = _if.Nodes
                 Dim firstChild As XElement = children(0)
                 If firstChild.Name = "then" Then
-                    Dim _then = "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
-                    _then += vbCrLf + "{" + vbCrLf + "    " + firstChild.InnerXML + vbCrLf + "}" + vbCrLf
+                    Dim _then = TempRootStart + "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
+                    _then += vbCrLf + "{" + vbCrLf + "    " + TempRootEnd + firstChild.InnerXML + TempRootStart + vbCrLf + "}" + vbCrLf + TempRootEnd
 
                     Dim _elseifs = PsrseElseIfs(_if)
 
                     Dim _else = ""
                     Dim lastChild As XElement = children(children.Count - 1)
                     If lastChild.Name = "else" Then
-                        _else = "else" + vbCrLf + "{" + vbCrLf + "    " + lastChild.InnerXML + vbCrLf + "}" + vbCrLf
+                        _else = TempRootStart + "else" + vbCrLf + "{" + vbCrLf + "    " + TempRootEnd +
+                                 lastChild.InnerXML + TempRootStart + vbCrLf + "}" + vbCrLf + TempRootEnd
                     End If
 
-                    _if.ReplaceWith(GetXml(_then + vbCrLf + _elseifs + vbCrLf + _else))
+                    _if.ReplaceWith(GetXml(_then + _elseifs + _else))
 
                 Else
-                    Dim x = "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
-                    x += vbCrLf + "{" + vbCrLf + "    " + firstChild.ToString() + vbCrLf + "}"
+                    Dim x = TempRootStart + "@if (" + ConvLog(_if.Attribute("condition").Value) + ")" +
+                             vbCrLf + "{" + vbCrLf + "    " + TempRootEnd +
+                             firstChild.ToString() + TempRootStart + vbCrLf + "}" + TempRootEnd
                     _if.ReplaceWith(GetXml(x))
                 End If
             End If
@@ -349,12 +337,13 @@ Public Module ZML
                         Where elm.Name = "elseif")
 
         Dim sb As New Text.StringBuilder()
+        Dim x = ""
         For Each _elseif In _elseifs
-            Dim x = "else if (" + ConvLog(_elseif.Attribute("condition").Value) + ")"
-            x += vbCrLf + "{" + vbCrLf + "    " + _elseif.InnerXML + vbCrLf + "}"
+            x = TempRootStart + "else if (" + ConvLog(_elseif.Attribute("condition").Value) + ")" +
+                       vbCrLf + "{" + vbCrLf + "    " + TempRootEnd +
+                       _elseif.InnerXML + TempRootStart + vbCrLf + "}" + TempRootEnd
             sb.AppendLine(x)
         Next
-        sb.AppendLine("")
         Return sb.ToString()
     End Function
 
