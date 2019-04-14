@@ -88,7 +88,7 @@ Public Module ZML
 
         Return GetStr(xml).
             Replace(
-                            (TempRootStart & vbCrLf, ""), (vbCrLf & TempRootEnd, ""),
+                            (TempRootStart & vbCrLf, ""), (vbCrLf & TempRootEnd & vbCrLf, "vbCrLf"),
                             (TempRootStart, ""), (TempRootEnd, ""),
                             (LessThan, "<"), (GreaterThan, ">"),
                             (Ampersand, "&")
