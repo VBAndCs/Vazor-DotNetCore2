@@ -347,7 +347,7 @@
             ("@Model.", "Model."),
             (" And ", $" {Ampersand} "), (" and ", $" {Ampersand} "),
             (" AndAlso ", $" {Ampersand + Ampersand} "), (" andalso ", $" {Ampersand + Ampersand} "),
-            (" Or ", " | "), (" or ", " | "),
+            (" Or ", " | "), (" or ", " | "), (" mod ", " % "), (" Mod ", " % "),
             (" OrElse ", " || "), (" orelse ", " || "),
             (" Not ", " !"), (" not ", " !"),
             (" Xor ", " ^ "), (" xor ", " ^ "),

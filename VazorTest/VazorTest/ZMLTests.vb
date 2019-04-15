@@ -170,7 +170,7 @@ Namespace VazorTest
         End Sub
 
         <TestMethod>
-        Sub TestLoops()
+        Sub TestLoop()
             Dim lp = <zml>
                          <foreach var="i" in='"abcd"'>
                              <p>@i</p>
@@ -186,18 +186,23 @@ $"@foreach (var i in {Qt}abcd{Qt})
   }}"
             Assert.AreEqual(y, z)
 
-            lp = <zml>
-                     <foreach var="country" in="Model.Countries">
-                         <h1>Country: @country</h1>
-                         <foreach var="city" in="country.Cities">
-                             <p>City: @city</p>
+        End Sub
+
+        <TestMethod>
+        Sub TestNestedLoops()
+
+            Dim lp = <zml>
+                         <foreach var="country" in="Model.Countries">
+                             <h1>Country: @country</h1>
+                             <foreach var="city" in="country.Cities">
+                                 <p>City: @city</p>
+                             </foreach>
                          </foreach>
-                     </foreach>
-                 </zml>
+                     </zml>
 
 
-            y = lp.ParseZml()
-            z =
+            Dim y = lp.ParseZml()
+            Dim z =
 "@foreach (var country in Model.Countries)
   {
     <h1>Country: @country</h1>
@@ -210,9 +215,8 @@ $"@foreach (var i in {Qt}abcd{Qt})
             Assert.AreEqual(y, z)
         End Sub
 
-
         <TestMethod>
-        Sub TestIfStatements()
+        Sub TestIf()
 
             Dim x =
                     <zml>
@@ -230,7 +234,11 @@ $"@foreach (var i in {Qt}abcd{Qt})
 
             Assert.AreEqual(y, z)
 
-            x =
+        End Sub
+
+        <TestMethod>
+        Sub TestIfElse()
+            Dim x =
                 <zml>
                     <if condition=<%= "a <> 3 andalso b == 5" %>>
                         <then>
@@ -242,8 +250,8 @@ $"@foreach (var i in {Qt}abcd{Qt})
                     </if>
                 </zml>
 
-            y = x.ParseZml().ToString()
-            z =
+            Dim y = x.ParseZml().ToString()
+            Dim z =
 "@if (a != 3 && b == 5)
   {
     <p>test 1</p>
@@ -254,7 +262,132 @@ $"@foreach (var i in {Qt}abcd{Qt})
   }"
 
             Assert.AreEqual(y, z)
+
         End Sub
+
+        <TestMethod>
+        Sub TestElseIfs()
+            Dim x =
+                <zml>
+                    <if condition=<%= "grade < 30" %>>
+                        <then>
+                            <p>Very weak</p>
+                        </then>
+                        <elseif condition=<%= "grade < 50" %>>
+                            <p>Weak 2</p>
+                        </elseif>
+                        <elseif condition=<%= "grade < 65" %>>
+                            <p>Accepted</p>
+                        </elseif>
+                        <elseif condition=<%= "grade < 75" %>>
+                            <p>Good</p>
+                        </elseif>
+                        <elseif condition=<%= "grade < 85" %>>
+                            <p>Very Good</p>
+                        </elseif>
+                        <else>
+                            <p>Excellent</p>
+                        </else>
+                    </if>
+                </zml>
+
+            Dim y = x.ParseZml().ToString()
+            Dim z =
+"@if (grade < 30)
+  {
+    <p>Very weak</p>
+  }
+  else if (grade < 50)
+  {
+    <p>Weak 2</p>
+  }
+  else if (grade < 65)
+  {
+    <p>Accepted</p>
+  }
+  else if (grade < 75)
+  {
+    <p>Good</p>
+  }
+  else if (grade < 85)
+  {
+    <p>Very Good</p>
+  }
+  else
+  {
+    <p>Excellent</p>
+  }"
+
+            Assert.AreEqual(y, z)
+
+        End Sub
+
+        <TestMethod>
+        Sub TestNestedIfs()
+            Dim x =
+                <zml>
+                    <if condition="@Model.Count = 0">
+                        <then>
+                            <if condition="Model.Test">
+                                <then>
+                                    <p>Test</p>
+                                </then>
+                                <else>
+                                    <p>Not Test</p>
+                                </else>
+                            </if>
+                        </then>
+                        <else>
+                            <h1>Show Items</h1>
+                            <foreach var="item" in="Model">
+                                <if condition="item.Id mod 2 = 0">
+                                    <then>
+                                        <p class="EvenItems">item.Name</p>
+                                    </then>
+                                    <else>
+                                        <p class="OddItems">item.Name</p>
+                                    </else>
+                                </if>
+                            </foreach>
+                            <p>Done</p>
+                        </else>
+                    </if>
+                </zml>
+
+            Dim y = x.ParseZml().ToString()
+            Dim z =
+"@if (Model.Count == 0)
+  {
+      @if (Model.Test)
+      {
+        <p>Test</p>
+      }
+      else
+      {
+        <p>Not Test</p>
+      }
+  }
+  else
+  {
+    <h1>Show Items</h1>
+      @foreach (var item in Model)
+      {
+          @if (item.Id % 2 == 0)
+          {
+            <p class=" + Qt + "EvenItems" + Qt + ">item.Name</p>
+          }
+          else
+          {
+            <p class=" + Qt + "OddItems" + Qt + ">item.Name</p>
+          }
+      }
+    <p>Done</p>
+  }"
+
+            Assert.AreEqual(y, z)
+
+        End Sub
+
 
     End Class
 End Namespace
