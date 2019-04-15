@@ -9,6 +9,7 @@
 
     Dim CsCode As New List(Of String)
     Dim BlockStart, BlockEnd As String
+    Dim Xml As XElement
 
     Public Sub New(Optional addComment As Boolean = True)
         Me.AddComment = addComment
@@ -18,32 +19,32 @@
         BlockStart = AddToCsList("{")
         BlockEnd = AddToCsList("}")
 
-        Dim xml = New XElement(zml)
-        ParsePage(xml)
-        ParseModel(xml)
-        ParseViewData(xml)
-        ParseTitle(xml)
-        FixTagHelpers(xml)
-        PsrseSetters(xml)
-        PsrseGetters(xml)
-        PsrseIfStatements(xml)
-        PsrseLoops(xml)
+        Xml = New XElement(zml)
+        ParsePage()
+        ParseModel()
+        ParseViewData()
+        ParseTitle()
+        FixTagHelpers()
+        ParseDeclarations()
+        ParseSetters()
+        ParseGetters()
+        ParseIfStatements()
+        ParseLoops()
 
-        Dim sb As New Text.StringBuilder(xml.ToString())
-
+        Dim x = Xml.ToString()
         For n = 0 To CsCode.Count - 1
-            sb.Replace($"<zmlitem{n} />", CsCode(n))
+            x = x.Replace($"<zmlitem{n} />", CsCode(n))
         Next
 
-        sb.Replace(
-                            (TempRootStart, ""), (TempRootEnd, ""),
-                            (LessThan, "<"), (GreaterThan, ">"),
-                            (Ampersand, "&")
-                         )
+        x = x.Replace((TempRootStart, ""),
+                 (TempRootEnd, ""),
+                 (LessThan, "<"),
+                 (GreaterThan, ">"),
+                 (Ampersand, "&")
+                 ).Trim(" ", vbCr, vbLf)
 
-        Dim x = sb.ToString().Trim(" ", vbCr, vbLf)
-        sb.Clear()
         Dim lines = x.Split(vbCrLf)
+        Dim sb As New Text.StringBuilder()
 
         For Each line In lines
             If line = "  " Then
@@ -95,8 +96,8 @@
         End Try
     End Function
 
-    Private Sub FixTagHelpers(xml As XElement)
-        Dim tageHelpers = From elm In xml.Descendants()
+    Private Sub FixTagHelpers()
+        Dim tageHelpers = From elm In Xml.Descendants()
                           From attr In elm.Attributes
                           Where attr.Name.LocalName.StartsWith("asp-")
                           Select attr
@@ -114,8 +115,8 @@
 
     End Sub
 
-    Private Sub ParseTitle(xml As XElement)
-        Dim viewTitle = (From elm In xml.Descendants()
+    Private Sub ParseTitle()
+        Dim viewTitle = (From elm In Xml.Descendants()
                          Where elm.Name = "viewtitle")?.FirstOrDefault
 
         If viewTitle IsNot Nothing Then
@@ -131,7 +132,7 @@
 
             viewTitle.ReplaceWith(GetXml(title))
 
-            ParseTitle(xml)
+            ParseTitle()
         End If
 
     End Sub
@@ -142,9 +143,9 @@
         Return $"<{zmlKey}/>"
     End Function
 
-    Private Sub PsrseSetters(xml As XElement)
+    Private Sub ParseSetters()
 
-        Dim setter = (From elm In xml.Descendants()
+        Dim setter = (From elm In Xml.Descendants()
                       Where elm.Name = "set").FirstOrDefault
 
         If setter IsNot Nothing Then
@@ -156,7 +157,7 @@
 
                 Dim sb As New Text.StringBuilder(Ln + "@{" + Ln)
                 For Each o In setter.Attributes
-                    sb.AppendLine($"{At(o.Name.ToString())} = {Quote(o.Value)};")
+                    sb.AppendLine($"{  At(o.Name.ToString())} = {Quote(o.Value)};")
                 Next
                 sb.AppendLine("}" + Ln)
                 x = sb.ToString()
@@ -176,14 +177,80 @@
 
             x = AddToCsList(x)
             setter.ReplaceWith(GetXml(x))
-            PsrseSetters(xml)
+            ParseSetters()
         End If
 
     End Sub
 
-    Private Sub PsrseGetters(xml As XElement)
+    Private Sub ParseDeclarations()
 
-        Dim getter = (From elm In xml.Descendants()
+        Dim dclr = (From elm In Xml.Descendants()
+                    Where elm.Name = "declare").FirstOrDefault
+
+        If dclr IsNot Nothing Then
+            Dim x = ""
+            Dim var = dclr.Attribute("var")
+
+            If var Is Nothing Then
+                ' Set multiple values
+
+                Dim sb As New Text.StringBuilder(Ln + "@{" + Ln)
+                For Each o In dclr.Attributes
+                    sb.AppendLine($"  var {At(o.Name.ToString())} = {Quote(o.Value)};")
+                Next
+                sb.AppendLine("}" + Ln)
+                x = sb.ToString()
+
+            Else ' Set single value 
+                Dim type = If(convVars(dclr.Attribute("type")?.Value), "var")
+                Dim value = If(dclr.Attribute("value")?.Value, dclr.Value)
+                Dim key = dclr.Attribute("key")
+
+                If key Is Nothing Then
+                    ' Set var value without key
+                    x = "@{ " + $"{type} {At(var.Value)} = {Quote(value)};" + " }" + Ln
+
+                Else ' Set single value with key
+                    x = "@{ " + $"{type} {At(var.Value)} = {At(value)}[{Quote(key.Value)}];" + " }" + Ln
+                End If
+            End If
+
+            x = AddToCsList(x)
+            dclr.ReplaceWith(GetXml(x))
+            ParseDeclarations()
+        End If
+
+    End Sub
+
+    Private Function convVars(type As String) As String
+        If type Is Nothing Then Return Nothing
+        Dim t = type.Trim().ToLower()
+        Select Case t
+            Case "byte", "sbyte", "short", "ushort", "long", "ulong", "douple", "decimal"
+                Return t
+            Case "integer"
+                Return "int"
+            Case "uinteger"
+                Return "uint"
+            Case "single"
+                Return "float"
+            Case Else
+                Return type.Trim().Replace(
+                    (" Byte", " byte"), (" SBtye", " sbyte"), (" Short", " short"),
+                    (" UShort", " ushort"), (" Long", " long"), (" ULong", " ulong"),
+                    (" Double", " douple"), (" Decimal", " decimal"),
+                    (" Integer", " int"), (" UInteger", " uint"), (" Single", " float"),
+                    ("(Of ", LessThan), ("of ", LessThan), (")", GreaterThan)
+                )
+
+        End Select
+
+
+    End Function
+
+    Private Sub ParseGetters()
+
+        Dim getter = (From elm In Xml.Descendants()
                       Where elm.Name = "get").FirstOrDefault
 
         If getter IsNot Nothing Then
@@ -200,13 +267,13 @@
             x = AddToCsList(x)
             getter.ReplaceWith(GetXml(x))
 
-            PsrseGetters(xml)
+            ParseGetters()
         End If
 
     End Sub
 
-    Private Sub ParseViewData(xml As XElement)
-        Dim viewdata = (From elm In xml.Descendants()
+    Private Sub ParseViewData()
+        Dim viewdata = (From elm In Xml.Descendants()
                         Where elm.Name = "viewdata")?.FirstOrDefault
 
         If viewdata IsNot Nothing Then
@@ -243,13 +310,13 @@
                 viewdata.ReplaceWith(GetXml(x))
             End If
 
-            ParseViewData(xml)
+            ParseViewData()
         End If
 
     End Sub
 
-    Private Sub ParsePage(xml As XElement)
-        Dim page = (From elm In xml.Descendants()
+    Private Sub ParsePage()
+        Dim page = (From elm In Xml.Descendants()
                     Where elm.Name = "page")?.FirstOrDefault
 
         If page IsNot Nothing Then
@@ -262,8 +329,8 @@
         End If
     End Sub
 
-    Private Sub ParseModel(xml As XElement)
-        Dim model = (From elm In xml.Descendants()
+    Private Sub ParseModel()
+        Dim model = (From elm In Xml.Descendants()
                      Where elm.Name = "model")?.FirstOrDefault
 
         If model IsNot Nothing Then
@@ -277,8 +344,8 @@
         End If
     End Sub
 
-    Private Sub PsrseLoops(xml As XElement)
-        Dim foreach = (From elm In xml.Descendants()
+    Private Sub ParseLoops()
+        Dim foreach = (From elm In Xml.Descendants()
                        Where elm.Name = "foreach")?.FirstOrDefault
 
         If foreach IsNot Nothing Then
@@ -293,12 +360,12 @@
 
             foreach.ReplaceWith(GetXml(x))
 
-            PsrseLoops(xml)
+            ParseLoops()
         End If
     End Sub
 
-    Private Sub PsrseIfStatements(xml As XElement)
-        Dim _if = (From elm In xml.Descendants()
+    Private Sub ParseIfStatements()
+        Dim _if = (From elm In Xml.Descendants()
                    Where elm.Name = "if")?.FirstOrDefault
 
         If _if IsNot Nothing Then
@@ -314,7 +381,7 @@
                     Dim _then = st + Ln +
                             BlockStart + firstChild.InnerXML + BlockEnd
 
-                    Dim _elseifs = PsrseElseIfs(_if)
+                    Dim _elseifs = ParseElseIfs(_if)
 
                     Dim _else = ""
                     Dim lastChild As XElement = children(children.Count - 1)
@@ -337,13 +404,13 @@
                 End If
             End If
 
-            PsrseIfStatements(xml)
+            ParseIfStatements()
         End If
 
     End Sub
 
     Private Function ConvLog(value As String) As String
-        Return value.Replace(
+        Dim x = value.Replace(
             ("@Model.", "Model."),
             (" And ", $" {Ampersand} "), (" and ", $" {Ampersand} "),
             (" AndAlso ", $" {Ampersand + Ampersand} "), (" andalso ", $" {Ampersand + Ampersand} "),
@@ -354,10 +421,13 @@
             (" <> ", " != "), (" = ", " == "), ("====", "=="),
             (" IsNot ", " != "), (" isnot ", " != "),
             (">", GreaterThan), (">", LessThan))
+
+        Return x
+
     End Function
 
-    Private Function PsrseElseIfs(xml As XElement) As String
-        Dim _elseifs = (From elm In xml.Descendants()
+    Private Function ParseElseIfs(ifXml As XElement) As String
+        Dim _elseifs = (From elm In ifXml.Descendants()
                         Where elm.Name = "elseif")
 
         Dim sb As New Text.StringBuilder()

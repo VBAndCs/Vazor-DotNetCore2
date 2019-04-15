@@ -17,19 +17,10 @@ Public Module ZMLExtentions
 
     <Extension>
     Function Replace(s As String, ParamArray repPairs() As (repStr As String, repWithStr As String)) As String
-        Dim sb As New Text.StringBuilder(s)
         For Each x In repPairs
-            sb.Replace(x.repStr, x.repWithStr)
+            s = s.Replace(x.repStr, x.repWithStr)
         Next
-        Return sb.ToString()
-    End Function
-
-    <Extension>
-    Function Replace(sb As Text.StringBuilder, ParamArray repPairs() As (repStr As String, repWithStr As String)) As Text.StringBuilder
-        For Each x In repPairs
-            sb.Replace(x.repStr, x.repWithStr)
-        Next
-        Return sb
+        Return s
     End Function
 
     <Extension>

@@ -3,7 +3,7 @@ Imports Vazor
 
 Namespace VazorTest
     <TestClass>
-    Public Class UnitTest1
+    Public Class ZmlUnitTest
 
         <TestMethod>
         Sub TestReplace()
@@ -64,6 +64,79 @@ Namespace VazorTest
         End Sub
 
         <TestMethod>
+        Sub TestDeclarations()
+            Dim x = <zml>
+                        <declare
+                            d="4/1/2019"
+                            d2="#4/1/2019#"
+                            n="3"
+                            s='"3"'
+                            y="@arr[3]"
+                            z='@dict["key"]'
+                            myChar="'a'"
+                            name="student"
+                            obj="@Student"/>
+                    </zml>
+
+            Dim y = x.ParseZml().ToXml()
+            Dim s = y.Value.Trim()
+            Assert.IsTrue(s.StartsWith("@{") And s.EndsWith("}"))
+            Dim lines = s.Trim("@", "{", "}", vbCr, vbLf).Replace(vbCrLf, vbLf).Split(vbLf, StringSplitOptions.RemoveEmptyEntries)
+            Assert.AreEqual(lines(0), $"var d = {Qt}4/1/2019{Qt};")
+            Assert.AreEqual(lines(1), $"var d2 = DateTime.Parse({Qt}4/1/2019{Qt});")
+            Assert.AreEqual(lines(2), "var n = 3;")
+            Assert.AreEqual(lines(3), $"var s = {Qt}3{Qt};")
+            Assert.AreEqual(lines(4), "var y = arr[3];")
+            Assert.AreEqual(lines(5), $"var z = dict[{Qt}key{Qt}];")
+            Assert.AreEqual(lines(6), "var myChar = 'a';")
+            Assert.AreEqual(lines(7), $"var name = {Qt}student{Qt};")
+            Assert.AreEqual(lines(8), "var obj = Student;")
+
+            x = <zml><declare var="arr" value="new String(){}"/></zml>
+            Dim z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ var arr = {Qt}new String(){{}}{Qt}; }}")
+
+            x = <zml><declare var="arr" value="@new String[]{}"/></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ var arr = new String[]{{}}; }}")
+
+            x = <zml><declare var="Name" key="Adam">dict</declare></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ var Name = dict[{Qt}Adam{Qt}]; }}")
+
+            x = <zml><declare var="Name" value="dict" key="Adam"/></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ var Name = dict[{Qt}Adam{Qt}]; }}")
+
+            x = <zml><declare var="Name" key="@Adam">@dict</declare></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ var Name = dict[Adam]; }}")
+
+            ' Test Types
+            ' ------------------------
+            x = <zml><declare var="arr" type="int" value="new String(){}"/></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ int arr = {Qt}new String(){{}}{Qt}; }}")
+
+            x = <zml><declare var="arr" type="Int32" value="@new String[]{}"/></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ Int32 arr = new String[]{{}}; }}")
+
+            x = <zml><declare var="Name" type="Integer" key="Adam">dict</declare></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ int Name = dict[{Qt}Adam{Qt}]; }}")
+
+            x = <zml><declare var="Name" type="Long" value="dict" key="Adam"/></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ long Name = dict[{Qt}Adam{Qt}]; }}")
+
+            x = <zml><declare var="Name" type="List(Of Single)" key="@Adam">@dict</declare></zml>
+            z = x.ParseZml()
+            Assert.AreEqual(z, $"@{{ List<float> Name = dict[Adam]; }}")
+
+        End Sub
+
+        <TestMethod>
         Sub TestSetters()
             Dim x = <zml>
                         <set
@@ -100,17 +173,17 @@ Namespace VazorTest
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ arr = new String[]{{}}; }}")
 
-            x = <zml><set object="dect" key="Name">Adam</set></zml>
+            x = <zml><set object="dict" key="Name">Adam</set></zml>
             z = x.ParseZml()
-            Assert.AreEqual(z, $"@{{ dect[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
+            Assert.AreEqual(z, $"@{{ dict[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
 
-            x = <zml><set object="dect" key="Name" value="Adam"/></zml>
+            x = <zml><set object="dict" key="Name" value="Adam"/></zml>
             z = x.ParseZml()
-            Assert.AreEqual(z, $"@{{ dect[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
+            Assert.AreEqual(z, $"@{{ dict[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
 
-            x = <zml><set object="dect" key="@Name">@Adam</set></zml>
+            x = <zml><set object="dict" key="@Name">@Adam</set></zml>
             z = x.ParseZml()
-            Assert.AreEqual(z, $"@{{ dect[Name] = Adam; }}")
+            Assert.AreEqual(z, $"@{{ dict[Name] = Adam; }}")
 
         End Sub
 
