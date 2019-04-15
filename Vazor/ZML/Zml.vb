@@ -26,7 +26,7 @@
         FixTagHelpers(xml)
         PsrseSetters(xml)
         PsrseGetters(xml)
-        PsrseConditions(xml)
+        PsrseIfStatements(xml)
         PsrseLoops(xml)
 
         Dim sb As New Text.StringBuilder(xml.ToString())
@@ -297,7 +297,7 @@
         End If
     End Sub
 
-    Private Sub PsrseConditions(xml As XElement)
+    Private Sub PsrseIfStatements(xml As XElement)
         Dim _if = (From elm In xml.Descendants()
                    Where elm.Name = "if")?.FirstOrDefault
 
@@ -337,7 +337,7 @@
                 End If
             End If
 
-            PsrseConditions(xml)
+            PsrseIfStatements(xml)
         End If
 
     End Sub
@@ -351,7 +351,7 @@
             (" OrElse ", " || "), (" orelse ", " || "),
             (" Not ", " !"), (" not ", " !"),
             (" Xor ", " ^ "), (" xor ", " ^ "),
-            (" = ", " == "), (" <> ", " != "),
+            (" <> ", " != "), (" = ", " == "), ("====", "=="),
             (" IsNot ", " != "), (" isnot ", " != "),
             (">", GreaterThan), (">", LessThan))
     End Function

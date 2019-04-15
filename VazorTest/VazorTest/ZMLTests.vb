@@ -210,6 +210,52 @@ $"@foreach (var i in {Qt}abcd{Qt})
             Assert.AreEqual(y, z)
         End Sub
 
+
+        <TestMethod>
+        Sub TestIfStatements()
+
+            Dim x =
+                    <zml>
+                        <if condition=<%= "a>3 and y<5" %>>
+                            <p>a = 4</p>
+                        </if>
+                    </zml>
+
+            Dim y = x.ParseZml().ToString()
+            Dim z =
+"@if (a>3 & y<5)
+  {
+  <p>a = 4</p>
+  }"
+
+            Assert.AreEqual(y, z)
+
+            x =
+                <zml>
+                    <if condition=<%= "a <> 3 andalso b == 5" %>>
+                        <then>
+                            <p>test 1</p>
+                        </then>
+                        <else>
+                            <p>test 2</p>
+                        </else>
+                    </if>
+                </zml>
+
+            y = x.ParseZml().ToString()
+            z =
+"@if (a != 3 && b == 5)
+  {
+    <p>test 1</p>
+  }
+  else
+  {
+    <p>test 2</p>
+  }"
+
+            Assert.AreEqual(y, z)
+        End Sub
+
     End Class
 End Namespace
 
