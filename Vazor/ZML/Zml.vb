@@ -261,16 +261,7 @@
             Dim x = ""
             Dim var = _declare.Attribute("var")
 
-            Dim insideCsBlock = False
-            Dim pn As XElement = _declare.PreviousNode
-            Dim blkSt = BlockStart.Name.ToString()
-
-            Do While PN IsNot Nothing
-                If pn.Name.ToString() = blkSt Then
-                    insideCsBlock = True
-                    Exit Do
-                End If
-            Loop
+            Dim insideCsBlock = IsInsideCsBlock(_declare)
 
             If var Is Nothing Then
                 ' Set multiple values
@@ -290,7 +281,7 @@
                 Dim value = If(_declare.Attribute("value")?.Value, _declare.Value)
                 Dim key = _declare.Attribute("key")
 
-                blkSt = ""
+                Dim blkSt = ""
                 Dim blkEnd = ""
                 If Not insideCsBlock Then
                     blkSt = "@{ "
@@ -311,6 +302,20 @@
         End If
 
     End Sub
+
+    Private Function IsInsideCsBlock(item As XElement) As Boolean
+        Dim pn As XElement = item.Parent
+        Dim parentName = pn.Name.ToString
+        If parentName = "zmlbody" OrElse parentName = "zml" Then pn = pn.Parent
+
+        Dim blkSt = BlockStart.Name.ToString()
+
+        For Each x As XElement In pn.Nodes
+            If x.Name.ToString() = blkSt Then Return True
+        Next
+
+        Return False
+    End Function
 
     Private Function convVars(type As String) As String
         If type Is Nothing Then Return Nothing
