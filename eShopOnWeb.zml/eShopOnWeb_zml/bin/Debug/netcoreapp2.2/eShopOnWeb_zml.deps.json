@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "4b287846985e854c55c9f8d6345617b01782e37a"
+    "signature": "24dc62841ec745f6d38615033adec8dad7b05d4f"
   },
   "compilationOptions": {
     "languageVersion": "",
@@ -27,7 +27,6 @@
           "Microsoft.NETCore.App": "2.2.0",
           "Microsoft.NETCore.Targets": "2.1.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.3",
-          "Microsoft.Web.LibraryManager.Build": "1.0.172",
           "Swashbuckle.AspNetCore": "4.0.1",
           "Vazor1.6": "1.6.0"
         },
@@ -285,11 +284,6 @@
         },
         "compile": {
           "lib/netstandard2.0/Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll": {}
-        }
-      },
-      "Microsoft.Web.LibraryManager.Build/1.0.172": {
-        "dependencies": {
-          "System.Runtime.Loader": "4.3.0"
         }
       },
       "NuGet.Frameworks/4.7.0": {
@@ -553,13 +547,6 @@
           "System.Reflection": "4.3.0",
           "System.Reflection.Extensions": "4.3.0",
           "System.Resources.ResourceManager": "4.3.0",
-          "System.Runtime": "4.3.0"
-        }
-      },
-      "System.Runtime.Loader/4.3.0": {
-        "dependencies": {
-          "System.IO": "4.3.0",
-          "System.Reflection": "4.3.0",
           "System.Runtime": "4.3.0"
         }
       },
@@ -3838,13 +3825,6 @@
       "path": "microsoft.visualstudio.web.codegenerators.mvc/2.2.3",
       "hashPath": "microsoft.visualstudio.web.codegenerators.mvc.2.2.3.nupkg.sha512"
     },
-    "Microsoft.Web.LibraryManager.Build/1.0.172": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-qHBbfIjSxS/0AdEqyifxAMpAHE8TMpMvvU+EpEIB+9ZbOI9L09G96GJLcKTi3sbo6mYNfeWpZn5lCPjqCn1l7g==",
-      "path": "microsoft.web.librarymanager.build/1.0.172",
-      "hashPath": "microsoft.web.librarymanager.build.1.0.172.nupkg.sha512"
-    },
     "NuGet.Frameworks/4.7.0": {
       "type": "package",
       "serviceable": true,
@@ -3956,13 +3936,6 @@
       "sha512": "sha512-Yn/WfYe9RoRfmSLvUt2JerP0BTGGykCZkQPgojaxgzF2N0oPo+/AhB8TXOpdCcNlrG3VRtsamtK2uzsp3cqRVw==",
       "path": "system.linq.queryable/4.0.1",
       "hashPath": "system.linq.queryable.4.0.1.nupkg.sha512"
-    },
-    "System.Runtime.Loader/4.3.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-DHMaRn8D8YCK2GG2pw+UzNxn/OHVfaWx7OTLBD/hPegHZZgcZh3H6seWegrC4BYwsfuGrywIuT+MQs+rPqRLTQ==",
-      "path": "system.runtime.loader/4.3.0",
-      "hashPath": "system.runtime.loader.4.3.0.nupkg.sha512"
     },
     "ApplicationCore/1.0.0": {
       "type": "project",

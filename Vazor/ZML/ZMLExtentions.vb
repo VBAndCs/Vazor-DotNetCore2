@@ -16,6 +16,14 @@ Public Module ZMLExtentions
     Public Const Ln = vbCrLf
 
     <Extension>
+    Function EndsWithAny(s As String, ParamArray ends() As String) As Boolean
+        For Each e In ends
+            If s.EndsWith(e) Then Return True
+        Next
+        Return False
+    End Function
+
+    <Extension>
     Function Replace(s As String, ParamArray repPairs() As (repStr As String, repWithStr As String)) As String
         For Each x In repPairs
             s = s.Replace(x.repStr, x.repWithStr)
@@ -34,16 +42,24 @@ Public Module ZMLExtentions
 
     <Extension>
     Public Function GetInnerXML(el As XElement) As String
-        Return InnerXML(el).
-                   Replace((TempRootStart, ""), (TempRootEnd, "")).
+        Return InnerXml(el).ToString().
+                   Replace((TempRootStart, ""), (TempRootEnd, ""),
+                   ("<zmlbody>", ""), ("</zmlbody>", "")).
                    Trim(" ", vbCr, vbLf)
     End Function
 
     <Extension>
-    Friend Function InnerXML(el As XElement) As String
-        Dim x = <zml/>
+    Friend Function InnerXml(el As XElement) As XElement
+        Dim x = <zmlbody/>
         x.Add(el.Nodes)
-        Return Ln + x.ToString() + Ln
+        Return x
+    End Function
+
+    <Extension>
+    Friend Function OuterXml(el As XElement) As XElement
+        Dim x = <zmlbody/>
+        x.Add(el)
+        Return x
     End Function
 
     <Extension>

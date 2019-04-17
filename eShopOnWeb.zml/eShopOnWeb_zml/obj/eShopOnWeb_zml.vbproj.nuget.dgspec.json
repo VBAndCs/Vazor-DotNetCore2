@@ -144,10 +144,6 @@
               "target": "Package",
               "version": "[2.2.3, )"
             },
-            "Microsoft.Web.LibraryManager.Build": {
-              "target": "Package",
-              "version": "[1.0.172, )"
-            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[4.0.1, )"

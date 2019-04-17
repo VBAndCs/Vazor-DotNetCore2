@@ -2846,16 +2846,6 @@
           "lib/netstandard2.0/Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll": {}
         }
       },
-      "Microsoft.Web.LibraryManager.Build/1.0.172": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime.Loader": "4.3.0"
-        },
-        "build": {
-          "build/Microsoft.Web.LibraryManager.Build.props": {},
-          "build/Microsoft.Web.LibraryManager.Build.targets": {}
-        }
-      },
       "Microsoft.Win32.Registry/4.5.0": {
         "type": "package",
         "dependencies": {
@@ -4161,20 +4151,6 @@
             "assetType": "runtime",
             "rid": "win"
           }
-        }
-      },
-      "System.Runtime.Loader/4.3.0": {
-        "type": "package",
-        "dependencies": {
-          "System.IO": "4.3.0",
-          "System.Reflection": "4.3.0",
-          "System.Runtime": "4.3.0"
-        },
-        "compile": {
-          "ref/netstandard1.5/System.Runtime.Loader.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.5/System.Runtime.Loader.dll": {}
         }
       },
       "System.Runtime.Numerics/4.3.0": {
@@ -8047,82 +8023,6 @@
         "microsoft.visualstudio.web.codegenerators.mvc.nuspec"
       ]
     },
-    "Microsoft.Web.LibraryManager.Build/1.0.172": {
-      "sha512": "qHBbfIjSxS/0AdEqyifxAMpAHE8TMpMvvU+EpEIB+9ZbOI9L09G96GJLcKTi3sbo6mYNfeWpZn5lCPjqCn1l7g==",
-      "type": "package",
-      "path": "microsoft.web.librarymanager.build/1.0.172",
-      "hasTools": true,
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Third-party-notice.txt",
-        "build/Microsoft.Web.LibraryManager.Build.props",
-        "build/Microsoft.Web.LibraryManager.Build.targets",
-        "microsoft.web.librarymanager.build.1.0.172.nupkg.sha512",
-        "microsoft.web.librarymanager.build.nuspec",
-        "tools/net461/Microsoft.Web.LibraryManager.Build.dll",
-        "tools/net461/Microsoft.Web.LibraryManager.Contracts.dll",
-        "tools/net461/Microsoft.Web.LibraryManager.dll",
-        "tools/net461/Newtonsoft.Json.dll",
-        "tools/net461/System.Threading.Thread.dll",
-        "tools/net461/System.ValueTuple.dll",
-        "tools/net461/cs/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/cs/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/de/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/de/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/es/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/es/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/fr/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/fr/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/it/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/it/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/ja/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/ja/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/ko/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/ko/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/pl/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/pl/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/pt-BR/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/pt-BR/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/ru/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/ru/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/tr/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/tr/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/zh-Hans/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/zh-Hans/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/net461/zh-Hant/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/net461/zh-Hant/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/Microsoft.Web.LibraryManager.Build.dll",
-        "tools/netstandard2.0/Microsoft.Web.LibraryManager.Contracts.dll",
-        "tools/netstandard2.0/Microsoft.Web.LibraryManager.dll",
-        "tools/netstandard2.0/cs/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/cs/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/de/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/de/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/es/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/es/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/fr/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/fr/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/it/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/it/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/ja/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/ja/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/ko/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/ko/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/pl/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/pl/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/pt-BR/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/pt-BR/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/ru/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/ru/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/tr/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/tr/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/zh-Hans/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/zh-Hans/Microsoft.Web.LibraryManager.resources.dll",
-        "tools/netstandard2.0/zh-Hant/Microsoft.Web.LibraryManager.Contracts.resources.dll",
-        "tools/netstandard2.0/zh-Hant/Microsoft.Web.LibraryManager.resources.dll"
-      ]
-    },
     "Microsoft.Win32.Registry/4.5.0": {
       "sha512": "+FWlwd//+Tt56316p00hVePBCouXyEzT86Jb3+AuRotTND0IYn0OO3obs1gnQEs/txEnt+rF2JBGLItTG+Be6A==",
       "type": "package",
@@ -11601,38 +11501,6 @@
         "system.runtime.interopservices.runtimeinformation.nuspec"
       ]
     },
-    "System.Runtime.Loader/4.3.0": {
-      "sha512": "DHMaRn8D8YCK2GG2pw+UzNxn/OHVfaWx7OTLBD/hPegHZZgcZh3H6seWegrC4BYwsfuGrywIuT+MQs+rPqRLTQ==",
-      "type": "package",
-      "path": "system.runtime.loader/4.3.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net462/_._",
-        "lib/netstandard1.5/System.Runtime.Loader.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/netstandard1.5/System.Runtime.Loader.dll",
-        "ref/netstandard1.5/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/de/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/es/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/fr/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/it/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/ja/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/ko/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/ru/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/zh-hans/System.Runtime.Loader.xml",
-        "ref/netstandard1.5/zh-hant/System.Runtime.Loader.xml",
-        "system.runtime.loader.4.3.0.nupkg.sha512",
-        "system.runtime.loader.nuspec"
-      ]
-    },
     "System.Runtime.Numerics/4.3.0": {
       "sha512": "yMH+MfdzHjy17l2KESnPiF2dwq7T+xLnSJar7slyimAkUh/gTrS9/UQOtv7xarskJ2/XDSNvfLGOBQPjL7PaHQ==",
       "type": "package",
@@ -13317,7 +13185,6 @@
       "Microsoft.NETCore.App >= 2.2.0",
       "Microsoft.NETCore.Targets >= 2.1.0",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 2.2.3",
-      "Microsoft.Web.LibraryManager.Build >= 1.0.172",
       "Swashbuckle.AspNetCore >= 4.0.1",
       "Vazor1.6 >= 1.6.0"
     ]
@@ -13405,10 +13272,6 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "[2.2.3, )"
-          },
-          "Microsoft.Web.LibraryManager.Build": {
-            "target": "Package",
-            "version": "[1.0.172, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
