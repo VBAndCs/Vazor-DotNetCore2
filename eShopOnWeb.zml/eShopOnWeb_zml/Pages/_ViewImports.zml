@@ -1,0 +1,9 @@
+﻿<imports>Microsoft.eShopWeb.Web</imports>
+<imports ns="Microsoft.eShopWeb.Web.ViewModels" />
+<using>Microsoft.eShopWeb.Web.ViewModels.Account</using>
+<using ns="Microsoft.eShopWeb.Web.ViewModels.Manage" />
+<using Microsoft.eShopWeb.Web.Pages
+       Microsoft.AspNetCore.Identity
+       Microsoft.eShopWeb.Infrastructure.Identity />
+<namespace>Microsoft.eShopWeb.Web.Pages</namespace>
+<helpers Microsoft.AspNetCore.Mvc.TagHelpers="*"/>

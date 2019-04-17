@@ -33,11 +33,12 @@ Public Module ZMLExtentions
 
     <Extension>
     Public Function ToXml(x As String) As XElement
-        Try
-            Return XElement.Parse(x)
-        Catch
-            Return XElement.Parse(TempRootStart + vbCrLf + x + vbCrLf + TempRootEnd)
-        End Try
+        x = Zml.FixAttr(x)
+        Return XElement.Parse(
+                TempRootStart + vbCrLf +
+                 x + vbCrLf +
+                TempRootEnd,
+            LoadOptions.PreserveWhitespace)
     End Function
 
     <Extension>

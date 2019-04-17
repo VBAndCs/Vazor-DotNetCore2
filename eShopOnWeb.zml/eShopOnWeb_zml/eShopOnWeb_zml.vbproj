@@ -22,10 +22,14 @@
 
   <ItemGroup>
     <None Remove="Pages\Basket\Index.zml" />
+    <None Remove="Pages\_ViewImports.zml" />
+    <None Remove="Pages\_ViewStart.zml" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Pages\Basket\Index.zml" />
+    <Content Include="Pages\_ViewImports.zml" />
+    <Content Include="Pages\_ViewStart.zml" />
   </ItemGroup>
 
   <ItemGroup>
