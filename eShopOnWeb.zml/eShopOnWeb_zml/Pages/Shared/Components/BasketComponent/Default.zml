@@ -1,5 +1,5 @@
 ﻿<model type="BasketComponentViewModel"/>"
-<viewtitle>My Basket</viewtitle>
+<_title>My Basket</_title>
 
 <a class="esh-basketstatus "
     asp-page="/Basket/Index">

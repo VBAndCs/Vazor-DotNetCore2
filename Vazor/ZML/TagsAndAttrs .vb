@@ -9,7 +9,7 @@
     Const setTag = "set"
     Const getTag = "get"
     Const declareTag = "declare"
-    Const viewtitleTag = "viewtitle"
+    Const viewtitleTag = "_title"
     Const commentTag = "comment"
     Const forTag = "for"
     Const foreachTag = "foreach"
@@ -18,9 +18,10 @@
     Const elseifTag = "elseif"
     Const elseTag = "else"
     Const invokeTag = "invoke"
+    Const awaitTag = "await"
     Const argTag = "arg"
     Const lambdaTag = "lambda"
-    Const sectionTag = "section"
+    Const sectionTag = "_section"
 
     Const aspHelperPrefix = "asp-"
     Const pageHelperPrefix = "asp-page"
@@ -29,6 +30,7 @@
     Const AtUsing = "@using"
     Const AtNamespace = "@namespace"
     Const ModelKeyword = "Model"
+    Const awaitKeyword = "await"
 
     Const nsAttr = "ns"
     Const addAttr = "add"

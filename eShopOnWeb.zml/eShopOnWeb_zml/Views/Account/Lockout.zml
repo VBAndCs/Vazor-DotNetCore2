@@ -1,6 +1,6 @@
-<viewtitle>Locked out</viewtitle>
+<_title>Locked out</_title>
 
 <header>
-    <h2 class="text-danger"><viewtitle/></h2>
+    <h2 class="text-danger"><_title/></h2>
     <p class="text-danger">This account has been locked out, please try again later.</p>
 </header>

@@ -38,7 +38,6 @@ because they will be overwritten when the .zml file changes.-->*@
   Don't have access to your authenticator device? You can
   <a asp-action="@Model.LoginWithRecoveryCode" asp-route-returnUrl='@ViewData["ReturnUrl"]'>log in with a recovery code</a>.
 </p>
-@section Scripts
-{
+<section name="Scripts">
   <partial name="_ValidationScriptsPartial" />
-}
+</section>

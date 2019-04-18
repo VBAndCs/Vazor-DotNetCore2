@@ -1,6 +1,6 @@
 ﻿<page/>
 <model type="CheckoutModel"/>
-<viewtitle>Checkout Complete</viewtitle>
+<_title>Checkout Complete</_title>
 
 <section class="esh-catalog-hero">
     <div class="container">

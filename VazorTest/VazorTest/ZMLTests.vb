@@ -34,30 +34,30 @@ Namespace VazorTest
         <TestMethod>
         Sub TestViewTitle()
             ' Set string title
-            Dim x = <zml><viewtitle>test</viewtitle></zml>
+            Dim x = <zml><_title>test</_title></zml>
             Dim y = x.ParseZml()
             Dim z = "@{ " & $"ViewData[{Qt}Title{Qt}] = {Qt}test{Qt};" & " }"
             Assert.IsTrue(y.Contains(z))
 
             ' Set string title
-            x = <zml><viewtitle value="test"/></zml>
+            x = <zml><_title value="test"/></zml>
             y = x.ParseZml()
             Assert.IsTrue(y.Contains(z))
 
             ' Get string title
-            x = <zml><viewtitle/></zml>
+            x = <zml><_title/></zml>
             y = x.ParseZml()
             z = $"@ViewData[{Qt }Title{Qt }]"
             Assert.IsTrue(y.Contains(z))
 
             ' Set title from variable
-            x = <zml><viewtitle>@Title</viewtitle></zml>
+            x = <zml><_title>@Title</_title></zml>
             y = x.ParseZml()
             z = "@{ " & $"ViewData[{Qt}Title{Qt}] = Title;" & " }"
             Assert.IsTrue(y.Contains(z))
 
             ' Set title from model property
-            x = <zml><viewtitle value="@Model.Title"/></zml>
+            x = <zml><_title value="@Model.Title"/></zml>
             y = x.ParseZml()
             z = "@{ " & $"ViewData[{Qt}Title{Qt}] = Model.Title;" & " }"
             Assert.IsTrue(y.Contains(z))
@@ -825,9 +825,9 @@ $"<imports>Microsoft.eShopWeb.Web</imports>
         <TestMethod>
         Sub TestSections()
             Dim x = <zml>
-                        <section name="Scripts">
+                        <_section name="Scripts">
                             <partial name="_ValidationScriptsPartial"/>
-                        </section>
+                        </_section>
                     </zml>
 
             Dim y = x.ParseZml.ToString()

@@ -1,7 +1,7 @@
 <model type="LoginWith2faViewModel" />
-<viewtitle>Two-factor authentication</viewtitle>
+<_title>Two-factor authentication</_title>
 
-<h2><viewtitle /></h2>
+<h2><_title /></h2>
 <hr />
 <p>Your login is protected with an authenticator app. Enter your authenticator code below.</p>
 <div class="row">

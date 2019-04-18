@@ -1,6 +1,6 @@
 ﻿<page route="{handler?}"/>
 <model type="IndexModel"/>
-<viewtitle>Basket</viewtitle>
+<_title>Basket</_title>
 
 <section class="esh-catalog-hero">
     <div class="container">

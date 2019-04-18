@@ -291,7 +291,7 @@
 
         If tag IsNot Nothing Then
             Dim ns = If(tag.Attribute(nsAttr)?.Value, tag.Value)
-            Dim _using
+            Dim _using = ""
             Dim x = ""
 
             If tag.Name.ToString = namespaceTag Then
@@ -528,7 +528,8 @@
 
     Private Sub ParseInvokes()
         Dim invoke = (From elm In Xml.Descendants()
-                      Where elm.Name = invokeTag)?.FirstOrDefault
+                      Where elm.Name = invokeTag OrElse
+                          elm.Name = awaitTag)?.FirstOrDefault
 
         If invoke IsNot Nothing Then
             Dim method = If(invoke.Attribute(methodAttr)?.Value, invoke.Attributes()(0).Name.ToString()).TrimStart("@")
@@ -549,7 +550,14 @@
             Next
 
             Dim args = sb.Remove(sb.Length - 2, 2).ToString()
-            Dim x = AddToCsList($"@{method}({args})")
+            Dim cs = ""
+            If invoke.Name.ToString = awaitTag Then
+                cs = "@{ " & awaitKeyword & $" {method}({args})" + "; }"
+            Else
+                cs = $"@{method}({args})"
+            End If
+
+            Dim x = AddToCsList(cs)
             invoke.ReplaceWith(x)
 
             ParseInvokes()
@@ -597,7 +605,6 @@
 
         If section IsNot Nothing Then
             Dim name = At(section.Attribute(nameAttr).Value)
-
             Dim cs = $"@section {name}"
             section.ReplaceWith(GetCsHtml(cs, section))
 

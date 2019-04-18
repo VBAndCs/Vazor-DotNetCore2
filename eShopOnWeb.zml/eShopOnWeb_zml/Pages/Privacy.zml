@@ -1,7 +1,7 @@
 ﻿<page/>
 <model type="PrivacyModel" />
-<viewtitle>Privacy Policy</viewtitle>
+<_title>Privacy Policy</_title>
 
-<h1><viewtitle/></h1>
+<h1><_title/></h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
