@@ -5,9 +5,7 @@
 
     Const comment = "@*<!--This file is auto generated from the .zml file." + Ln +
                  "Make cahnges only to the .zml file, and don't make any changes here," + Ln +
-                 "because they will be overwritten when the .zml file changes." + Ln +
-                 "If you want to format this file to review some blocks," + Ln +
-                 "use the Edit\Advanced\Format Document from main menus. -->*@"
+                 "because they will be overwritten when the .zml file changes.-->*@"
 
     Dim CsCode As New List(Of String)
     Dim BlockStart, BlockEnd As XElement
@@ -24,13 +22,25 @@
 
 
     Friend Shared Function FixAttr(x As String) As String
-        Do
-            Dim L = x.Length
-            x = x.Replace(("  ", " "), ("< ", "<"), (" >", ">"))
-            If L = x.Length Then Exit Do
-        Loop
+
+        Dim lines = x.Split({CChar(vbCr), CChar(vbLf)}, StringSplitOptions.RemoveEmptyEntries)
+        Dim sb As New Text.StringBuilder
+
+        For Each line In lines
+            Dim absLine = line.TrimStart()
+            Dim spaces = New String(" ", line.Length - absLine.Length)
+            Do
+                Dim L = absLine.Length
+                absLine = absLine.Replace(("< ", "<"), (" >", ">"))
+                If L = absLine.Length Then Exit Do
+            Loop
+            sb.AppendLine(spaces + absLine)
+        Next
+
+        x = sb.ToString()
 
         Dim tags = {usingTag, importsTag, namespaceTag, helpersTag}
+
         For Each tag In tags
             Dim pos = 0
             Dim offset = 0
@@ -44,7 +54,7 @@
                     Dim s = x.Substring(offset, endPos - offset)
                     If Not s.Contains("=") Then
                         Dim attrs = s.Split(" "c, CChar(vbCr), CChar(vbLf))
-                        Dim sb As New Text.StringBuilder
+                        sb = New Text.StringBuilder
                         For Each attr In attrs
                             If attr <> "" Then sb.AppendLine(attr + "=" + Qt + Qt)
                         Next

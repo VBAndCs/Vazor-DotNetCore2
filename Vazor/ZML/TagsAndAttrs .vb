@@ -17,6 +17,10 @@
     Const thenTag = "then"
     Const elseifTag = "elseif"
     Const elseTag = "else"
+    Const invokeTag = "invoke"
+    Const argTag = "arg"
+    Const lambdaTag = "lambda"
+    Const sectionTag = "section"
 
     Const aspHelperPrefix = "asp-"
     Const pageHelperPrefix = "asp-page"
@@ -32,6 +36,7 @@
     Const routeAttr = "route"
     Const objectAttr = "object"
     Const typeAttr = "type"
+    Const nameAttr = "name"
     Const varAttr = "var"
     Const keyAttr = "key"
     Const valueAttr = "value"
@@ -41,5 +46,6 @@
     Const letAttr = "let"
     Const inAttr = "in"
     Const conditionAttr = "condition"
-
+    Const methodAttr = "method"
+    Const returnAttr = "return"
 End Class

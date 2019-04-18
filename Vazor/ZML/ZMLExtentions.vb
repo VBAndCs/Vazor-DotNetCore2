@@ -16,6 +16,15 @@ Public Module ZMLExtentions
     Public Const Ln = vbCrLf
 
     <Extension>
+    Function ContainsAny(s As String, ParamArray findStr() As String) As Boolean
+        For Each x In findStr
+            If s.Contains(x) Then Return True
+        Next
+
+        Return False
+    End Function
+
+    <Extension>
     Function EndsWithAny(s As String, ParamArray ends() As String) As Boolean
         For Each e In ends
             If s.EndsWith(e) Then Return True
@@ -34,11 +43,13 @@ Public Module ZMLExtentions
     <Extension>
     Public Function ToXml(x As String) As XElement
         x = Zml.FixAttr(x)
-        Return XElement.Parse(
-                TempRootStart + vbCrLf +
-                 x + vbCrLf +
-                TempRootEnd,
-            LoadOptions.PreserveWhitespace)
+        Dim xml = XElement.Parse(
+                TempRootStart +
+                 x +
+                TempRootEnd)
+        'LoadOptions.PreserveWhitespace)
+
+        Return xml
     End Function
 
     <Extension>

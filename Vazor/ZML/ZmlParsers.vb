@@ -20,6 +20,8 @@
         ParseViewData()
         ParseSetters()
         ParseGetters()
+        ParseInvokes()
+        ParseSections()
         ParseDeclarations()
 
         Dim x = Xml.ToString()
@@ -35,16 +37,14 @@
                  (ChngQt, ""), (SnglQt + SnglQt, Qt)
                  ).Trim(" ", vbCr, vbLf)
 
-        Dim lines = x.Split(vbCrLf)
+        Dim lines = x.Split({vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)
         Dim sb As New Text.StringBuilder()
 
         Dim offset = 0
 
         For Each line In lines
             Dim absLine = line.Trim()
-            If line = "  " Then
-                sb.AppendLine("")
-            ElseIf absLine = TempRootStart Then
+            If absLine = TempRootStart Then
                 offset += 2
             ElseIf absLine = TempRootEnd Then
                 offset -= 2
@@ -444,9 +444,9 @@
 
             Dim typeName = If(convVars(type?.Value), varAttr)
 
-            Dim st = $"@for ({typeName} {varName} = {Quote(var.Value)}; {cond}; {inc})"
+            Dim cs = $"@for ({typeName} {varName} = {Quote(var.Value)}; {cond}; {inc})"
 
-            _for.ReplaceWith(GetCsHtml(st, _for))
+            _for.ReplaceWith(GetCsHtml(cs, _for))
 
             ParseForLoops()
         End If
@@ -466,9 +466,9 @@
                         Where attr.Value = "").FirstOrDefault.Name.ToString()
             End If
 
-            Dim st = $"@foreach ({type} {_var} in {_in})"
+            Dim cs = $"@foreach ({type} {_var} in {_in})"
 
-            foreach.ReplaceWith(GetCsHtml(st, foreach))
+            foreach.ReplaceWith(GetCsHtml(cs, foreach))
 
             ParseForEachLoops()
         End If
@@ -511,7 +511,6 @@
 
     End Sub
 
-
     Private Function ParseElseIfs(ifXml As XElement) As List(Of XElement)
         Dim _elseifs = (From elm In ifXml.Descendants()
                         Where elm.Name = elseifTag)
@@ -526,5 +525,84 @@
 
         Return x
     End Function
+
+    Private Sub ParseInvokes()
+        Dim invoke = (From elm In Xml.Descendants()
+                      Where elm.Name = invokeTag)?.FirstOrDefault
+
+        If invoke IsNot Nothing Then
+            Dim method = If(invoke.Attribute(methodAttr)?.Value, invoke.Attributes()(0).Name.ToString()).TrimStart("@")
+            Dim sb As New Text.StringBuilder()
+
+            For Each node In invoke.Nodes
+                Dim arg = TryCast(node, XElement)
+                If arg Is Nothing Then Continue For
+
+                Select Case arg.Name.ToString()
+                    Case argTag
+                        sb.Append(Quote(If(arg.Value, arg.Attribute(valueAttr).Value)))
+                        sb.Append(", ")
+                    Case Else
+                        sb.Append(Parselambda(arg))
+                        sb.Append(", ")
+                End Select
+            Next
+
+            Dim args = sb.Remove(sb.Length - 2, 2).ToString()
+            Dim x = AddToCsList($"@{method}({args})")
+            invoke.ReplaceWith(x)
+
+            ParseInvokes()
+        End If
+    End Sub
+
+    Private Function Parselambda(lambda As XElement) As String
+        Dim args = ""
+        If lambda.Name = lambdaTag Then
+            Dim sb As New Text.StringBuilder()
+            For Each arg In lambda.Attributes
+                Dim name = arg.Name.ToString()
+                If name <> returnAttr Then
+                    If name.EndsWith("." & typeAttr) Then
+                        sb.Append($"{convVars(arg.Value)} {name.Substring(0, name.Length - 5)}, ")
+                    Else
+                        sb.Append($"{convVars(arg.Value)} {name}, ")
+                    End If
+                End If
+            Next
+            args = sb.Remove(sb.Length - 2, 2).ToString()
+        Else
+            Dim type = convVars(lambda.Attribute(typeAttr)?.Value)
+            If type = "" Then
+                args = lambda.Name.ToString()
+            Else
+                args = $"{type} {lambda.Name.ToString()}"
+            End If
+
+        End If
+
+        Dim _return = If(lambda.Attribute(returnAttr)?.Value, lambda.Value)
+
+        If args.IndexOfAny({","c, " "c}) > -1 Then
+            Return $"({args}) => {_return}"
+        Else
+            Return $"{args} => {_return}"
+        End If
+
+    End Function
+
+    Private Sub ParseSections()
+        Dim section = (From elm In Xml.Descendants()
+                       Where elm.Name = sectionTag)?.FirstOrDefault
+
+        If section IsNot Nothing Then
+            Dim name = At(section.Attribute(nameAttr).Value)
+
+            Dim cs = $"@section {name}"
+            section.ReplaceWith(GetCsHtml(cs, section))
+
+            ParseSections()
+        End If
+    End Sub
 
 End Class

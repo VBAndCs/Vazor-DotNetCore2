@@ -23,7 +23,7 @@ Namespace VazorTest
                         />
                     </zml>
 
-            Dim p As XElement = x.ParseZml().ToXml().Nodes(1)
+            Dim p As XElement = x.ParseZml().ToXml().FirstNode
             Assert.AreEqual(p.Attribute("asp-a").Value, "@Model.students")
             Assert.AreEqual(p.Attribute("asp-b").Value, "@students")
             Assert.AreEqual(p.Attribute("asp-c").Value, "@Model.students")
@@ -729,6 +729,35 @@ $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt}
         End Sub
 
         <TestMethod>
+        Sub TestAllImports()
+            Dim x =
+$"<imports>Microsoft.eShopWeb.Web</imports>
+<imports ns={Qt}Microsoft.eShopWeb.Web.ViewModels{Qt} />
+<using>Microsoft.eShopWeb.Web.ViewModels.Account</using>
+<using ns={Qt}Microsoft.eShopWeb.Web.ViewModels.Manage{Qt} />
+<using Microsoft.eShopWeb.Web.Pages
+       Microsoft.AspNetCore.Identity
+       Microsoft.eShopWeb.Infrastructure.Identity />
+<namespace>Microsoft.eShopWeb.Web.Pages</namespace>
+<helpers Microsoft.AspNetCore.Mvc.TagHelpers={Qt}*{Qt}/>"
+
+            Dim y = x.ToXml.ParseZml().ToString()
+
+            Dim z =
+"@using Microsoft.eShopWeb.Web
+@using Microsoft.eShopWeb.Web.ViewModels
+@using Microsoft.eShopWeb.Web.ViewModels.Account
+@using Microsoft.eShopWeb.Web.ViewModels.Manage
+@using Microsoft.eShopWeb.Web.Pages
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.eShopWeb.Infrastructure.Identity
+@namespace Microsoft.eShopWeb.Web.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers"
+
+            Assert.AreEqual(y, z)
+        End Sub
+
+        <TestMethod>
         Sub TestHelperImports()
             Dim x = <zml>
                         <helpers add="*" ns="Microsoft.AspNetCore.Mvc.TagHelpers"/>
@@ -745,7 +774,6 @@ $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt}
 
             y = x.ParseZml.ToString()
             Assert.AreEqual(y, z)
-
 
             x = <zml>
                     <helpers add="*">Microsoft.AspNetCore.Mvc.TagHelpers</helpers>
@@ -773,6 +801,45 @@ $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt}
 
             Assert.AreEqual(y, z)
         End Sub
+
+        <TestMethod>
+        Sub TestInvokes()
+            Dim x = <zml>
+                        <invoke method="Foo">
+                            <arg>3</arg>
+                            <arg>'a'</arg>
+                            <arg>Ali</arg>
+                            <m return="m.Name"/>
+                            <n type="Integer" return="n + 1"/>
+                            <lambda x.type="int" y.type="int" return="x + y"/>
+                            <lambda a="Double" b="Single" return="a + b"/>
+                        </invoke>
+                    </zml>
+
+            Dim y = x.ParseZml.ToString()
+            Dim z = $"@Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b)"
+
+            Assert.AreEqual(y, z)
+        End Sub
+
+        <TestMethod>
+        Sub TestSections()
+            Dim x = <zml>
+                        <section name="Scripts">
+                            <partial name="_ValidationScriptsPartial"/>
+                        </section>
+                    </zml>
+
+            Dim y = x.ParseZml.ToString()
+            Dim z =
+"@section Scripts
+{
+  <partial name='_ValidationScriptsPartial' />
+}".Replace(SnglQt, Qt)
+
+            Assert.AreEqual(y, z)
+        End Sub
+
     End Class
 End Namespace
 

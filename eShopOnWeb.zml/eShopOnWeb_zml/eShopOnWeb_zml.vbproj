@@ -21,15 +21,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Pages\Basket\Checkout.zml" />
     <None Remove="Pages\Basket\Index.zml" />
+    <None Remove="Pages\Shared\_pagination.zml" />
+    <None Remove="Pages\Shared\_product.zml" />
     <None Remove="Pages\_ViewImports.zml" />
     <None Remove="Pages\_ViewStart.zml" />
+    <None Remove="Views\Account\Lockout.zml" />
+    <None Remove="Views\Account\LoginWith2fa.zml" />
+    <None Remove="Views\_ViewImports.zml" />
+    <None Remove="Views\_ViewStart.zml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Pages\Basket\Checkout.zml" />
     <Content Include="Pages\Basket\Index.zml" />
+    <Content Include="Pages\Shared\_pagination.zml" />
+    <Content Include="Pages\Shared\_product.zml" />
     <Content Include="Pages\_ViewImports.zml" />
     <Content Include="Pages\_ViewStart.zml" />
+    <Content Include="Views\Account\Lockout.zml" />
+    <Content Include="Views\Account\LoginWith2fa.zml" />
+    <Content Include="Views\_ViewImports.zml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Views\_ViewStart.zml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -89,12 +107,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="Views\Shared\_ValidationScriptsPartial.cshtml">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="Views\_ViewImports.cshtml">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="Views\_ViewStart.cshtml">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
