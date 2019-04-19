@@ -69,7 +69,8 @@
     Private Sub FixTagHelpers()
         Dim tageHelpers = From elm In Xml.Descendants()
                           From attr In elm.Attributes
-                          Where attr.Name.LocalName.StartsWith(aspHelperPrefix)
+                          Let name = attr.Name.ToString()
+                          Where name = aspItems Or name = aspFor
                           Select attr
 
         For Each tageHelper In tageHelpers
@@ -77,7 +78,7 @@
             If Not value.StartsWith("@") Then
                 If value.StartsWith(modelKeyword) Then
                     tageHelper.Value = "@" + value
-                ElseIf Not tageHelper.Name.ToString.Contains(pageHelperPrefix) Then
+                Else
                     tageHelper.Value = atModel + "." + value
                 End If
             End If

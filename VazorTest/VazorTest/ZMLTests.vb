@@ -16,18 +16,25 @@ Namespace VazorTest
         <TestMethod>
         Sub TestTagHelpers()
             Dim x = <zml>
-                        <p asp-a="students"
-                            asp-b="@students"
-                            asp-c="Model.students"
-                            asp-d="@Model.students"
+                        <p asp-for="students"
+                            asp-items="Model.students"
                         />
                     </zml>
 
             Dim p As XElement = x.ParseZml().ToXml().FirstNode
-            Assert.AreEqual(p.Attribute("asp-a").Value, "@Model.students")
-            Assert.AreEqual(p.Attribute("asp-b").Value, "@students")
-            Assert.AreEqual(p.Attribute("asp-c").Value, "@Model.students")
-            Assert.AreEqual(p.Attribute("asp-d").Value, "@Model.students")
+            Assert.AreEqual(p.Attribute("asp-for").Value, "@Model.students")
+            Assert.AreEqual(p.Attribute("asp-items").Value, "@Model.students")
+
+            x = <zml>
+                    <p
+                        asp-for="@students"
+                        asp-items="@Model.students"
+                    />
+                </zml>
+
+            p = x.ParseZml().ToXml().FirstNode
+            Assert.AreEqual(p.Attribute("asp-for").Value, "@students")
+            Assert.AreEqual(p.Attribute("asp-items").Value, "@Model.students")
 
         End Sub
 

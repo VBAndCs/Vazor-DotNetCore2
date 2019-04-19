@@ -23,8 +23,8 @@
     Const lambdaTag = "lambda"
     Const sectionTag = "_section"
 
-    Const aspHelperPrefix = "asp-"
-    Const pageHelperPrefix = "asp-page"
+    Const aspItems = "asp-items"
+    Const aspFor = "asp-for"
     Const atModel = "@Model"
     Const AtPage = "@page"
     Const AtUsing = "@using"
