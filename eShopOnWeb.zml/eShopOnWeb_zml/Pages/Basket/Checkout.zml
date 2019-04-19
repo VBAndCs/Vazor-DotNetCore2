@@ -1,6 +1,6 @@
-﻿<page/>
-<model type="CheckoutModel"/>
-<_title>Checkout Complete</_title>
+﻿<z:page/>
+<z:model type="CheckoutModel"/>
+<z:title>Checkout Complete</z:title>
 
 <section class="esh-catalog-hero">
     <div class="container">

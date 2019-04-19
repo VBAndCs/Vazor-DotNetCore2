@@ -1,6 +1,6 @@
-﻿<page />
-<model type="IndexModel" />
-<_title>Catalog</_title>
+﻿<z:page />
+<z:model type="IndexModel" />
+<z:title>Catalog</z:title>
 
 <section class="esh-catalog-hero">
     <div class="container">
@@ -23,22 +23,22 @@
 </section>
 
 <div class="container">
-    <if condition="Model.CatalogModel.CatalogItems.Any()">
-        <then>
+    <z:if condition="Model.CatalogModel.CatalogItems.Any()">
+        <z:then>
             <partial name="_pagination" for="CatalogModel.PaginationInfo" />
             <div class="esh-catalog-items row">
-                <foreach var="catItem" in="Model.CatalogModel.CatalogItems">
+                <z:foreach var="catItem" in="Model.CatalogModel.CatalogItems">
                     <div class="esh-catalog-item col-md-4">
                         <partial name="_product" for="@catItem" />
                     </div>
-                </foreach>
+                </z:foreach>
             </div>
             <partial name="_pagination" for="CatalogModel.PaginationInfo" />
-        </then>
-        <else>
+        </z:then>
+        <z:else>
             <div class="esh-catalog-items row">
                 THERE ARE NO RESULTS THAT MATCH YOUR SEARCH
             </div>
-        </else>
-    </if>
+        </z:else>
+    </z:if>
 </div>

@@ -1,6 +1,6 @@
-﻿<page route="{handler?}"/>
-<model type="IndexModel"/>
-<_title>Basket</_title>
+﻿<z:page route="{handler?}"/>
+<z:model type="IndexModel"/>
+<z:title>Basket</z:title>
 
 <section class="esh-catalog-hero">
     <div class="container">
@@ -10,8 +10,8 @@
 
 <div class="container">
 
-    <if condition="Model.BasketModel.Items.Any()">
-        <then>
+    <z:if condition="Model.BasketModel.Items.Any()">
+        <z:then>
             <form method="post">
                 <article class="esh-basket-titles row">
                     <br />
@@ -22,8 +22,8 @@
                     <section class="esh-basket-title col-xs-2">Cost</section>
                 </article>
                 <div class="esh-catalog-items row">
-                    <for i="0" to="Model.BasketModel.Items.Count - 1">
-                        <declare var="item" value="Model.BasketModel.Items" key="@i" />
+                    <z:for i="0" to="Model.BasketModel.Items.Count - 1">
+                        <z:declare var="item" value="Model.BasketModel.Items" key="@i" />
                         <article class="esh-basket-items row">
                             <div>
                                 <section class="esh-basket-item esh-basket-item--middle col-lg-3 hidden-lg-down">
@@ -41,13 +41,13 @@
 
                             </div>
                         </article>
-                        <comment>
+                        <z:comment>
                             <div class="esh-catalog-item col-md-4">
                                 @item.ProductId
                             </div>
-                        </comment>
+                        </z:comment>
 
-                    </for>
+                    </z:for>
 
                     <div class="container">
                         <article class="esh-basket-titles esh-basket-titles--clean row">
@@ -63,7 +63,7 @@
                         <article class="esh-basket-items row">
                             <section class="esh-basket-item col-xs-7"></section>
                             <section class="esh-basket-item col-xs-2">
-                                <comment><button class="btn esh-basket-checkout" name="name" value="" type="submit">[ Update ]</button></comment>
+                                <z:comment><button class="btn esh-basket-checkout" name="name" value="" type="submit">[ Update ]</button></z:comment>
                             </section>
                         </article>
                     </div>
@@ -80,11 +80,11 @@
 
                 </div>
             </form>
-        </then>
-        <else>
+        </z:then>
+        <z:else>
             <div class="esh-catalog-items row">
                 Basket is empty.
             </div>
-        </else>
-    </if>
+        </z:else>
+    </z:if>
 </div>

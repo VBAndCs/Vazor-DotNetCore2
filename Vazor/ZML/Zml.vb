@@ -42,6 +42,7 @@
         Dim tags = {usingTag, importsTag, namespaceTag, helpersTag}
 
         For Each tag In tags
+            tag = tag.Replace(zns, "z:")
             Dim pos = 0
             Dim offset = 0
             Dim endPos = 0
@@ -95,14 +96,6 @@
         Else
             Return value.Trim(Qt).Trim(SnglQt)
         End If
-    End Function
-
-    Private Function GetXml(xml As String) As XElement
-        Try
-            Return XElement.Parse(xml)
-        Catch
-            Return XElement.Parse(TempRootStart + vbCrLf + xml + vbCrLf + TempRootEnd)
-        End Try
     End Function
 
     Private Function CombineXml(ParamArray xml() As XElement) As XElement

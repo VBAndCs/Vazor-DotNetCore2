@@ -15,7 +15,7 @@ Namespace VazorTest
 
         <TestMethod>
         Sub TestTagHelpers()
-            Dim x = <zml>
+            Dim x = <zml xmlns:z="zml">
                         <p asp-for="students"
                             asp-items="Model.students"
                         />
@@ -25,7 +25,7 @@ Namespace VazorTest
             Assert.AreEqual(p.Attribute("asp-for").Value, "@Model.students")
             Assert.AreEqual(p.Attribute("asp-items").Value, "@Model.students")
 
-            x = <zml>
+            x = <zml xmlns:z="zml">
                     <p
                         asp-for="@students"
                         asp-items="@Model.students"
@@ -39,46 +39,57 @@ Namespace VazorTest
         End Sub
 
         <TestMethod>
-        Sub TestViewTitle()
+        Sub TestTitle()
             ' Set string title
-            Dim x = <zml><_title>test</_title></zml>
+            Dim x = <zml xmlns:z="zml">
+                        <z:title>test</z:title>
+                    </zml>
+
             Dim y = x.ParseZml()
             Dim z = "@{ " & $"ViewData[{Qt}Title{Qt}] = {Qt}test{Qt};" & " }"
-            Assert.IsTrue(y.Contains(z))
+            Assert.AreEqual(y, z)
 
             ' Set string title
-            x = <zml><_title value="test"/></zml>
+            x = <zml xmlns:z="zml">
+                    <z:title value="test"/>
+                </zml>
             y = x.ParseZml()
-            Assert.IsTrue(y.Contains(z))
+            Assert.AreEqual(y, z)
 
-            ' Get string title
-            x = <zml><_title/></zml>
+            ' Read title
+            x = <zml xmlns:z="zml">
+                    <z:title/>
+                </zml>
             y = x.ParseZml()
             z = $"@ViewData[{Qt }Title{Qt }]"
-            Assert.IsTrue(y.Contains(z))
+            Assert.AreEqual(y, z)
 
             ' Set title from variable
-            x = <zml><_title>@Title</_title></zml>
+            x = <zml xmlns:z="zml">
+                    <z:title>@Title</z:title>
+                </zml>
             y = x.ParseZml()
             z = "@{ " & $"ViewData[{Qt}Title{Qt}] = Title;" & " }"
-            Assert.IsTrue(y.Contains(z))
+            Assert.AreEqual(y, z)
 
             ' Set title from model property
-            x = <zml><_title value="@Model.Title"/></zml>
+            x = <zml xmlns:z="zml">
+                    <z:title value="@Model.Title"/>
+                </zml>
             y = x.ParseZml()
             z = "@{ " & $"ViewData[{Qt}Title{Qt}] = Model.Title;" & " }"
-            Assert.IsTrue(y.Contains(z))
+            Assert.AreEqual(y, z)
         End Sub
 
         <TestMethod>
         Sub TestComments()
             Dim x =
-                <zml>
+                <zml xmlns:z="zml">
                     <p>test</p>
-                    <comment>comment</comment>
-                    <comment>
+                    <z:comment>comment</z:comment>
+                    <z:comment>
                         <p>test comment</p>
-                    </comment>
+                    </z:comment>
                 </zml>
 
             Dim y = x.ParseZml.ToString()
@@ -97,18 +108,18 @@ comment
 
         <TestMethod>
         Sub TestDeclarations()
-            Dim x = <zml>
-                                <declare
-                                    d="4/1/2019"
-                                    d2="#4/1/2019#"
-                                    n="3"
-                                    s='"3"'
-                                    y="@arr[3]"
-                                    z='@dict["key"]'
-                                    myChar="'a'"
-                                    name="student"
-                                    obj="@Student"/>
-                            </zml>
+            Dim x = <zml xmlns:z="zml">
+                        <z:declare
+                            d="4/1/2019"
+                            d2="#4/1/2019#"
+                            n="3"
+                            s='"3"'
+                            y="@arr[3]"
+                            z='@dict["key"]'
+                            myChar="'a'"
+                            name="student"
+                            obj="@Student"/>
+                    </zml>
 
             Dim y = x.ParseZml().ToXml()
             Dim s = y.Value.Trim()
@@ -124,45 +135,45 @@ comment
             Assert.AreEqual(lines(7), $"var name = {Qt}student{Qt};")
             Assert.AreEqual(lines(8), "var obj = Student;")
 
-            x = <zml><declare var="arr" value="new String(){}"/></zml>
+            x = <zml xmlns:z="zml"><z:declare var="arr" value="new String(){}"/></zml>
             Dim z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ var arr = {Qt}new String(){{}}{Qt}; }}")
 
-            x = <zml><declare var="arr" value="@new String[]{}"/></zml>
+            x = <zml xmlns:z="zml"><z:declare var="arr" value="@new String[]{}"/></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ var arr = new String[]{{}}; }}")
 
-            x = <zml><declare var="Name" key="Adam">dict</declare></zml>
+            x = <zml xmlns:z="zml"><z:declare var="Name" key="Adam">dict</z:declare></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ var Name = dict[{Qt}Adam{Qt}]; }}")
 
-            x = <zml><declare var="Name" value="dict" key="Adam"/></zml>
+            x = <zml xmlns:z="zml"><z:declare var="Name" value="dict" key="Adam"/></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ var Name = dict[{Qt}Adam{Qt}]; }}")
 
-            x = <zml><declare var="Name" key="@Adam">@dict</declare></zml>
+            x = <zml xmlns:z="zml"><z:declare var="Name" key="@Adam">@dict</z:declare></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ var Name = dict[Adam]; }}")
 
             ' Test Types
             ' ------------------------
-            x = <zml><declare var="arr" type="int" value="new String(){}"/></zml>
+            x = <zml xmlns:z="zml"><z:declare var="arr" type="int" value="new String(){}"/></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ int arr = {Qt}new String(){{}}{Qt}; }}")
 
-            x = <zml><declare var="arr" type="Int32" value="@new String[]{}"/></zml>
+            x = <zml xmlns:z="zml"><z:declare var="arr" type="Int32" value="@new String[]{}"/></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ Int32 arr = new String[]{{}}; }}")
 
-            x = <zml><declare var="Name" type="Integer" key="Adam">dict</declare></zml>
+            x = <zml xmlns:z="zml"><z:declare var="Name" type="Integer" key="Adam">dict</z:declare></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ int Name = dict[{Qt}Adam{Qt}]; }}")
 
-            x = <zml><declare var="Name" type="Long" value="dict" key="Adam"/></zml>
+            x = <zml xmlns:z="zml"><z:declare var="Name" type="Long" value="dict" key="Adam"/></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ long Name = dict[{Qt}Adam{Qt}]; }}")
 
-            x = <zml><declare var="Name" type="List(Of Single, UInteger)" key="@Adam">@dict</declare></zml>
+            x = <zml xmlns:z="zml"><z:declare var="Name" type="List(Of Single, UInteger)" key="@Adam">@dict</z:declare></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ List<float, uint> Name = dict[Adam]; }}")
 
@@ -170,18 +181,18 @@ comment
 
         <TestMethod>
         Sub TestSetters()
-            Dim x = <zml>
-                                        <set
-                                            d="4/1/2019"
-                                            d2="#4/1/2019#"
-                                            n="3"
-                                            s='"3"'
-                                            y="@arr[3]"
-                                            z='@dict["key"]'
-                                            myChar="'a'"
-                                            name="student"
-                                            obj="@Student"/>
-                                    </zml>
+            Dim x = <zml xmlns:z="zml">
+                        <z:set
+                            d="4/1/2019"
+                            d2="#4/1/2019#"
+                            n="3"
+                            s='"3"'
+                            y="@arr[3]"
+                            z='@dict["key"]'
+                            myChar="'a'"
+                            name="student"
+                            obj="@Student"/>
+                    </zml>
 
             Dim y = x.ParseZml().ToXml()
             Dim s = y.Value.Trim()
@@ -197,23 +208,23 @@ comment
             Assert.AreEqual(lines(7), $"name = {Qt}student{Qt};")
             Assert.AreEqual(lines(8), "obj = Student;")
 
-            x = <zml><set object="arr" value="new String(){}"/></zml>
+            x = <zml xmlns:z="zml"><z:set object="arr" value="new String(){}"/></zml>
             Dim z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ arr = {Qt}new String(){{}}{Qt}; }}")
 
-            x = <zml><set object="arr" value="@new String[]{}"/></zml>
+            x = <zml xmlns:z="zml"><z:set object="arr" value="@new String[]{}"/></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ arr = new String[]{{}}; }}")
 
-            x = <zml><set object="dict" key="Name">Adam</set></zml>
+            x = <zml xmlns:z="zml"><z:set object="dict" key="Name">Adam</z:set></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ dict[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
 
-            x = <zml><set object="dict" key="Name" value="Adam"/></zml>
+            x = <zml xmlns:z="zml"><z:set object="dict" key="Name" value="Adam"/></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ dict[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
 
-            x = <zml><set object="dict" key="@Name">@Adam</set></zml>
+            x = <zml xmlns:z="zml"><z:set object="dict" key="@Name">@Adam</z:set></zml>
             z = x.ParseZml()
             Assert.AreEqual(z, $"@{{ dict[Name] = Adam; }}")
 
@@ -221,22 +232,25 @@ comment
 
         <TestMethod>
         Sub TestGetters()
-            Dim x = <zml><get>X</get></zml>
+            Dim x = <zml xmlns:z="zml"><z:get>X</z:get></zml>
             Dim y = x.ParseZml().ToXml()
             Dim z = y.Value.Trim()
             Assert.AreEqual(z, "@X")
 
-            x = <zml><get object="X"/></zml>
+            x = <zml xmlns:z="zml">
+                    <z:get object="X"/>
+                </zml>
+
             y = x.ParseZml().ToXml()
             z = y.Value.Trim()
             Assert.AreEqual(z, "@X")
 
-            x = <zml><get object="X" key="@i"/></zml>
+            x = <zml xmlns:z="zml"><z:get object="X" key="@i"/></zml>
             y = x.ParseZml().ToXml()
             z = y.Value.Trim()
             Assert.AreEqual(z, "@X[i]")
 
-            x = <zml><get object="X" key="name"/></zml>
+            x = <zml xmlns:z="zml"><z:get object="X" key="name"/></zml>
             y = x.ParseZml().ToXml()
             z = y.Value.Trim()
             Assert.AreEqual(z, $"@X[{Qt}name{Qt}]")
@@ -245,17 +259,19 @@ comment
 
         <TestMethod>
         Sub TestPage()
-            Dim x = <zml><page/></zml>
+            Dim x = <zml xmlns:z="zml">
+                        <z:page/>
+                    </zml>
             Dim y = x.ParseZml().ToXml()
             Dim z = y.Value.Trim()
             Assert.AreEqual(z, "@page")
 
-            x = <zml><page>Pages/Home</page></zml>
+            x = <zml xmlns:z="zml"><z:page>Pages/Home</z:page></zml>
             y = x.ParseZml().ToXml()
             z = y.Value.Trim()
             Assert.AreEqual(z, $"@page {Qt}Pages/Home{Qt}")
 
-            x = <zml><page route="Pages/Home"/></zml>
+            x = <zml xmlns:z="zml"><z:page route="Pages/Home"/></zml>
             y = x.ParseZml().ToXml()
             z = y.Value.Trim()
             Assert.AreEqual(z, $"@page {Qt}Pages/Home{Qt}")
@@ -264,11 +280,14 @@ comment
 
         <TestMethod>
         Sub TestModel()
-            Dim x = <zml><model>IndexModel</model></zml>
+            Dim x = <zml xmlns:z="zml">
+                        <z:model>IndexModel</z:model>
+                    </zml>
+
             Dim y = x.ParseZml()
             Assert.IsTrue(y.Contains("@model IndexModel"))
 
-            x = <zml><model type="IndexModel"/></zml>
+            x = <zml xmlns:z="zml"><z:model type="IndexModel"/></zml>
             y = x.ParseZml()
             Assert.IsTrue(y.Contains("@model IndexModel"))
 
@@ -277,10 +296,10 @@ comment
         <TestMethod>
         Sub TestForLoop()
             Dim lp =
-                <zml>
-                    <for i="0" to="10">
+                <zml xmlns:z="zml">
+                    <z:for i="0" to="10">
                         <p>@i</p>
-                    </for>
+                    </z:for>
                 </zml>
 
             Dim y = lp.ParseZml()
@@ -290,10 +309,10 @@ comment
   <p>@i</p>
 }"
 
-            lp = <zml>
-                     <for i="0" to="@Model.Count - 1">
+            lp = <zml xmlns:z="zml">
+                     <z:for i="0" to="@Model.Count - 1">
                          <p>@i</p>
-                     </for>
+                     </z:for>
                  </zml>
 
             y = lp.ParseZml()
@@ -305,10 +324,10 @@ comment
 
             Assert.AreEqual(y, z)
 
-            lp = <zml>
-                     <for i="0" while=<%= "i < Model.Count" %> let="i++">
+            lp = <zml xmlns:z="zml">
+                     <z:for i="0" while=<%= "i < Model.Count" %> let="i++">
                          <p>@i</p>
-                     </for>
+                     </z:for>
                  </zml>
 
             y = lp.ParseZml()
@@ -320,10 +339,10 @@ comment
 
             Assert.AreEqual(y, z)
 
-            lp = <zml>
-                     <for i="0" while=<%= "i > Model.Count" %> let="i -= 2">
+            lp = <zml xmlns:z="zml">
+                     <z:for i="0" while=<%= "i > Model.Count" %> let="i -= 2">
                          <p>@i</p>
-                     </for>
+                     </z:for>
                  </zml>
 
             y = lp.ParseZml()
@@ -338,10 +357,10 @@ comment
 
         <TestMethod>
         Sub TestForLoopSteps()
-            Dim lp = <zml>
-                         <for i="0" to="10" step="2">
+            Dim lp = <zml xmlns:z="zml">
+                         <z:for i="0" to="10" step="2">
                              <p>@i</p>
-                         </for>
+                         </z:for>
                      </zml>
 
             Dim y = lp.ParseZml()
@@ -351,10 +370,10 @@ comment
   <p>@i</p>
 }"
 
-            lp = <zml>
-                     <for type="Integer" i="@Model.Count - 1" to="0" step="-1">
+            lp = <zml xmlns:z="zml">
+                     <z:for type="Integer" i="@Model.Count - 1" to="0" step="-1">
                          <p>@i</p>
-                     </for>
+                     </z:for>
                  </zml>
 
             y = lp.ParseZml()
@@ -366,10 +385,10 @@ comment
 
             Assert.AreEqual(y, z)
 
-            lp = <zml>
-                     <for type="Byte" i="@Model.Count - 1" to="0" step="-2">
+            lp = <zml xmlns:z="zml">
+                     <z:for type="Byte" i="@Model.Count - 1" to="0" step="-2">
                          <p>@i</p>
-                     </for>
+                     </z:for>
                  </zml>
 
             y = lp.ParseZml()
@@ -385,10 +404,10 @@ comment
 
         <TestMethod>
         Sub TestForEachLoop()
-            Dim lp = <zml>
-                         <foreach var="i" in='"abcd"'>
+            Dim lp = <zml xmlns:z="zml">
+                         <z:foreach var="i" in='"abcd"'>
                              <p>@i</p>
-                         </foreach>
+                         </z:foreach>
                      </zml>
 
 
@@ -400,10 +419,10 @@ $"@foreach (var i in {Qt}abcd{Qt})
 }}"
             Assert.AreEqual(y, z)
 
-            lp = <zml>
-                     <foreach type="Integer" var="i" in='"abcd"'>
+            lp = <zml xmlns:z="zml">
+                     <z:foreach type="Integer" var="i" in='"abcd"'>
                          <p>@i</p>
-                     </foreach>
+                     </z:foreach>
                  </zml>
 
 
@@ -415,10 +434,10 @@ $"@foreach (int i in {Qt}abcd{Qt})
 }}"
             Assert.AreEqual(y, z)
 
-            lp = <zml>
-                     <foreach i="" in="''abcd''">
+            lp = <zml xmlns:z="zml">
+                     <z:foreach i="" in="''abcd''">
                          <p>@i</p>
-                     </foreach>
+                     </z:foreach>
                  </zml>
 
 
@@ -434,13 +453,13 @@ $"@foreach (var i in {Qt}abcd{Qt})
         <TestMethod>
         Sub TestNestedForEachLoops()
 
-            Dim lp = <zml>
-                         <foreach var="country" in="Model.Countries">
+            Dim lp = <zml xmlns:z="zml">
+                         <z:foreach var="country" in="Model.Countries">
                              <h1>Country: @country</h1>
-                             <foreach var="city" in="country.Cities">
+                             <z:foreach var="city" in="country.Cities">
                                  <p>City: @city</p>
-                             </foreach>
-                         </foreach>
+                             </z:foreach>
+                         </z:foreach>
                      </zml>
 
 
@@ -462,10 +481,10 @@ $"@foreach (var i in {Qt}abcd{Qt})
         Sub TestIf()
 
             Dim x =
-                    <zml>
-                        <if condition=<%= "a>3 and y<5" %>>
+                    <zml xmlns:z="zml">
+                        <z:if condition=<%= "a>3 and y<5" %>>
                             <p>a = 4</p>
-                        </if>
+                        </z:if>
                     </zml>
 
             Dim y = x.ParseZml().ToString()
@@ -482,15 +501,15 @@ $"@foreach (var i in {Qt}abcd{Qt})
         <TestMethod>
         Sub TestIfElse()
             Dim x =
-                <zml>
-                    <if condition=<%= "a <> 3 andalso b == 5" %>>
-                        <then>
+                <zml xmlns:z="zml">
+                    <z:if condition=<%= "a <> 3 andalso b == 5" %>>
+                        <z:then>
                             <p>test 1</p>
-                        </then>
-                        <else>
+                        </z:then>
+                        <z:else>
                             <p>test 2</p>
-                        </else>
-                    </if>
+                        </z:else>
+                    </z:if>
                 </zml>
 
             Dim y = x.ParseZml().ToString()
@@ -511,27 +530,27 @@ else
         <TestMethod>
         Sub TestElseIfs()
             Dim x =
-                <zml>
-                    <if condition=<%= "grade < 30" %>>
-                        <then>
+                <zml xmlns:z="zml">
+                    <z:if condition=<%= "grade < 30" %>>
+                        <z:then>
                             <p>Very weak</p>
-                        </then>
-                        <elseif condition=<%= "grade < 50" %>>
+                        </z:then>
+                        <z:elseif condition=<%= "grade < 50" %>>
                             <p>Weak 2</p>
-                        </elseif>
-                        <elseif condition=<%= "grade < 65" %>>
+                        </z:elseif>
+                        <z:elseif condition=<%= "grade < 65" %>>
                             <p>Accepted</p>
-                        </elseif>
-                        <elseif condition=<%= "grade < 75" %>>
+                        </z:elseif>
+                        <z:elseif condition=<%= "grade < 75" %>>
                             <p>Good</p>
-                        </elseif>
-                        <elseif condition=<%= "grade < 85" %>>
+                        </z:elseif>
+                        <z:elseif condition=<%= "grade < 85" %>>
                             <p>Very Good</p>
-                        </elseif>
-                        <else>
+                        </z:elseif>
+                        <z:else>
                             <p>Excellent</p>
-                        </else>
-                    </if>
+                        </z:else>
+                    </z:if>
                 </zml>
 
             Dim y = x.ParseZml().ToString()
@@ -567,33 +586,33 @@ else
 
         <TestMethod>
         Sub TestNestedIfs()
-            Dim x = <zml>
-                        <if condition="@Model.Count = 0">
-                            <then>
-                                <if condition="Model.Test">
-                                    <then>
+            Dim x = <zml xmlns:z="zml">
+                        <z:if condition="@Model.Count = 0">
+                            <z:then>
+                                <z:if condition="Model.Test">
+                                    <z:then>
                                         <p>Test</p>
-                                    </then>
-                                    <else>
+                                    </z:then>
+                                    <z:else>
                                         <p>Not Test</p>
-                                    </else>
-                                </if>
-                            </then>
-                            <else>
+                                    </z:else>
+                                </z:if>
+                            </z:then>
+                            <z:else>
                                 <h1>Show Items</h1>
-                                <foreach var="item" in="Model">
-                                    <if condition="item.Id mod 2 = 0">
-                                        <then>
+                                <z:foreach var="item" in="Model">
+                                    <z:if condition="item.Id mod 2 = 0">
+                                        <z:then>
                                             <p class="EvenItems">item.Name</p>
-                                        </then>
-                                        <else>
+                                        </z:then>
+                                        <z:else>
                                             <p class="OddItems">item.Name</p>
-                                        </else>
-                                    </if>
-                                </foreach>
+                                        </z:else>
+                                    </z:if>
+                                </z:foreach>
                                 <p>Done</p>
-                            </else>
-                        </if>
+                            </z:else>
+                        </z:if>
                     </zml>
 
             Dim y = x.ParseZml().ToString()
@@ -632,7 +651,7 @@ else
 
         <TestMethod>
         Sub TestAttr()
-            Dim x = <zml>
+            Dim x = <zml xmlns:z="zml">
                         <input type="hidden" name="Items[''@i''].Key" value="@item.Id"/>
                         <input type="number" class="esh-basket-input" min="1" name="Items[''@i''].Value" value="@item.Quantity"/>
                     </zml>
@@ -647,8 +666,8 @@ $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt}
 
         <TestMethod>
         Sub TestLayout()
-            Dim x = <zml>
-                        <layout>_Layout</layout>
+            Dim x = <zml xmlns:z="zml">
+                        <z:layout>_Layout</z:layout>
                     </zml>
 
             Dim y = x.ParseZml.ToString()
@@ -659,8 +678,8 @@ $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt}
 
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <layout page="_Layout"/>
+            x = <zml xmlns:z="zml">
+                    <z:layout page="_Layout"/>
                 </zml>
 
             y = x.ParseZml.ToString()
@@ -670,24 +689,24 @@ $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt}
 
         <TestMethod>
         Sub TestImports()
-            Dim x = <zml>
-                        <imports>Microsoft.eShopWeb.Web</imports>
+            Dim x = <zml xmlns:z="zml">
+                        <z:imports>Microsoft.eShopWeb.Web</z:imports>
                     </zml>
 
             Dim y = x.ParseZml().ToString()
             Dim z = "@using Microsoft.eShopWeb.Web"
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <using ns="Microsoft.eShopWeb.Web.ViewModels.Manage"/>
+            x = <zml xmlns:z="zml">
+                    <z:using ns="Microsoft.eShopWeb.Web.ViewModels.Manage"/>
                 </zml>
 
             y = x.ParseZml().ToString()
             z = "@using Microsoft.eShopWeb.Web.ViewModels.Manage"
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <using Microsoft.eShopWeb.Web.Pages=""
+            x = <zml xmlns:z="zml">
+                    <z:using Microsoft.eShopWeb.Web.Pages=""
                         Microsoft.AspNetCore.Identity=""
                         Microsoft.eShopWeb.Infrastructure.Identity=""/>
                 </zml>
@@ -703,24 +722,24 @@ $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt}
 
         <TestMethod>
         Sub TestNamespace()
-            Dim x = <zml>
-                        <namespace>Microsoft.eShopWeb.Web</namespace>
+            Dim x = <zml xmlns:z="zml">
+                        <z:namespace>Microsoft.eShopWeb.Web</z:namespace>
                     </zml>
 
             Dim y = x.ParseZml().ToString()
             Dim z = $"@namespace Microsoft.eShopWeb.Web"
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <namespace ns="Microsoft.eShopWeb.Web.ViewModels.Manage"/>
+            x = <zml xmlns:z="zml">
+                    <z:namespace ns="Microsoft.eShopWeb.Web.ViewModels.Manage"/>
                 </zml>
 
             y = x.ParseZml().ToString()
             z = $"@namespace Microsoft.eShopWeb.Web.ViewModels.Manage"
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <namespace Microsoft.eShopWeb.Web.Pages=""
+            x = <zml xmlns:z="zml">
+                    <z:namespace Microsoft.eShopWeb.Web.Pages=""
                         Microsoft.AspNetCore.Identity=""
                         Microsoft.eShopWeb.Infrastructure.Identity=""/>
                 </zml>
@@ -738,15 +757,15 @@ $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt}
         <TestMethod>
         Sub TestAllImports()
             Dim x =
-$"<imports>Microsoft.eShopWeb.Web</imports>
-<imports ns={Qt}Microsoft.eShopWeb.Web.ViewModels{Qt} />
-<using>Microsoft.eShopWeb.Web.ViewModels.Account</using>
-<using ns={Qt}Microsoft.eShopWeb.Web.ViewModels.Manage{Qt} />
-<using Microsoft.eShopWeb.Web.Pages
+$"<z:imports>Microsoft.eShopWeb.Web</z:imports>
+<z:imports ns={Qt}Microsoft.eShopWeb.Web.ViewModels{Qt} />
+<z:using>Microsoft.eShopWeb.Web.ViewModels.Account</z:using>
+<z:using ns={Qt}Microsoft.eShopWeb.Web.ViewModels.Manage{Qt} />
+<z:using Microsoft.eShopWeb.Web.Pages
        Microsoft.AspNetCore.Identity
        Microsoft.eShopWeb.Infrastructure.Identity />
-<namespace>Microsoft.eShopWeb.Web.Pages</namespace>
-<helpers Microsoft.AspNetCore.Mvc.TagHelpers={Qt}*{Qt}/>"
+<z:namespace>Microsoft.eShopWeb.Web.Pages</z:namespace>
+<z:helpers Microsoft.AspNetCore.Mvc.TagHelpers={Qt}*{Qt}/>"
 
             Dim y = x.ToXml.ParseZml().ToString()
 
@@ -766,8 +785,8 @@ $"<imports>Microsoft.eShopWeb.Web</imports>
 
         <TestMethod>
         Sub TestHelperImports()
-            Dim x = <zml>
-                        <helpers add="*" ns="Microsoft.AspNetCore.Mvc.TagHelpers"/>
+            Dim x = <zml xmlns:z="zml">
+                        <z:helpers add="*" ns="Microsoft.AspNetCore.Mvc.TagHelpers"/>
                     </zml>
 
             Dim y = x.ParseZml.ToString()
@@ -775,29 +794,29 @@ $"<imports>Microsoft.eShopWeb.Web</imports>
             Dim z = "@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers"
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <helpers ns="Microsoft.AspNetCore.Mvc.TagHelpers"/>
+            x = <zml xmlns:z="zml">
+                    <z:helpers ns="Microsoft.AspNetCore.Mvc.TagHelpers"/>
                 </zml>
 
             y = x.ParseZml.ToString()
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <helpers add="*">Microsoft.AspNetCore.Mvc.TagHelpers</helpers>
+            x = <zml xmlns:z="zml">
+                    <z:helpers add="*">Microsoft.AspNetCore.Mvc.TagHelpers</z:helpers>
                 </zml>
 
             y = x.ParseZml.ToString()
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <helpers>Microsoft.AspNetCore.Mvc.TagHelpers</helpers>
+            x = <zml xmlns:z="zml">
+                    <z:helpers>Microsoft.AspNetCore.Mvc.TagHelpers</z:helpers>
                 </zml>
 
             y = x.ParseZml.ToString()
             Assert.AreEqual(y, z)
 
-            x = <zml>
-                    <helpers Microsoft.AspNetCore.Mvc.TagHelpers="*"
+            x = <zml xmlns:z="zml">
+                    <z:helpers Microsoft.AspNetCore.Mvc.TagHelpers="*"
                         MyHelpers="*"/>
                 </zml>
 
@@ -811,30 +830,48 @@ $"<imports>Microsoft.eShopWeb.Web</imports>
 
         <TestMethod>
         Sub TestInvokes()
-            Dim x = <zml>
-                        <invoke method="Foo">
-                            <arg>3</arg>
-                            <arg>'a'</arg>
-                            <arg>Ali</arg>
+            Dim x = <zml xmlns:z="zml">
+                        <z:invoke method="Foo">
+                            <z:arg>3</z:arg>
+                            <z:arg>'a'</z:arg>
+                            <z:arg>Ali</z:arg>
                             <m return="m.Name"/>
                             <n type="Integer" return="n + 1"/>
-                            <lambda x.type="int" y.type="int" return="x + y"/>
-                            <lambda a="Double" b="Single" return="a + b"/>
-                        </invoke>
+                            <z:lambda x.type="int" y.type="int" return="x + y"/>
+                            <z:lambda a="Double" b="Single" return="a + b"/>
+                        </z:invoke>
                     </zml>
 
             Dim y = x.ParseZml.ToString()
             Dim z = $"@Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b)"
 
             Assert.AreEqual(y, z)
+
+            x = <zml xmlns:z="zml">
+                    <z:await method="Foo">
+                        <z:arg>3</z:arg>
+                        <z:arg>'a'</z:arg>
+                        <z:arg>Ali</z:arg>
+                        <m return="m.Name"/>
+                        <n type="Integer" return="n + 1"/>
+                        <z:lambda x.type="int" y.type="int" return="x + y"/>
+                        <z:lambda a="Double" b="Single" return="a + b"/>
+                    </z:await>
+                </zml>
+
+            y = x.ParseZml.ToString()
+            z = "@{ await " & $"Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b);" & " }"
+
+            Assert.AreEqual(y, z)
+
         End Sub
 
         <TestMethod>
         Sub TestSections()
-            Dim x = <zml>
-                        <_section name="Scripts">
+            Dim x = <zml xmlns:z="zml">
+                        <z:section name="Scripts">
                             <partial name="_ValidationScriptsPartial"/>
-                        </_section>
+                        </z:section>
                     </zml>
 
             Dim y = x.ParseZml.ToString()

@@ -1,15 +1,15 @@
-﻿<page/>
-<model type="ErrorModel"/>"
-<_title>Error</_title>
+﻿<z:page/>
+<z:model type="ErrorModel"/>"
+<z:title>Error</z:title>
 
 <h1 class="text-danger">Error</h1>
 <h2 class="text-danger">An error occurred while processing your request.</h2>
 
-<if condition="Model.ShowRequestId">
+<z:if condition="Model.ShowRequestId">
     <p>
         <strong>Request ID:</strong><code>@Model.RequestId</code>
     </p>
-</if>
+</z:if>
 
 <h3>Development Mode</h3>
 <p>Swapping to the <strong>Development</strong> environment displays detailed information about the error that occurred.</p>

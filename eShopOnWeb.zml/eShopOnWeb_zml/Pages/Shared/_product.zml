@@ -1,4 +1,4 @@
-﻿<model type="CatalogItemViewModel"/>
+﻿<z:model type="CatalogItemViewModel"/>
 
 <form asp-page="/Basket/Index" method="post">
     <img class="esh-catalog-thumbnail" src="@Model.PictureUri" />

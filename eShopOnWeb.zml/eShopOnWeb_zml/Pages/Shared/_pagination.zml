@@ -1,4 +1,4 @@
-﻿<model>PaginationInfoViewModel</model>
+﻿<z:model>PaginationInfoViewModel</z:model>
 
 <div class="esh-pager">
 	<div class="container-fluid">

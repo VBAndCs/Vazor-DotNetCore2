@@ -1,5 +1,5 @@
-<model>RegisterViewModel</model>
-<_title>Register</_title>
+<z:model>RegisterViewModel</z:model>
+<z:title>Register</z:title>
 
 <div class="brand-header-block">
     <ul class="container">
@@ -46,8 +46,8 @@
     </div>
 </div>
 
-<_section name="Scripts">
-    <await method="Html.RenderPartialAsync">
-        <arg>_ValidationScriptsPartial"</arg>
-    </await>
-</_section>
+<z:section name="Scripts">
+    <z:await method="Html.RenderPartialAsync">
+        <z:arg>_ValidationScriptsPartial"</z:arg>
+    </z:await>
+</z:section>

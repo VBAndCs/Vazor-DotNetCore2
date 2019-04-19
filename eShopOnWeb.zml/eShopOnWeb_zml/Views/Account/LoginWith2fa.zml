@@ -1,7 +1,7 @@
-<model type="LoginWith2faViewModel" />
-<_title>Two-factor authentication</_title>
+<z:model type="LoginWith2faViewModel" />
+<z:title>Two-factor authentication</z:title>
 
-<h2><_title /></h2>
+<h2><z:title /></h2>
 <hr />
 <p>Your login is protected with an authenticator app. Enter your authenticator code below.</p>
 <div class="row">
@@ -18,9 +18,9 @@
                 <div class="checkbox">
                     <label asp-for="RememberMachine">
                         <input asp-for="RememberMachine" />
-                        <invoke method="Html.DisplayNameFor">
+                        <z:invoke method="Html.DisplayNameFor">
                             <m return="m.RememberMachine" />
-                        </invoke>
+                        </z:invoke>
                     </label>
                 </div>
             </div>
@@ -35,6 +35,6 @@
     <a asp-action="LoginWithRecoveryCode" asp-route-returnUrl="@ViewData[''ReturnUrl'']">log in with a recovery code</a>.
 </p>
 
-<section name="Scripts">
+<z:section name="Scripts">
     <partial name="_ValidationScriptsPartial" />
-</section>
+</z:section>

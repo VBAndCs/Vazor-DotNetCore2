@@ -44,9 +44,9 @@
 
         For Each line In lines
             Dim absLine = line.Trim()
-            If absLine = TempRootStart Then
+            If absLine = TempRoot Or absLine = TempTagStart Then
                 offset += 2
-            ElseIf absLine = TempRootEnd Then
+            ElseIf absLine = TemptagEnd Then
                 offset -= 2
             ElseIf absLine <> "" AndAlso absLine <> TempBodyStart AndAlso absLine <> TempBodyEnd Then
                 If AddComment AndAlso Not absLine.StartsWith("@") Then

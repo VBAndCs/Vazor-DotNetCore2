@@ -1,6 +1,6 @@
-<_title>Locked out</_title>
+<z:title>Locked out</z:title>
 
 <header>
-    <h2 class="text-danger"><_title/></h2>
+    <h2 class="text-danger"><z:title/></h2>
     <p class="text-danger">This account has been locked out, please try again later.</p>
 </header>
