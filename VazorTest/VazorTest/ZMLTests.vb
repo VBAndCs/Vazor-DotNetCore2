@@ -844,24 +844,34 @@ $"<z:imports>Microsoft.eShopWeb.Web</z:imports>
 
             Dim y = x.ParseZml.ToString()
             Dim z = $"@Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b)"
-
             Assert.AreEqual(y, z)
 
+
             x = <zml xmlns:z="zml">
-                    <z:await method="Foo">
-                        <z:arg>3</z:arg>
-                        <z:arg>'a'</z:arg>
-                        <z:arg>Ali</z:arg>
-                        <m return="m.Name"/>
-                        <n type="Integer" return="n + 1"/>
-                        <z:lambda x.type="int" y.type="int" return="x + y"/>
-                        <z:lambda a="Double" b="Single" return="a + b"/>
-                    </z:await>
+                    <z:invoke method="RenderSection">
+                        <z:arg>Scripts</z:arg>
+                        <z:arg name="required">false</z:arg>
+                    </z:invoke>
                 </zml>
 
             y = x.ParseZml.ToString()
-            z = "@{ await " & $"Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b);" & " }"
+            z = "@RenderSection('Scripts', required: false)".Replace(SnglQt, Qt)
+            Assert.AreEqual(y, z)
 
+            x = <zml xmlns:z="zml">
+                        <z:await method="Foo">
+                            <z:arg>3</z:arg>
+                            <z:arg>'a'</z:arg>
+                            <z:arg>Ali</z:arg>
+                            <m return="m.Name"/>
+                            <n type="Integer" return="n + 1"/>
+                            <z:lambda x.type="int" y.type="int" return="x + y"/>
+                            <z:lambda a="Double" b="Single" return="a + b"/>
+                        </z:await>
+                    </zml>
+
+            y = x.ParseZml.ToString()
+            z = "@{ await " & $"Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b);" & " }"
             Assert.AreEqual(y, z)
 
         End Sub
@@ -869,10 +879,10 @@ $"<z:imports>Microsoft.eShopWeb.Web</z:imports>
         <TestMethod>
         Sub TestSections()
             Dim x = <zml xmlns:z="zml">
-                        <z:section name="Scripts">
-                            <partial name="_ValidationScriptsPartial"/>
-                        </z:section>
-                    </zml>
+                            <z:section name="Scripts">
+                                <partial name="_ValidationScriptsPartial"/>
+                            </z:section>
+                        </zml>
 
             Dim y = x.ParseZml.ToString()
             Dim z =

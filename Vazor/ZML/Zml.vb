@@ -80,6 +80,8 @@
             Return value ' value is char
         ElseIf value.StartsWith("#") AndAlso value.EndsWith("#") Then
             Return $"DateTime.Parse({Qt}{value.Trim("#")}{Qt})"
+        ElseIf value = trueKeyword OrElse value = falseKeyword Then
+            Return value ' value is boolean  
         ElseIf Double.TryParse(value, New Double()) Then
             Return value ' value is numeric       
         Else

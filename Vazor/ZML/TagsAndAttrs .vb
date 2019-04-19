@@ -24,15 +24,6 @@
     Const lambdaTag = zns & "lambda"
     Const sectionTag = zns & "section"
 
-    Const aspItems = "asp-items"
-    Const aspFor = "asp-for"
-    Const atModel = "@Model"
-    Const AtPage = "@page"
-    Const AtUsing = "@using"
-    Const AtNamespace = "@namespace"
-    Const ModelKeyword = "Model"
-    Const awaitKeyword = "await"
-
     Const nsAttr = "ns"
     Const addAttr = "add"
     Const pageAttr = "page"
@@ -51,4 +42,15 @@
     Const conditionAttr = "condition"
     Const methodAttr = "method"
     Const returnAttr = "return"
+
+    Const aspItems = "asp-items"
+    Const aspFor = "asp-for"
+    Const atModel = "@Model"
+    Const AtPage = "@page"
+    Const AtUsing = "@using"
+    Const AtNamespace = "@namespace"
+    Const ModelKeyword = "Model"
+    Const awaitKeyword = "await"
+    Const trueKeyword = "true"
+    Const falseKeyword = "false"
 End Class

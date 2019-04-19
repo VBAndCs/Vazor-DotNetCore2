@@ -542,6 +542,8 @@
 
                 Select Case arg.Name.ToString()
                     Case argTag
+                        Dim namedArg = arg.Attribute(nameAttr)?.Value
+                        If namedArg <> "" Then sb.Append(namedArg + ": ")
                         sb.Append(Quote(If(arg.Value, arg.Attribute(valueAttr).Value)))
                         sb.Append(", ")
                     Case Else
@@ -550,7 +552,7 @@
                 End Select
             Next
 
-            Dim args = sb.Remove(sb.Length - 2, 2).ToString()
+            Dim args = If(sb.Length = 0, "", sb.Remove(sb.Length - 2, 2).ToString())
             Dim cs = ""
             If invoke.Name.ToString = awaitTag Then
                 cs = "@{ " & awaitKeyword & $" {method}({args})" + "; }"
