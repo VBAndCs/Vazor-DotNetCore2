@@ -39,9 +39,10 @@
 
         x = sb.ToString()
 
-        Dim tags = {usingTag, importsTag, namespaceTag, helpersTag}
+        Dim tags = {lambdaTag, usingTag, importsTag, namespaceTag, helpersTag}
 
         For Each tag In tags
+            Dim lambdaCase = (tag = lambdaTag)
             tag = tag.Replace(zns, "z:")
             Dim pos = 0
             Dim offset = 0
@@ -53,11 +54,14 @@
                 endPos = x.IndexOf("/>", offset)
                 If endPos > -1 Then
                     Dim s = x.Substring(offset, endPos - offset)
-                    If Not s.Contains("=") Then
+                    Dim t = s
+                    If lambdaCase Then t = t.Replace("return=", "")
+
+                    If Not t.Contains("=") Then
                         Dim attrs = s.Split(" "c, CChar(vbCr), CChar(vbLf))
                         sb = New Text.StringBuilder
                         For Each attr In attrs
-                            If attr <> "" Then sb.AppendLine(attr + "=" + Qt + Qt)
+                            If attr <> "" And Not attr.Contains("=") Then sb.AppendLine(attr + "=" + Qt + Qt)
                         Next
                         x = x.Substring(0, offset) + sb.ToString().TrimEnd(vbCr, vbLf) + x.Substring(endPos)
                         endPos += 2

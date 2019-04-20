@@ -9,6 +9,7 @@
         ParseHelperImports()
         ParseLayout()
         ParsePage()
+        ParseInjects()
         ParseModel()
         ParseTitle()
         FixTagHelpers()
@@ -18,14 +19,16 @@
         ParseForLoops()
         ParseComments()
         ParseViewData()
-        ParseSetters()
-        ParseGetters()
+        ParseDots()
+        ParseLambdas()
         ParseInvokes()
+        ParseGetters()
+        ParseSetters()
         ParseSections()
         ParseDeclarations()
 
         Dim x = Xml.ToString()
-        For n = 0 To CsCode.Count - 1
+        For n = CsCode.Count - 1 To 0 Step -1
             x = x.Replace($"<zmlitem{n} />", CsCode(n))
         Next
 
@@ -46,7 +49,7 @@
             Dim absLine = line.Trim()
             If absLine = TempRoot Or absLine = TempTagStart Then
                 offset += 2
-            ElseIf absLine = TemptagEnd Then
+            ElseIf absLine = TempTagEnd Then
                 offset -= 2
             ElseIf absLine <> "" AndAlso absLine <> TempBodyStart AndAlso absLine <> TempBodyEnd Then
                 If AddComment AndAlso Not absLine.StartsWith("@") Then
@@ -76,7 +79,7 @@
         For Each tageHelper In tageHelpers
             Dim value = tageHelper.Value
             If Not value.StartsWith("@") Then
-                If value.StartsWith(modelKeyword) Then
+                If value.StartsWith(ModelKeyword) Then
                     tageHelper.Value = "@" + value
                 Else
                     tageHelper.Value = atModel + "." + value
@@ -157,7 +160,13 @@
 
             Else ' Set single value 
                 Dim key = setter.Attribute(keyAttr)
-                Dim value = Quote(If(setter.Attribute(valueAttr)?.Value, setter.Value))
+
+                Dim value = ""
+                If setter.Nodes.Count > 0 AndAlso TypeOf setter.Nodes(0) Is XElement Then
+                    value = ParseNestedInvoke(setter.Nodes(0))
+                Else
+                    value = Quote(If(setter.Attribute(valueAttr)?.Value, setter.Value))
+                End If
 
                 If key Is Nothing Then
                     ' Set single value without key
@@ -200,7 +209,14 @@
 
             Else ' Set single value 
                 Dim type = If(convVars(_declare.Attribute(typeAttr)?.Value), varAttr)
-                Dim value = If(_declare.Attribute(valueAttr)?.Value, _declare.Value)
+                Dim value = ""
+                Dim isNested = False
+                If _declare.Nodes.Count > 0 AndAlso TypeOf _declare.Nodes(0) Is XElement Then
+                    value = ParseNestedInvoke(_declare.Nodes(0))
+                    isNested = True
+                Else
+                    value = If(_declare.Attribute(valueAttr)?.Value, _declare.Value)
+                End If
                 Dim key = _declare.Attribute(keyAttr)
 
                 Dim blkSt = ""
@@ -212,8 +228,7 @@
 
                 If key Is Nothing Then
                     ' Set var value without key
-                    x = blkSt + $"{type} {At(var.Value)} = {Quote(value)};" + blkEnd
-
+                    x = blkSt + $"{type} {At(var.Value)} = {If(isNested, value, Quote(value))};" + blkEnd
                 Else ' Set single value with key
                     x = blkSt + $"{type} {At(var.Value)} = {At(value)}[{Quote(key.Value)}];" + blkEnd
                 End If
@@ -407,7 +422,7 @@
             Dim inc = ""
 
             If _to IsNot Nothing Then
-                cond = _to.Value.Trim().Replace(atModel + ".", modelKeyword + ".")
+                cond = _to.Value.Trim().Replace(atModel + ".", ModelKeyword + ".")
                 Dim n As Integer
                 Dim L = cond.Length - 1
                 Dim reverseLoop = False
@@ -438,7 +453,7 @@
                 ElseIf cond.EndsWith(" > 0 - 1") Then
                     cond = cond.Substring(0, cond.Length - 5) & "-1"
                 End If
-                Else
+            Else
                 cond = _while.Value.Replace(atModel + ".", ModelKeyword + ".")
                 inc = _let.Value.Replace(atModel + ".", ModelKeyword + ".")
             End If
@@ -527,38 +542,90 @@
         Return x
     End Function
 
+    Private Sub ParseDots()
+        Dim dot = (From elm In Xml.Descendants()
+                   Where elm.Name = dotTag)?.FirstOrDefault
+
+        If dot IsNot Nothing Then
+            Dim sb As New Text.StringBuilder()
+            For Each item As XElement In dot.Nodes
+                Dim x = ParseNestedInvoke(item)
+                If x.StartsWith(awaitKeyword) Then x = "(" + x + ")"
+                sb.Append(x)
+                sb.Append(".")
+            Next
+            Dim cs = "@" & If(sb.Length = 0, "", sb.Remove(sb.Length - 1, 1).ToString())
+            dot.ReplaceWith(AddToCsList(cs))
+            ParseDots()
+        End If
+    End Sub
+
     Private Sub ParseInvokes()
         Dim invoke = (From elm In Xml.Descendants()
                       Where elm.Name = invokeTag OrElse
                           elm.Name = awaitTag)?.FirstOrDefault
 
         If invoke IsNot Nothing Then
-            Dim method = If(invoke.Attribute(methodAttr)?.Value, invoke.Attributes()(0).Name.ToString()).TrimStart("@")
-            Dim sb As New Text.StringBuilder()
+            Dim cs = ""
+            For Each attr In invoke.Attributes
+                Select Case attr.Name.ToString
+                    Case propertyAttr
+                        cs = $"@{attr.Value}"
+                    Case indexerAttr
+                        Dim indexer = attr.Value
+                        Dim sb As New Text.StringBuilder()
 
-            For Each node In invoke.Nodes
-                Dim arg = TryCast(node, XElement)
-                If arg Is Nothing Then Continue For
+                        For Each key As XElement In invoke.Nodes
+                            Dim namedArg = key.Attribute(nameAttr)?.Value
+                            If namedArg <> "" Then sb.Append(namedArg + ": ")
+                            If key.Nodes.Count > 0 AndAlso TypeOf key.Nodes(0) Is XElement Then
+                                sb.Append(ParseNestedInvoke(key.Nodes(0)))
+                            Else
+                                sb.Append(Quote(If(key.Value, key.Attribute(valueAttr).Value)))
+                            End If
 
-                Select Case arg.Name.ToString()
-                    Case argTag
-                        Dim namedArg = arg.Attribute(nameAttr)?.Value
-                        If namedArg <> "" Then sb.Append(namedArg + ": ")
-                        sb.Append(Quote(If(arg.Value, arg.Attribute(valueAttr).Value)))
-                        sb.Append(", ")
+                            sb.Append(", ")
+                        Next
+
+                        Dim args = If(sb.Length = 0, "", sb.Remove(sb.Length - 2, 2).ToString())
+
+                        If invoke.Name.ToString = awaitTag Then
+                            cs = "@{ " & awaitKeyword & $" {indexer}[{args}]" + "; }"
+                        Else
+                            cs = $"@{indexer}([args])"
+                        End If
                     Case Else
-                        sb.Append(Parselambda(arg))
-                        sb.Append(", ")
+                        Dim method = If(invoke.Attribute(methodAttr)?.Value, invoke.Attributes()(0).Name.ToString()).TrimStart("@")
+                        Dim sb As New Text.StringBuilder()
+
+                        For Each node In invoke.Nodes
+                            Dim arg = TryCast(node, XElement)
+                            If arg Is Nothing Then Continue For
+
+                            Select Case arg.Name.ToString()
+                                Case argTag
+                                    Dim namedArg = arg.Attribute(nameAttr)?.Value
+                                    If namedArg <> "" Then sb.Append(namedArg + ": ")
+                                    If arg.Nodes.Count > 0 AndAlso TypeOf arg.Nodes(0) Is XElement Then
+                                        sb.Append(ParseNestedInvoke(arg.Nodes(0)))
+                                    Else
+                                        sb.Append(Quote(If(arg.Value, arg.Attribute(valueAttr).Value)))
+                                    End If
+                                Case Else
+                                    sb.Append(ParseNestedInvoke(arg))
+                            End Select
+                            sb.Append(", ")
+                        Next
+
+                        Dim args = If(sb.Length = 0, "", sb.Remove(sb.Length - 2, 2).ToString())
+
+                        If invoke.Name.ToString = awaitTag Then
+                            cs = "@{ " & awaitKeyword & $" {method}({args})" + "; }"
+                        Else
+                            cs = $"@{method}({args})"
+                        End If
                 End Select
             Next
-
-            Dim args = If(sb.Length = 0, "", sb.Remove(sb.Length - 2, 2).ToString())
-            Dim cs = ""
-            If invoke.Name.ToString = awaitTag Then
-                cs = "@{ " & awaitKeyword & $" {method}({args})" + "; }"
-            Else
-                cs = $"@{method}({args})"
-            End If
 
             Dim x = AddToCsList(cs)
             invoke.ReplaceWith(x)
@@ -567,39 +634,74 @@
         End If
     End Sub
 
-    Private Function Parselambda(lambda As XElement) As String
-        Dim args = ""
-        If lambda.Name = lambdaTag Then
+    Private Sub ParseLambdas()
+        Dim lambda = (From elm In Xml.Descendants()
+                      Where elm.Name = lambdaTag)?.FirstOrDefault
+
+        If lambda IsNot Nothing Then
+            Dim args = ""
             Dim sb As New Text.StringBuilder()
             For Each arg In lambda.Attributes
                 Dim name = arg.Name.ToString()
                 If name <> returnAttr Then
-                    If name.EndsWith("." & typeAttr) Then
-                        sb.Append($"{convVars(arg.Value)} {name.Substring(0, name.Length - 5)}, ")
+                    Dim var = convVars(arg.Value)
+                    If name.EndsWith("." & typeAttr) Then name = name.Substring(0, name.Length - 5)
+                    If var = "var" OrElse var = "" Then
+                        sb.Append($"{name}, ")
                     Else
-                        sb.Append($"{convVars(arg.Value)} {name}, ")
+                        sb.Append($"{var} {name}, ")
                     End If
                 End If
             Next
             args = sb.Remove(sb.Length - 2, 2).ToString()
-        Else
-            Dim type = convVars(lambda.Attribute(typeAttr)?.Value)
-            If type = "" Then
-                args = lambda.Name.ToString()
+
+            Dim _return = ""
+            If lambda.Nodes.Count > 0 AndAlso TypeOf lambda.Nodes(0) Is XElement Then
+                _return = ParseNestedInvoke(lambda.Nodes(0))
             Else
-                args = $"{type} {lambda.Name.ToString()}"
+                _return = If(lambda.Attribute(returnAttr)?.Value, lambda.Value)
             End If
 
+            Dim cs = ""
+            If args.IndexOfAny({","c, " "c}) > -1 Then
+                cs = $"({args}) => {_return}"
+            Else
+                cs = $"{args} => {_return}"
+            End If
+
+            lambda.ReplaceWith(AddToCsList(cs))
+            ParseLambdas()
         End If
+    End Sub
 
-        Dim _return = If(lambda.Attribute(returnAttr)?.Value, lambda.Value)
+    Private Sub ParseInjects()
+        Dim inject = (From elm In Xml.Descendants()
+                      Where elm.Name = injectTag)?.FirstOrDefault
 
-        If args.IndexOfAny({","c, " "c}) > -1 Then
-            Return $"({args}) => {_return}"
-        Else
-            Return $"{args} => {_return}"
+        If inject IsNot Nothing Then
+            Dim sb As New Text.StringBuilder()
+            For Each arg In inject.Attributes
+                Dim name = arg.Name.ToString()
+                Dim type = convVars(arg.Value)
+                If name.EndsWith("." & typeAttr) Then name = name.Substring(0, name.Length - 5)
+                sb.AppendLine($"@inject {type} {name}")
+            Next
+
+            inject.ReplaceWith(AddToCsList(sb.ToString()))
+            ParseInjects()
         End If
+    End Sub
 
+    Function ParseNestedInvoke(x As XElement) As String
+        Dim CsBlock() As Char = {"@"c, "{"c, "}"c, ";", " "c, CChar(vbCr), CChar(vbLf)}
+        Dim z = <zml/>
+        z.Add(x)
+        Dim result = New Zml(False).ParseZml(z).Trim(CsBlock)
+        If result.StartsWith("<zmlitem") Then
+            Dim n = CInt(result.Substring(8, result.Length - 11))
+            CsCode(n) = CsCode(n).Trim(CsBlock)
+        End If
+        Return result
     End Function
 
     Private Sub ParseSections()

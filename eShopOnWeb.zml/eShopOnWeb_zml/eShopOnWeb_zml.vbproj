@@ -31,6 +31,7 @@
     <None Remove="Views\Account\LoginWith2fa.zml" />
     <None Remove="Views\Account\Register.zml" />
     <None Remove="Views\Manage\_Layout.zml" />
+    <None Remove="Views\Manage\_ManageNav.zml" />
     <None Remove="Views\_ViewImports.zml" />
     <None Remove="Views\_ViewStart.zml" />
   </ItemGroup>
@@ -46,6 +47,7 @@
     <Content Include="Views\Account\LoginWith2fa.zml" />
     <Content Include="Views\Account\Register.zml" />
     <Content Include="Views\Manage\_Layout.zml" />
+    <Content Include="Views\Manage\_ManageNav.zml" />
     <Content Include="Views\_ViewImports.zml">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

@@ -1,15 +1,24 @@
-﻿@inject SignInManager<ApplicationUser> SignInManager
-@{
-    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
-}
+@inject SignInManager<ApplicationUser> SignInManager
+@{ hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()()).Any(); }
+
+@*<!--This file is auto generated from the .zml file.
+Make cahnges only to the .zml file, and don't make any changes here,
+because they will be overwritten when the .zml file changes.-->*@
 
 <ul class="nav nav-pills nav-stacked">
-    <li class="@ManageNavPages.IndexNavClass(ViewContext)"><a asp-action="MyAccount">Profile</a></li>
-    <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)"><a asp-action="ChangePassword">Password</a></li>
-    @if (hasExternalLogins)
-    {
-        <li class="@ManageNavPages.ExternalLoginsNavClass(ViewContext)"><a asp-action="ExternalLogins">External logins</a></li>
-    }
-    <li class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"><a asp-action="TwoFactorAuthentication">Two-factor authentication</a></li>
+  <li class="@ManageNavPages.IndexNavClass(ViewContext)">
+    <a asp-action="MyAccount">Profile</a>
+  </li>
+  <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)">
+    <a asp-action="ChangePassword">Password</a>
+  </li>
+  @if (hasExternalLogins)
+  {
+    <li class="@ManageNavPages.ExternalLoginsNavClass(ViewContext)">
+      <a asp-action="ExternalLogins">External logins</a>
+    </li>
+  }
+  <li class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)">
+    <a asp-action="TwoFactorAuthentication">Two-factor authentication</a>
+  </li>
 </ul>
-

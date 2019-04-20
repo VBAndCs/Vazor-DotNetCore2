@@ -19,7 +19,7 @@
                     <label asp-for="RememberMachine">
                         <input asp-for="RememberMachine" />
                         <z:invoke method="Html.DisplayNameFor">
-                            <m return="m.RememberMachine" />
+                            <z:lambda m return="m.RememberMachine" />
                         </z:invoke>
                     </label>
                 </div>

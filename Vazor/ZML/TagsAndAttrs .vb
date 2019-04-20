@@ -4,6 +4,7 @@
     Const usingTag = zns & "using"
     Const namespaceTag = zns & "namespace"
     Const helpersTag = zns & "helpers"
+    Const injectTag = zns & "inject"
     Const layoutTag = zns & "layout"
     Const pageTag = zns & "page"
     Const modelTag = zns & "model"
@@ -22,6 +23,7 @@
     Const awaitTag = zns & "await"
     Const argTag = zns & "arg"
     Const lambdaTag = zns & "lambda"
+    Const dotTag = zns & "dot"
     Const sectionTag = zns & "section"
 
     Const nsAttr = "ns"
@@ -41,6 +43,8 @@
     Const inAttr = "in"
     Const conditionAttr = "condition"
     Const methodAttr = "method"
+    Const propertyAttr = "property"
+    Const indexerAttr = "indexer"
     Const returnAttr = "return"
 
     Const aspItems = "asp-items"
