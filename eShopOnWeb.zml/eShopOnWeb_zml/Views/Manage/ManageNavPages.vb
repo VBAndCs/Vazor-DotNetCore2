@@ -1,7 +1,7 @@
 ﻿Imports System
 Imports System.Runtime.CompilerServices
 
-Namespace Microsoft.eShopWeb.Web.Views.Manage
+Namespace Views.Manage
     Module ManageNavPages
         Public Shared ReadOnly Property ActivePageKey As String
             Get

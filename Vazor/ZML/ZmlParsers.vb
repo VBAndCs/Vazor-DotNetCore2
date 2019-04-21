@@ -5,6 +5,7 @@
         BlockEnd = AddToCsList("}")
 
         Xml = New XElement(zml)
+        FixSelfClosing()
         ParseImports()
         ParseHelperImports()
         ParseLayout()
@@ -12,8 +13,10 @@
         ParseInjects()
         ParseModel()
         ParseTitle()
+        ParseText()
         FixTagHelpers()
         FixAttrExpressions()
+        ParseChecks()
         ParseIfStatements()
         ParseForEachLoops()
         ParseForLoops()
@@ -34,7 +37,7 @@
 
         x = x.Replace(
                  (LessThan, "<"), (GreaterThan, ">"),
-                 (Ampersand, "&"),
+                 (Ampersand, "&"), (tempText, ""),
                  (Qt + ChngQt, SnglQt),
                  (ChngQt + Qt, SnglQt),
                  (ChngQt, ""), (SnglQt + SnglQt, Qt)
@@ -68,6 +71,19 @@
         Next
         Return sb.ToString().Trim(" ", vbCr, vbLf)
     End Function
+
+    Private Sub FixSelfClosing()
+        Dim tagNamess = {"span", "label"}
+        Dim tags = (From elm In Xml.Descendants()
+                    Where tagNamess.Contains(elm.Name.ToString()))
+
+        ' add a temp node to ensure using a closing tag
+        For Each tag In tags
+            If tag.Nodes.Count = 0 Then
+                tag.Add(tempText)
+            End If
+        Next
+    End Sub
 
     Private Sub FixTagHelpers()
         Dim tageHelpers = From elm In Xml.Descendants()
@@ -108,17 +124,31 @@
                          Where elm.Name = viewtitleTag)?.FirstOrDefault
 
         If viewTitle IsNot Nothing Then
-            Dim title = ""
+            Dim cs = ""
             Dim value = If(viewTitle.Attribute(valueAttr)?.Value, viewTitle.Value)
             If value = "" Then 'Read Title
-                title = $"@ViewData[{Qt }Title{Qt }]"
+                cs = $"@ViewData[{Qt }Title{Qt }]"
             Else ' Set Title
-                title = "@{ " & $"ViewData[{Qt}Title{Qt}] = {Quote(value)};" & " }"
+                cs = "@{ " & $"ViewData[{Qt}Title{Qt}] = {Quote(value)};" & " }"
             End If
 
-            viewTitle.ReplaceWith(AddToCsList(title))
+            viewTitle.ReplaceWith(AddToCsList(cs, viewTitle))
 
             ParseTitle()
+        End If
+
+    End Sub
+
+    Private Sub ParseText()
+        Dim text = (From elm In Xml.Descendants()
+                    Where elm.Name = textTag)?.FirstOrDefault
+
+        If text IsNot Nothing Then
+
+            Dim value = If(text.Attribute(valueAttr)?.Value, text.Value)
+            text.ReplaceWith(AddToCsList("@: " + value))
+
+            ParseText()
         End If
 
     End Sub
@@ -177,7 +207,7 @@
                 End If
             End If
 
-            setter.ReplaceWith(AddToCsList(x))
+            setter.ReplaceWith(AddToCsList(x, setter))
             ParseSetters()
         End If
 
@@ -189,23 +219,19 @@
                         Where elm.Name = declareTag).FirstOrDefault
 
         If _declare IsNot Nothing Then
-            Dim x = ""
+            Dim cs = ""
             Dim var = _declare.Attribute(varAttr)
-
-            Dim insideCsBlock = IsInsideCsBlock(_declare)
 
             If var Is Nothing Then
                 ' Set multiple values
 
                 Dim sb As New Text.StringBuilder()
-                If Not insideCsBlock Then sb.AppendLine("@{" + Ln)
-
+                sb.AppendLine("@{")
                 For Each o In _declare.Attributes
                     sb.AppendLine($"  var {At(o.Name.ToString())} = {Quote(o.Value)};")
                 Next
-
-                If Not insideCsBlock Then sb.AppendLine("}")
-                x = sb.ToString()
+                sb.AppendLine("}")
+                cs = sb.ToString()
 
             Else ' Set single value 
                 Dim type = If(convVars(_declare.Attribute(typeAttr)?.Value), varAttr)
@@ -219,22 +245,18 @@
                 End If
                 Dim key = _declare.Attribute(keyAttr)
 
-                Dim blkSt = ""
-                Dim blkEnd = ""
-                If Not insideCsBlock Then
-                    blkSt = "@{ "
-                    blkEnd = " }"
-                End If
+                Dim blkSt = "@{ "
+                Dim blkEnd = " }"
 
                 If key Is Nothing Then
                     ' Set var value without key
-                    x = blkSt + $"{type} {At(var.Value)} = {If(isNested, value, Quote(value))};" + blkEnd
+                    cs = blkSt + $"{type} {At(var.Value)} = {If(isNested, value, Quote(value))};" + blkEnd
                 Else ' Set single value with key
-                    x = blkSt + $"{type} {At(var.Value)} = {At(value)}[{Quote(key.Value)}];" + blkEnd
+                    cs = blkSt + $"{type} {At(var.Value)} = {At(value)}[{Quote(key.Value)}];" + blkEnd
                 End If
             End If
 
-            _declare.ReplaceWith(AddToCsList(x))
+            _declare.ReplaceWith(AddToCsList(cs, _declare))
             ParseDeclarations()
         End If
 
@@ -256,7 +278,7 @@
                 x = $"@{obj}[{Quote(key.Value)}]" + Ln
             End If
 
-            getter.ReplaceWith(AddToCsList(x))
+            getter.ReplaceWith(AddToCsList(x, getter))
 
             ParseGetters()
         End If
@@ -281,17 +303,17 @@
                 Next
                 sb.AppendLine("}" + Ln)
 
-                viewdata.ReplaceWith(AddToCsList(sb.ToString()))
+                viewdata.ReplaceWith(AddToCsList(sb.ToString(), viewdata))
 
             ElseIf value IsNot Nothing Then
                 ' Write one value to ViewData
 
-                Dim x = $"ViewData[{At(_keyAttr.Value)}] = {Quote(value)};"
-                viewdata.ReplaceWith(AddToCsList(x))
+                Dim cs = $"ViewData[{At(_keyAttr.Value)}] = {Quote(value)};"
+                viewdata.ReplaceWith(AddToCsList(cs, viewdata))
 
             Else ' Read from ViewData
-                Dim x = $"@ViewData[{At(_keyAttr.Value)}]"
-                viewdata.ReplaceWith(AddToCsList(x))
+                Dim cs = $"@ViewData[{At(_keyAttr.Value)}]"
+                viewdata.ReplaceWith(AddToCsList(cs, viewdata))
             End If
 
             ParseViewData()
@@ -490,6 +512,27 @@
         End If
     End Sub
 
+    Private Sub ParseChecks()
+        Dim check = (From elm In Xml.Descendants()
+                     Where elm.Name = checkTag)?.FirstOrDefault
+
+        If check IsNot Nothing Then
+            Dim cond = check.Attribute(conditionAttr).Value
+            Dim ifNull = Quote(check.Attribute(ifnullAttr)?.Value)
+            Dim cs = ""
+            If ifNull IsNot Nothing Then
+                cs = $"@{cond} ?? {ifNull}"
+            Else
+                Dim IfTrue = Quote(check.Attribute(iftrueAttr).Value)
+                Dim ifFalse = Quote(check.Attribute(iffalseAttr).Value)
+                cs = $"@{cond} ? {IfTrue} : {ifFalse}"
+            End If
+
+            check.ReplaceWith(AddToCsList(cs, check))
+            ParseChecks()
+        End If
+    End Sub
+
     Private Sub ParseIfStatements()
         Dim _if = (From elm In Xml.Descendants()
                    Where elm.Name = ifTag)?.FirstOrDefault
@@ -498,8 +541,8 @@
 
             If _if.Nodes.Count > 0 Then
                 Dim children = _if.Nodes
-                Dim firstChild As XElement = children(0)
-                If firstChild.Name = thenTag Then
+                Dim firstChild = TryCast(children(0), XElement)
+                If firstChild IsNot Nothing AndAlso firstChild.Name = thenTag Then
                     Dim cs = "@if (" + ConvLog(_if.Attribute(conditionAttr).Value) + ")"
                     Dim _then = GetCsHtml(cs, firstChild)
 
@@ -518,7 +561,7 @@
                     End If
                 Else
                     Dim cs = "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
-                    _if.ReplaceWith(GetCsHtml(cs, firstChild, False))
+                    _if.ReplaceWith(GetCsHtml(cs, _if.InnerXml, False))
                 End If
             End If
 
@@ -555,7 +598,7 @@
                 sb.Append(".")
             Next
             Dim cs = "@" & If(sb.Length = 0, "", sb.Remove(sb.Length - 1, 1).ToString())
-            dot.ReplaceWith(AddToCsList(cs))
+            dot.ReplaceWith(AddToCsList(cs, dot))
             ParseDots()
         End If
     End Sub
@@ -627,8 +670,7 @@
                 End Select
             Next
 
-            Dim x = AddToCsList(cs)
-            invoke.ReplaceWith(x)
+            invoke.ReplaceWith(AddToCsList(cs, invoke))
 
             ParseInvokes()
         End If

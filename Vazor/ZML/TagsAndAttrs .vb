@@ -25,6 +25,8 @@
     Const lambdaTag = zns & "lambda"
     Const dotTag = zns & "dot"
     Const sectionTag = zns & "section"
+    Const checkTag = zns & "check"
+    Const textTag = zns & "text"
 
     Const nsAttr = "ns"
     Const addAttr = "add"
@@ -46,6 +48,9 @@
     Const propertyAttr = "property"
     Const indexerAttr = "indexer"
     Const returnAttr = "return"
+    Const iftrueAttr = "iftrue"
+    Const iffalseAttr = "iffalse"
+    Const ifnullAttr = "ifnull"
 
     Const aspItems = "asp-items"
     Const aspFor = "asp-for"
@@ -57,4 +62,5 @@
     Const awaitKeyword = "await"
     Const trueKeyword = "true"
     Const falseKeyword = "false"
+    Const tempText = "__empty__"
 End Class

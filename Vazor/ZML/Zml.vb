@@ -1,4 +1,5 @@
-﻿Public Class Zml
+﻿
+Public Class Zml
     ' Note: All the wotk is done in the partial file ZmlParsers.vb
 
     Private AddComment As Boolean = True
@@ -14,7 +15,11 @@
     Const TempBodyEnd = "</zmlbody>"
     Const ChngQt = "__chngqt__"
 
-    Private Function AddToCsList(item As String) As XElement
+    Private Function AddToCsList(item As String, Optional parent As XElement = Nothing) As XElement
+        If parent IsNot Nothing Then
+            If IsInsideCsBlock(parent.Parent) Then item = item.TrimStart("@"c, "{"c).TrimEnd("}"c)
+        End If
+
         CsCode.Add(item)
         Dim zmlKey = "zmlitem" & CsCode.Count - 1
         Return <<%= zmlKey %>/>
@@ -23,7 +28,7 @@
 
     Friend Shared Function FixAttr(x As String) As String
 
-        Dim lines = x.Split({CChar(vbCr), CChar(vbLf)}, StringSplitOptions.RemoveEmptyEntries)
+        Dim lines = x.Replace("&", Ampersand).Split({CChar(vbCr), CChar(vbLf)}, StringSplitOptions.RemoveEmptyEntries)
         Dim sb As New Text.StringBuilder
 
         For Each line In lines
@@ -78,6 +83,8 @@
 
     ' Qute string values, except objects (starting with @) and chars (quted by ' ')
     Private Function Quote(value As String) As String
+        If value Is Nothing Then Return Nothing
+
         If value.StartsWith("@") Then
             Return value.Substring(1) ' value is object
         ElseIf value.StartsWith(SnglQt) AndAlso value.EndsWith(SnglQt) Then
@@ -121,7 +128,7 @@
     Private Function GetCsHtml(cs As String, html As XElement, Optional UseInner As Boolean = True) As XElement
         Dim x = <zml/>
         x.Add(
-                    AddToCsList(cs),
+                    AddToCsList(cs, html),
                      BlockStart,
                         If(UseInner, html.InnerXml, html.OuterXml),
                      BlockEnd
@@ -131,12 +138,16 @@
 
 
     Private Function IsInsideCsBlock(item As XElement) As Boolean
+        If item Is Nothing Then Return False
         Dim pn As XElement = item.Parent
         If pn Is Nothing Then Return False
 
         Dim parentName = pn.Name.ToString
-        If parentName = "zmlbody" OrElse parentName = "zml" Then pn = pn.Parent
+        If parentName.StartsWith(zns) Then Return True
+
+        If parentName = "zmlbody" OrElse (parentName = "zml" AndAlso pn.Nodes.Count = 1) Then pn = pn.Parent
         If pn Is Nothing Then Return False
+        If parentName.StartsWith(zns) Then Return True
 
         Dim blkSt = BlockStart.Name.ToString()
 

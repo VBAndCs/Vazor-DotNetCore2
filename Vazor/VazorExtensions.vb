@@ -12,7 +12,7 @@ Public Module VazorExtensions
         Dim html = x.ToString(SaveOptions.DisableFormatting).
             Replace("<vbxml>", "").
             Replace("</vbxml>", "").
-            Replace("_vazor_amp_", "&")
+            Replace(Ampersand, "&")
 
         For Each tag In tagsToRemove
             Dim open, close As String
@@ -98,7 +98,7 @@ Public Module VazorExtensions
 
         newHtml.Replace("<vbxml>", "").
             Replace("</vbxml>", "").
-            Replace("_vazor_amp_", "&")
+            Replace(Ampersand, "&")
 
         Return newHtml.ToString()
     End Function

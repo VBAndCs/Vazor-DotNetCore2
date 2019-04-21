@@ -50,6 +50,10 @@
               "target": "Package",
               "version": "[2.2.0, )",
               "autoReferenced": true
+            },
+            "Unofficial.Microsoft.mshtml": {
+              "target": "Package",
+              "version": "[7.0.3300, )"
             }
           },
           "imports": [

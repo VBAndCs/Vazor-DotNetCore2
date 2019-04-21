@@ -30,8 +30,19 @@
     <None Remove="Views\Account\Lockout.zml" />
     <None Remove="Views\Account\LoginWith2fa.zml" />
     <None Remove="Views\Account\Register.zml" />
+    <None Remove="Views\Manage\ChangePassword.zml" />
+    <None Remove="Views\Manage\Disable2fa.zml" />
+    <None Remove="Views\Manage\EnableAuthenticator.zml" />
+    <None Remove="Views\Manage\ExternalLogins.zml" />
+    <None Remove="Views\Manage\GenerateRecoveryCodes.zml" />
+    <None Remove="Views\Manage\MyAccount.zml" />
+    <None Remove="Views\Manage\ResetAuthenticator.zml" />
+    <None Remove="Views\Manage\SetPassword.zml" />
+    <None Remove="Views\Manage\TwoFactorAuthentication.zml" />
     <None Remove="Views\Manage\_Layout.zml" />
     <None Remove="Views\Manage\_ManageNav.zml" />
+    <None Remove="Views\Manage\_StatusMessage.zml" />
+    <None Remove="Views\Manage\_ViewImports.zml" />
     <None Remove="Views\_ViewImports.zml" />
     <None Remove="Views\_ViewStart.zml" />
   </ItemGroup>
@@ -46,8 +57,19 @@
     <Content Include="Views\Account\Lockout.zml" />
     <Content Include="Views\Account\LoginWith2fa.zml" />
     <Content Include="Views\Account\Register.zml" />
+    <Content Include="Views\Manage\ChangePassword.zml" />
+    <Content Include="Views\Manage\Disable2fa.zml" />
+    <Content Include="Views\Manage\EnableAuthenticator.zml" />
+    <Content Include="Views\Manage\ExternalLogins.zml" />
+    <Content Include="Views\Manage\GenerateRecoveryCodes.zml" />
+    <Content Include="Views\Manage\MyAccount.zml" />
+    <Content Include="Views\Manage\ResetAuthenticator.zml" />
+    <Content Include="Views\Manage\SetPassword.zml" />
+    <Content Include="Views\Manage\TwoFactorAuthentication.zml" />
     <Content Include="Views\Manage\_Layout.zml" />
     <Content Include="Views\Manage\_ManageNav.zml" />
+    <Content Include="Views\Manage\_StatusMessage.zml" />
+    <Content Include="Views\Manage\_ViewImports.zml" />
     <Content Include="Views\_ViewImports.zml">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
