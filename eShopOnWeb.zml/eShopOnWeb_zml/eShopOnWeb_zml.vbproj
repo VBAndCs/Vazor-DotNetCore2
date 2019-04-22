@@ -13,10 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\Manage\ManageNavPages.vb" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
 
@@ -101,7 +97,6 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
-    <None Include="Views\Manage\ManageNavPages.vb" />
     <None Include="wwwroot\images\products\1.png" />
     <None Include="wwwroot\images\products\10.png" />
     <None Include="wwwroot\images\products\11.png" />

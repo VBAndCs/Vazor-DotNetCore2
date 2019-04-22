@@ -1,11 +1,8 @@
 @model ExternalLoginsViewModel
 @{ ViewData["Title"] = "Manage your external logins"; }
-@ViewData.AddActivePage(ManageNavPages.ExternalLogins)
-
-@*<!--This file is auto generated from the .zml file.
-Make cahnges only to the .zml file, and don't make any changes here,
-because they will be overwritten when the .zml file changes.-->*@
-
+@{
+ViewData[ManageNavPages.ActivePageKey] = ManageNavPages.ExternalLogins;
+}
 <partial name="_StatusMessage" for="StatusMessage" />
 @if (Model.CurrentLogins?.Count> 0)
 {
@@ -21,8 +18,8 @@ because they will be overwritten when the .zml file changes.-->*@
               {
                 <form asp-action="RemoveLogin" method="post">
                   <div>
-                    <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
-                    <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
+                    <input asp-for="@Model.@login.LoginProvider" name="LoginProvider" type="hidden" />
+                    <input asp-for="@Model.@login.ProviderKey" name="ProviderKey" type="hidden" />
                     <button type="submit" class="btn btn-default" title="Remove this @login.LoginProvider login from your account">Remove</button>
                   </div>
                 </form>

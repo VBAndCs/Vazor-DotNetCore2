@@ -19,8 +19,8 @@ Public Class TestDeclarations
                         obj="@Student"/>
                 </zml>
 
-        Dim y = x.ParseZml().ToXml()
-        Dim s = y.Value.Trim()
+        Dim s = x.ParseZml()
+
         Assert.IsTrue(s.StartsWith("@{") And s.EndsWith("}"))
         Dim lines = s.Trim("@", "{", "}", vbCr, vbLf).Replace(vbCrLf, vbLf).Split(vbLf, StringSplitOptions.RemoveEmptyEntries)
         Assert.AreEqual(lines(0), $"var d = {Qt}4/1/2019{Qt};")
@@ -104,8 +104,7 @@ Public Class TestDeclarations
                         obj="@Student"/>
                 </zml>
 
-        Dim y = x.ParseZml().ToXml()
-        Dim s = y.Value.Trim()
+        Dim s = x.ParseZml()
         Assert.IsTrue(s.StartsWith("@{") And s.EndsWith("}"))
         Dim lines = s.Trim("@", "{", "}", vbCr, vbLf).Replace(vbCrLf, vbLf).Split(vbLf, StringSplitOptions.RemoveEmptyEntries)
         Assert.AreEqual(lines(0), $"d = {Qt}4/1/2019{Qt};")
@@ -152,27 +151,23 @@ Public Class TestDeclarations
     <TestMethod>
     Sub TestGetters()
         Dim x = <zml xmlns:z="zml"><z:get>X</z:get></zml>
-        Dim y = x.ParseZml().ToXml()
-        Dim z = y.Value.Trim()
-        Assert.AreEqual(z, "@X")
+        Dim y = x.ParseZml()
+        Assert.AreEqual(y, "@X")
 
         x = <zml xmlns:z="zml">
                 <z:get object="X"/>
             </zml>
 
-        y = x.ParseZml().ToXml()
-        z = y.Value.Trim()
-        Assert.AreEqual(z, "@X")
+        y = x.ParseZml()
+        Assert.AreEqual(y, "@X")
 
         x = <zml xmlns:z="zml"><z:get object="X" key="@i"/></zml>
-        y = x.ParseZml().ToXml()
-        z = y.Value.Trim()
-        Assert.AreEqual(z, "@X[i]")
+        y = x.ParseZml()
+        Assert.AreEqual(y, "@X[i]")
 
         x = <zml xmlns:z="zml"><z:get object="X" key="name"/></zml>
-        y = x.ParseZml().ToXml()
-        z = y.Value.Trim()
-        Assert.AreEqual(z, $"@X[{Qt}name{Qt}]")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@X[{Qt}name{Qt}]")
 
     End Sub
 
@@ -183,7 +178,7 @@ Public Class TestDeclarations
                     <input type="number" class="esh-basket-input" min="1" name="Items[''@i''].Value" value="@item.Quantity"/>
                 </zml>
 
-        Dim y = x.ParseZml.ToString()
+        Dim y = x.ParseZml()
         Dim z =
 $"<input type={Qt}hidden{Qt} name='Items[{Qt}@i{Qt}].Key' value={Qt}@item.Id{Qt} />
 <input type={Qt}number{Qt} class={Qt}esh-basket-input{Qt} min={Qt}1{Qt} name='Items[{Qt}@i{Qt}].Value' value={Qt}@item.Quantity{Qt} />"

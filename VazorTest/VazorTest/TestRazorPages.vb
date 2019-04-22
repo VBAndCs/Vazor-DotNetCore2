@@ -12,7 +12,7 @@ Public Class TestRazorPages
                     </z:section>
                 </zml>
 
-        Dim y = x.ParseZml.ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "@section Scripts
 {
@@ -31,9 +31,9 @@ Public Class TestRazorPages
                     />
                 </zml>
 
-        Dim p As XElement = x.ParseZml().ToXml().FirstNode
-        Assert.AreEqual(p.Attribute("asp-for").Value, "@Model.students")
-        Assert.AreEqual(p.Attribute("asp-items").Value, "@Model.students")
+        Dim y = x.ParseZml()
+        Dim z = "<p asp-for='@Model.students' asp-items='@Model.students' />".Replace(SnglQt, Qt)
+        Assert.AreEqual(y, z)
 
         x = <zml xmlns:z="zml">
                 <p
@@ -42,9 +42,9 @@ Public Class TestRazorPages
                 />
             </zml>
 
-        p = x.ParseZml().ToXml().FirstNode
-        Assert.AreEqual(p.Attribute("asp-for").Value, "@students")
-        Assert.AreEqual(p.Attribute("asp-items").Value, "@Model.students")
+        y = x.ParseZml()
+        z = "<p asp-for='@students' asp-items='@Model.students' />".Replace(SnglQt, Qt)
+        Assert.AreEqual(y, z)
 
     End Sub
 
@@ -102,7 +102,7 @@ Public Class TestRazorPages
                     </z:comment>
                 </zml>
 
-        Dim y = x.ParseZml.ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "<p>test</p>
 @*
@@ -123,7 +123,7 @@ comment
                     />
                 </zml>
 
-        Dim y = x.ParseZml.ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "@inject T<int> A
 @inject string B"
@@ -138,19 +138,16 @@ comment
         Dim x = <zml xmlns:z="zml">
                     <z:page/>
                 </zml>
-        Dim y = x.ParseZml().ToXml()
-        Dim z = y.Value.Trim()
-        Assert.AreEqual(z, "@page")
+        Dim y = x.ParseZml()
+        Assert.AreEqual(y, "@page")
 
         x = <zml xmlns:z="zml"><z:page>Pages/Home</z:page></zml>
-        y = x.ParseZml().ToXml()
-        z = y.Value.Trim()
-        Assert.AreEqual(z, $"@page {Qt}Pages/Home{Qt}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@page {Qt}Pages/Home{Qt}")
 
         x = <zml xmlns:z="zml"><z:page route="Pages/Home"/></zml>
-        y = x.ParseZml().ToXml()
-        z = y.Value.Trim()
-        Assert.AreEqual(z, $"@page {Qt}Pages/Home{Qt}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@page {Qt}Pages/Home{Qt}")
 
     End Sub
 
@@ -177,7 +174,7 @@ comment
                     <z:layout>_Layout</z:layout>
                 </zml>
 
-        Dim y = x.ParseZml.ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "@{
     Layout = '_Layout';
@@ -189,7 +186,7 @@ comment
                 <z:layout page="_Layout"/>
             </zml>
 
-        y = x.ParseZml.ToString()
+        y = x.ParseZml()
 
         Assert.AreEqual(y, z)
     End Sub
@@ -200,7 +197,7 @@ comment
                     <z:text>__amp__;nbsp;</z:text>
                 </zml>
 
-        Dim y = x.ParseZml().ToString()
+        Dim y = x.ParseZml()
         Dim z = "@: &nbsp;"
         Assert.AreEqual(y, z)
 
@@ -213,7 +210,7 @@ comment
                     <label id="1"/>
                 </zml>
 
-        Dim y = x.ParseZml().ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "<span></span>
 <label id='1'></label>".Replace(SnglQt, Qt)

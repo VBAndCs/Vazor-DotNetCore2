@@ -2,12 +2,6 @@
 Public Class Zml
     ' Note: All the wotk is done in the partial file ZmlParsers.vb
 
-    Private AddComment As Boolean = True
-
-    Const comment = "@*<!--This file is auto generated from the .zml file." + Ln +
-                 "Make cahnges only to the .zml file, and don't make any changes here," + Ln +
-                 "because they will be overwritten when the .zml file changes.-->*@"
-
     Dim CsCode As New List(Of String)
     Dim BlockStart, BlockEnd As XElement
     Dim Xml As XElement
@@ -28,7 +22,8 @@ Public Class Zml
 
     Friend Shared Function FixAttr(x As String) As String
 
-        Dim lines = x.Replace("&", Ampersand).Split({CChar(vbCr), CChar(vbLf)}, StringSplitOptions.RemoveEmptyEntries)
+        Dim lines = x.Replace(("&", Ampersand), ("@", AtSymbole)).
+        Split({CChar(vbCr), CChar(vbLf)}, StringSplitOptions.RemoveEmptyEntries)
         Dim sb As New Text.StringBuilder
 
         For Each line In lines
@@ -74,21 +69,23 @@ Public Class Zml
                 End If
             Loop
         Next
+
+
+        ' FixConditions
+
         Return x
     End Function
-
-    Public Sub New(Optional addComment As Boolean = True)
-        Me.AddComment = addComment
-    End Sub
 
     ' Qute string values, except objects (starting with @) and chars (quted by ' ')
     Private Function Quote(value As String) As String
         If value Is Nothing Then Return Nothing
 
-        If value.StartsWith("@") Then
-            Return value.Substring(1) ' value is object
+        If value.StartsWith(AtSymbole) Then
+            Return value.Substring(AtSymbole.Length) ' value is object
+        ElseIf value.StartsWith("@") Then ' This is for test app
+            Return value.Substring(1) ' value is object 
         ElseIf value.StartsWith(SnglQt) AndAlso value.EndsWith(SnglQt) Then
-            Return value ' value is char
+                Return value ' value is char
         ElseIf value.StartsWith("#") AndAlso value.EndsWith("#") Then
             Return $"DateTime.Parse({Qt}{value.Trim("#")}{Qt})"
         ElseIf value = trueKeyword OrElse value = falseKeyword Then
@@ -104,8 +101,10 @@ Public Class Zml
     Private Function At(value As String) As String
         If value Is Nothing Then Return Nothing
 
-        If value.StartsWith("@") Then
-            Return value.Substring(1)
+        If value.StartsWith(AtSymbole) Then
+            Return value.Substring(AtSymbole.Length)
+        ElseIf value.StartsWith("@") Then ' This is for test app
+            Return value.Substring(1) ' value is object 
         Else
             Return value.Trim(Qt).Trim(SnglQt)
         End If
@@ -130,7 +129,7 @@ Public Class Zml
         x.Add(
                     AddToCsList(cs, html),
                      BlockStart,
-                        If(UseInner, html.InnerXml, html.OuterXml),
+                        If(UseInner, html.InnerXml, html),
                      BlockEnd
                   )
         Return x

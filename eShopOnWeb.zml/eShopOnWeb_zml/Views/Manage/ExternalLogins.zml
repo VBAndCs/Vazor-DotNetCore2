@@ -1,8 +1,6 @@
 ﻿<z:model type="ExternalLoginsViewModel" />
 <z:title>Manage your external logins</z:title>
-<z:invoke method="ViewData.AddActivePage">
-    <z:arg>@ManageNavPages.ExternalLogins</z:arg>
-</z:invoke>
+<z:viewdata @ManageNavPages.ActivePageKey="@ManageNavPages.ExternalLogins" />
 
 <partial name="_StatusMessage" for="StatusMessage" />
 <z:if condition="Model.CurrentLogins?.Count > 0">

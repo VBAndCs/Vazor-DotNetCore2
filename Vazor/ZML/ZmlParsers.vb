@@ -37,7 +37,7 @@
 
         x = x.Replace(
                  (LessThan, "<"), (GreaterThan, ">"),
-                 (Ampersand, "&"), (tempText, ""),
+                 (Ampersand, "&"), (tempText, ""), (AtSymbole, "@"),
                  (Qt + ChngQt, SnglQt),
                  (ChngQt + Qt, SnglQt),
                  (ChngQt, ""), (SnglQt + SnglQt, Qt)
@@ -55,11 +55,6 @@
             ElseIf absLine = TempTagEnd Then
                 offset -= 2
             ElseIf absLine <> "" AndAlso absLine <> TempBodyStart AndAlso absLine <> TempBodyEnd Then
-                If AddComment AndAlso Not absLine.StartsWith("@") Then
-                    AddComment = False
-                    sb.AppendLine(Ln + comment + Ln)
-                End If
-
                 line = line.Replace((TempBodyStart, ""), (TempBodyEnd, ""))
                 If line.Length > offset AndAlso line.StartsWith(New String(" ", offset)) Then
                     sb.AppendLine(line.Substring(offset))
@@ -287,7 +282,7 @@
 
     Private Sub ParseViewData()
         Dim viewdata = (From elm In Xml.Descendants()
-                        Where elm.Name = "viewdata")?.FirstOrDefault
+                        Where elm.Name = viewdataTag)?.FirstOrDefault
 
         If viewdata IsNot Nothing Then
             Dim _keyAttr = viewdata.Attribute(keyAttr)
@@ -295,11 +290,10 @@
 
             If _keyAttr Is Nothing Then
                 ' Write miltiple values to ViewData
-                ' <viewdata Name="'Ali'" Age="15"/>
 
                 Dim sb As New Text.StringBuilder(Ln + "@{" + Ln)
                 For Each key In viewdata.Attributes
-                    sb.AppendLine($"ViewData[{At(key.Name.ToString())}] = {Quote(key.Value)};")
+                    sb.AppendLine($"ViewData[{Quote(key.Name.ToString())}] = {Quote(key.Value)};")
                 Next
                 sb.AppendLine("}" + Ln)
 
@@ -308,11 +302,11 @@
             ElseIf value IsNot Nothing Then
                 ' Write one value to ViewData
 
-                Dim cs = $"ViewData[{At(_keyAttr.Value)}] = {Quote(value)};"
+                Dim cs = $"ViewData[{Quote(_keyAttr.Value)}] = {Quote(value)};"
                 viewdata.ReplaceWith(AddToCsList(cs, viewdata))
 
             Else ' Read from ViewData
-                Dim cs = $"@ViewData[{At(_keyAttr.Value)}]"
+                Dim cs = $"@ViewData[{Quote(_keyAttr.Value)}]"
                 viewdata.ReplaceWith(AddToCsList(cs, viewdata))
             End If
 
@@ -738,7 +732,7 @@
         Dim CsBlock() As Char = {"@"c, "{"c, "}"c, ";", " "c, CChar(vbCr), CChar(vbLf)}
         Dim z = <zml/>
         z.Add(x)
-        Dim result = New Zml(False).ParseZml(z).Trim(CsBlock)
+        Dim result = New Zml().ParseZml(z).Trim(CsBlock)
         If result.StartsWith("<zmlitem") Then
             Dim n = CInt(result.Substring(8, result.Length - 11))
             CsCode(n) = CsCode(n).Trim(CsBlock)

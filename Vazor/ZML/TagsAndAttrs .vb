@@ -27,6 +27,7 @@
     Const sectionTag = zns & "section"
     Const checkTag = zns & "check"
     Const textTag = zns & "text"
+    Const viewdataTag = zns & "viewdata"
 
     Const nsAttr = "ns"
     Const addAttr = "add"
@@ -63,4 +64,5 @@
     Const trueKeyword = "true"
     Const falseKeyword = "false"
     Const tempText = "__empty__"
+    Const AtSymbole = "__AT__"
 End Class

@@ -1,33 +1,35 @@
 ﻿Imports System
 Imports System.Runtime.CompilerServices
+Imports Microsoft.AspNetCore.Mvc.Rendering
+Imports Microsoft.AspNetCore.Mvc.ViewFeatures
 
 Namespace Views.Manage
-    Module ManageNavPages
-        Public Shared ReadOnly Property ActivePageKey As String
+    Public Module ManageNavPages
+        Public ReadOnly Property ActivePageKey As String
             Get
                 Return "ActivePage"
             End Get
         End Property
 
-        Public Shared ReadOnly Property Index As String
+        Public ReadOnly Property Index As String
             Get
                 Return "Index"
             End Get
         End Property
 
-        Public Shared ReadOnly Property ChangePassword As String
+        Public ReadOnly Property ChangePassword As String
             Get
                 Return "ChangePassword"
             End Get
         End Property
 
-        Public Shared ReadOnly Property ExternalLogins As String
+        Public ReadOnly Property ExternalLogins As String
             Get
                 Return "ExternalLogins"
             End Get
         End Property
 
-        Public Shared ReadOnly Property TwoFactorAuthentication As String
+        Public ReadOnly Property TwoFactorAuthentication As String
             Get
                 Return "TwoFactorAuthentication"
             End Get
@@ -56,7 +58,7 @@ Namespace Views.Manage
 
         <Extension()>
         Sub AddActivePage(ByVal viewData As ViewDataDictionary, ByVal activePage As String)
-            Return viewData(ActivePageKey) = activePage
+            viewData(ActivePageKey) = activePage
         End Sub
 
     End Module

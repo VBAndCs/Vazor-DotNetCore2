@@ -14,7 +14,7 @@ Public Class TestIfStatements
                         </z:if>
                     </zml>
 
-        Dim y = x.ParseZml().ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "@if (a>3 & y<5)
 {
@@ -39,7 +39,7 @@ Public Class TestIfStatements
                     </z:if>
                 </zml>
 
-        Dim y = x.ParseZml().ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "@if (a != 3 && b == 5)
 {
@@ -80,7 +80,7 @@ else
                     </z:if>
                 </zml>
 
-        Dim y = x.ParseZml().ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "@if (grade < 30)
 {
@@ -142,7 +142,7 @@ else
                     </z:if>
                 </zml>
 
-        Dim y = x.ParseZml().ToString()
+        Dim y = x.ParseZml()
         Dim z =
 "@if (Model.Count == 0)
 {
@@ -184,7 +184,7 @@ else
                             iftrue="danger" iffalse="success"/>
                     </p>
                 </zml>
-        Dim y = x.ParseZml().ToString()
+        Dim y = x.ParseZml()
         Dim z =
 $"<p>
   @Model.StartsWith({Qt}Error{Qt}) ? {Qt}danger{Qt} : {Qt}success{Qt}
@@ -199,7 +199,7 @@ $"<p>
                 </z:declare>
             </zml>
 
-        y = x.ParseZml().ToString()
+        y = x.ParseZml()
         z = $"@{{ var x = Error ?? {Qt}success{Qt}; }}"
         Assert.AreEqual(y, z)
 

@@ -1,8 +1,6 @@
 <z:model type="TwoFactorAuthenticationViewModel" />
 <z:title>Two-factor authentication</z:title>
-<z:invoke method="ViewData.AddActivePage">
-    <z:arg>@ManageNavPages.TwoFactorAuthentication</z:arg>
-</z:invoke>
+<z:viewdata @ManageNavPages.ActivePageKey="@ManageNavPages.TwoFactorAuthentication"/>
 
 <h4><z:title /></h4>
 <z:if condition="Model.Is2faEnabled">
@@ -19,7 +17,7 @@
                 <p>You can <a asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
             </div>
         </z:elseif>
-        <z:elseif condition="Model.RecoveryCodesLeft __ltn__= 3">
+        <z:elseif condition="Model.RecoveryCodesLeft __ltn__;= 3">
             <div class="alert alert-warning">
                 <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
                 <p>You should <a asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>

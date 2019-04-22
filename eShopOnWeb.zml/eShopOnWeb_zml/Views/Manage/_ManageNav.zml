@@ -1,11 +1,11 @@
 ﻿<z:inject SignInManager.type="SignInManager(Of ApplicationUser)" />
 
-<z:set object="hasExternalLogins">
+<z:declare var="hasExternalLogins">
   <z:dot>
-      <z:await method="SignInManager.GetExternalAuthenticationSchemesAsync()"/>
+      <z:await method="SignInManager.GetExternalAuthenticationSchemesAsync"/>
       <z:invoke method="Any"/>
   </z:dot>
-</z:set>       
+</z:declare>       
 
 <ul class="nav nav-pills nav-stacked">
     <li class="@ManageNavPages.IndexNavClass(ViewContext)"><a asp-action="MyAccount">Profile</a></li>

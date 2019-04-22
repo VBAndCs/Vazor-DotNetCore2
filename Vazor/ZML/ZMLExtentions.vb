@@ -43,7 +43,7 @@ Public Module ZMLExtentions
     End Function
 
     <Extension>
-    Public Function ToXml(x As String) As XElement
+    Private Function ToXml(x As String) As XElement
         x = Zml.FixAttr(x)
         Dim xml = XElement.Parse(
                 TempRoot +
@@ -78,11 +78,11 @@ Public Module ZMLExtentions
 
     <Extension>
     Function ParseZml(zml As XElement, Optional addComment As Boolean = False) As String
-        Return New Zml(addComment).ParseZml(zml)
+        Return New Zml().ParseZml(zml)
     End Function
 
     <Extension>
-    Friend Function ParseZml(zml As String) As String
+    Public Function ParseZml(zml As String) As String
         Return ToXml(zml).ParseZml(True)
     End Function
 End Module

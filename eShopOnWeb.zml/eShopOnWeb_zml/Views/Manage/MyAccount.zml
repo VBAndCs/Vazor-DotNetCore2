@@ -1,8 +1,6 @@
 ﻿<z:model type="IndexViewModel" />
 <z:title>Profile</z:title>
-<z:invoke method="ViewData.AddActivePage">
-    <z:arg>@ManageNavPages.Index</z:arg>
-</z:invoke>
+<z:viewdata @ManageNavPages.ActivePageKey="@ManageNavPages.Index" />
 
 <h4><z:title /></h4>
 <partial name="_StatusMessage" for="StatusMessage" />

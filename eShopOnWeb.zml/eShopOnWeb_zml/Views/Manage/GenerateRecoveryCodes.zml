@@ -1,8 +1,6 @@
 ﻿<z:model type="GenerateRecoveryCodesViewModel" />
 <z:title>Recovery codes</z:title>
-<z:invoke method="ViewData.AddActivePage">
-    <z:arg>@ManageNavPages.TwoFactorAuthentication</z:arg>
-</z:invoke>
+<z:viewdata @ManageNavPages.ActivePageKey="@ManageNavPages.TwoFactorAuthentication" />
 
 <h4><z:title/></h4>
 <div class="alert alert-warning" role="alert">

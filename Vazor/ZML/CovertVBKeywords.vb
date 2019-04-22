@@ -42,6 +42,7 @@
             (" IsNot ", " != "), (" isnot ", " != "),
             (">", GreaterThan), (">", LessThan))
 
+        If x.ToLower().StartsWith("not ") Then x = "!" & x.Substring(3)
         Return x
 
     End Function

@@ -19,7 +19,7 @@ Imports Vazor
                         </z:invoke>
                     </zml>
 
-            Dim y = x.ParseZml.ToString()
+            Dim y = x.ParseZml()
             Dim z = $"@Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b)"
             Assert.AreEqual(y, z)
 
@@ -30,7 +30,7 @@ Imports Vazor
                     </z:invoke>
                 </zml>
 
-            y = x.ParseZml.ToString()
+            y = x.ParseZml()
             z = "@RenderSection('Scripts', required: false)".Replace(SnglQt, Qt)
             Assert.AreEqual(y, z)
 
@@ -46,7 +46,7 @@ Imports Vazor
                     </z:await>
                 </zml>
 
-            y = x.ParseZml.ToString()
+            y = x.ParseZml()
             z = "@{ await " & $"Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b);" & " }"
             Assert.AreEqual(y, z)
 
@@ -81,7 +81,7 @@ Imports Vazor
                         </z:invoke>
                     </zml>
 
-            Dim y = x.ParseZml.ToString()
+            Dim y = x.ParseZml()
             Dim z =
 "@Foo(
 3, 
@@ -106,7 +106,7 @@ await Foo2(false, 'Ali'))".Replace((SnglQt, Qt), (vbCrLf, ""))
                         </z:set>
                     </zml>
 
-            Dim y = x.ParseZml.ToString()
+            Dim y = x.ParseZml()
             Dim z = "@{ hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any(); }"
 
             Assert.AreEqual(y, z)

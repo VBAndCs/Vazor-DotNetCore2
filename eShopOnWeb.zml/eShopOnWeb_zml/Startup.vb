@@ -165,7 +165,6 @@ Public Class Startup
 
 
         Vazor.ZmlPages.Compile()
-
     End Sub
 
 End Class
