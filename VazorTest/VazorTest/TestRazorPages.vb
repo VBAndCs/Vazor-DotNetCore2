@@ -14,9 +14,26 @@ Public Class TestRazorPages
 
         Dim y = x.ParseZml()
         Dim z =
-"@section Scripts
-{
+"@section Scripts {
   <partial name='_ValidationScriptsPartial' />
+}".Replace(SnglQt, Qt)
+
+        Assert.AreEqual(y, z)
+
+
+        x = <zml xmlns:z="zml">
+                <z:section name="Scripts">
+                    <z:invoke method="RenderSection">
+                        <z:arg>Scripts</z:arg>
+                        <z:arg name="required">false</z:arg>
+                    </z:invoke>
+                </z:section>
+            </zml>
+
+        y = x.ParseZml()
+        z =
+"@section Scripts {
+  @RenderSection('Scripts', required: false)
 }".Replace(SnglQt, Qt)
 
         Assert.AreEqual(y, z)

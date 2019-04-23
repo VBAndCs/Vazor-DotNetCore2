@@ -24,7 +24,7 @@
         ParseForLoops()
         ParseComments()
         ParseViewData()
-        ParseDisplayfor()
+        ParseHtmlHelpers()
         ParseDots()
         ParseLambdas()
         ParseInvokes()
@@ -211,22 +211,26 @@
         End If
 
     End Sub
-    Private Sub ParseDisplayfor()
+    Private Sub ParseHtmlHelpers()
+        ParseHtmlHelper(displayforTag, "DisplayFor")
+        ParseHtmlHelper(displaynameforTag, "DisplayNameFor")
+    End Sub
 
-        Dim displayfor = (From elm In Xml.Descendants()
-                          Where elm.Name = displayforTag).FirstOrDefault
+    Sub ParseHtmlHelper(tag As String, methodName As String)
+        Dim helper = (From elm In Xml.Descendants()
+                      Where elm.Name = tag).FirstOrDefault
 
-        If displayfor IsNot Nothing Then
-            Dim var = At(displayfor.Attribute(varAttr).Value)
+        If helper IsNot Nothing Then
+            Dim var = At(helper.Attribute(varAttr).Value)
             Dim _return = ""
-            If displayfor.Nodes.Count > 0 AndAlso TypeOf displayfor.Nodes(0) Is XElement Then
-                _return = ParseNestedInvoke(displayfor.Nodes(0))
+            If helper.Nodes.Count > 0 AndAlso TypeOf helper.Nodes(0) Is XElement Then
+                _return = ParseNestedInvoke(helper.Nodes(0))
             Else
-                _return = At(If(displayfor.Attribute(returnAttr)?.Value, displayfor.Value))
+                _return = At(If(helper.Attribute(returnAttr)?.Value, helper.Value))
             End If
-            Dim cs = $"@Html.DisplayFor({var} => {_return})"
-            displayfor.ReplaceWith(AddToCsList(cs, displayfor))
-            ParseDisplayfor()
+            Dim cs = $"@Html.{methodName}({var} => {_return})"
+            helper.ReplaceWith(AddToCsList(cs, helper))
+            ParseHtmlHelper(tag, methodName)
         End If
     End Sub
 
@@ -771,7 +775,7 @@
         If section IsNot Nothing Then
             Dim name = At(section.Attribute(nameAttr).Value)
             Dim cs = $"@section {name}"
-            section.ReplaceWith(GetCsHtml(cs, section))
+            section.ReplaceWith(GetCsHtml(cs, section, False, True))
 
             ParseSections()
         End If

@@ -26,7 +26,6 @@ Imports Swashbuckle.AspNetCore.Swagger
 Imports System.Net.Mime
 Imports Microsoft.EntityFrameworkCore
 
-
 Public Class Startup
         Private _services As IServiceCollection
 

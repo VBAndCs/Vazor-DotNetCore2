@@ -30,6 +30,7 @@
     Const textTag = zns & "text"
     Const viewdataTag = zns & "viewdata"
     Const displayforTag = zns & "displayfor"
+    Const displaynameforTag = zns & "displaynamefor"
 
     Const nsAttr = "ns"
     Const addAttr = "add"

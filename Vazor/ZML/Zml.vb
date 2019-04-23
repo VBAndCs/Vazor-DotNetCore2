@@ -128,14 +128,26 @@ Public Class Zml
         Return x
     End Function
 
-    Private Function GetCsHtml(cs As String, html As XElement, Optional CheckParentBlock As Boolean = False) As XElement
+    Private Function GetCsHtml(cs As String, html As XElement, Optional CheckParentBlock As Boolean = False, Optional AtRequired As Boolean = False) As XElement
         Dim x = <zml/>
-        x.Add(
-                     AddToCsList(cs, If(CheckParentBlock, html.Parent, html)),
-                     BlockStart,
-                        html.InnerXml,
-                     BlockEnd
-                  )
+        Dim csTag As XElement
+        If AtRequired Then
+            csTag = AddToCsList(cs & " {", Nothing)
+            x.Add(
+                 csTag,
+                  html.InnerXml,
+              BlockEnd
+          )
+        Else
+            csTag = AddToCsList(cs, If(CheckParentBlock, html.Parent, html))
+            x.Add(
+                csTag,
+                BlockStart,
+                    html.InnerXml,
+                BlockEnd
+          )
+        End If
+
         Return x
     End Function
 
@@ -144,13 +156,13 @@ Public Class Zml
         If item Is Nothing Then Return False
         Dim pn As XElement = item.Parent
         If pn Is Nothing Then Return False
-
         Dim parentName = pn.Name.ToString
-        If parentName.StartsWith(zns) Then Return True
+        If parentName.StartsWith(zns) AndAlso parentName <> sectionTag Then Return True
 
         If parentName = "zmlbody" OrElse (parentName = "zml" AndAlso pn.Nodes.Count = 1) Then pn = pn.Parent
         If pn Is Nothing Then Return False
-        If parentName.StartsWith(zns) Then Return True
+        parentName = pn.Name.ToString()
+        If parentName.StartsWith(zns) AndAlso parentName <> sectionTag Then Return True
 
         Dim blkSt = BlockStart.Name.ToString()
 
