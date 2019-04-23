@@ -21,6 +21,7 @@
     Const elseTag = zns & "else"
     Const invokeTag = zns & "invoke"
     Const awaitTag = zns & "await"
+    Const typeparamTag = zns & "typeparam"
     Const argTag = zns & "arg"
     Const lambdaTag = zns & "lambda"
     Const dotTag = zns & "dot"
@@ -28,6 +29,7 @@
     Const checkTag = zns & "check"
     Const textTag = zns & "text"
     Const viewdataTag = zns & "viewdata"
+    Const displayforTag = zns & "displayfor"
 
     Const nsAttr = "ns"
     Const addAttr = "add"
@@ -65,4 +67,7 @@
     Const falseKeyword = "false"
     Const tempText = "__empty__"
     Const AtSymbole = "__AT__"
+
+    Const doctypeStr = "<!DOCTYPE html>"
+    Const doctypeTag = "<z:doctype html=""""/>"
 End Class

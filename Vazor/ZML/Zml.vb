@@ -11,7 +11,9 @@ Public Class Zml
 
     Private Function AddToCsList(item As String, Optional parent As XElement = Nothing) As XElement
         If parent IsNot Nothing Then
-            If IsInsideCsBlock(parent.Parent) Then item = item.TrimStart("@"c, "{"c).TrimEnd("}"c)
+            If IsInsideCsBlock(parent) Then
+                item = item.TrimStart("@"c, "{"c).TrimEnd("}"c)
+            End If
         End If
 
         CsCode.Add(item)
@@ -22,8 +24,10 @@ Public Class Zml
 
     Friend Shared Function FixAttr(x As String) As String
 
-        Dim lines = x.Replace(("&", Ampersand), ("@", AtSymbole)).
-        Split({CChar(vbCr), CChar(vbLf)}, StringSplitOptions.RemoveEmptyEntries)
+        Dim lines = x.Replace(
+                  ("&", Ampersand), ("@", AtSymbole),
+                  (doctypeStr, doctypeTag)
+               ).Split({CChar(vbCr), CChar(vbLf)}, StringSplitOptions.RemoveEmptyEntries)
         Dim sb As New Text.StringBuilder
 
         For Each line In lines
@@ -124,12 +128,12 @@ Public Class Zml
         Return x
     End Function
 
-    Private Function GetCsHtml(cs As String, html As XElement, Optional UseInner As Boolean = True) As XElement
+    Private Function GetCsHtml(cs As String, html As XElement, Optional CheckParentBlock As Boolean = False) As XElement
         Dim x = <zml/>
         x.Add(
-                    AddToCsList(cs, html),
+                     AddToCsList(cs, If(CheckParentBlock, html.Parent, html)),
                      BlockStart,
-                        If(UseInner, html.InnerXml, html),
+                        html.InnerXml,
                      BlockEnd
                   )
         Return x
@@ -150,8 +154,9 @@ Public Class Zml
 
         Dim blkSt = BlockStart.Name.ToString()
 
-        For Each x As XElement In pn.Nodes
-            If x.Name.ToString() = blkSt Then Return True
+        For Each node In pn.Nodes
+            Dim x = TryCast(node, XElement)
+            If x IsNot Nothing AndAlso x.Name.ToString() = blkSt Then Return True
         Next
 
         Return False

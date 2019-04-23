@@ -29,7 +29,7 @@
 
     End Function
 
-    Private Function ConvLog(value As String) As String
+    Private Function ConvCond(value As String) As String
         Dim x = value.Replace(
             ("@Model.", "Model."),
             (" And ", $" {Ampersand} "), (" and ", $" {Ampersand} "),
@@ -40,11 +40,13 @@
             (" Xor ", " ^ "), (" xor ", " ^ "),
             (" <> ", " != "), (" = ", " == "), ("====", "=="),
             (" IsNot ", " != "), (" isnot ", " != "),
+            (" nothing ", " null "), (" Nothing ", " null "),
             (">", GreaterThan), (">", LessThan))
 
         If x.ToLower().StartsWith("not ") Then x = "!" & x.Substring(3)
-        Return x
+        If x.ToLower().EndsWith(" nothing") Then x = x.Substring(0, x.Length - 7) & "null"
 
+        Return x
     End Function
 
 End Class

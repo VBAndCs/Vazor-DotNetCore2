@@ -7,21 +7,22 @@ Imports Vazor
 
         <TestMethod>
         Sub TestInvokes()
-            Dim x = <zml xmlns:z="zml">
-                        <z:invoke method="Foo">
-                            <z:arg>3</z:arg>
-                            <z:arg>'a'</z:arg>
-                            <z:arg>Ali</z:arg>
-                            <z:lambda m.type="var" return="m.Name"/>
-                            <z:lambda n.type="Integer" return="n + 1"/>
-                            <z:lambda x.type="int" y.type="int" return="x + y"/>
-                            <z:lambda a="Double" b="Single" return="a + b"/>
-                        </z:invoke>
-                    </zml>
+        Dim x = <zml xmlns:z="zml">
+                    <z:invoke method="Foo">
+                        <z:typeparam>Integer</z:typeparam>
+                        <z:arg>3</z:arg>
+                        <z:arg>'a'</z:arg>
+                        <z:arg>Ali</z:arg>
+                        <z:lambda m.type="var" return="m.Name"/>
+                        <z:lambda n.type="Integer" return="n + 1"/>
+                        <z:lambda x.type="int" y.type="int" return="x + y"/>
+                        <z:lambda a="Double" b="Single" return="a + b"/>
+                    </z:invoke>
+                </zml>
 
-            Dim y = x.ParseZml()
-            Dim z = $"@Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b)"
-            Assert.AreEqual(y, z)
+        Dim y = x.ParseZml()
+        Dim z = $"@Foo<int>(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b)"
+        Assert.AreEqual(y, z)
 
             x = <zml xmlns:z="zml">
                     <z:invoke method="RenderSection">
@@ -34,21 +35,23 @@ Imports Vazor
             z = "@RenderSection('Scripts', required: false)".Replace(SnglQt, Qt)
             Assert.AreEqual(y, z)
 
-            x = <zml xmlns:z="zml">
-                    <z:await method="Foo">
-                        <z:arg>3</z:arg>
-                        <z:arg>'a'</z:arg>
-                        <z:arg>Ali</z:arg>
-                        <z:lambda m="" return="m.Name"/>
-                        <z:lambda n.type="Integer" return="n + 1"/>
-                        <z:lambda x.type="int" y.type="int" return="x + y"/>
-                        <z:lambda a="Double" b="Single" return="a + b"/>
-                    </z:await>
-                </zml>
+        x = <zml xmlns:z="zml">
+                <z:await method="Foo">
+                    <z:typeparam>Integer</z:typeparam>
+                    <z:typeparam>UInteger</z:typeparam>
+                    <z:arg>3</z:arg>
+                    <z:arg>'a'</z:arg>
+                    <z:arg>Ali</z:arg>
+                    <z:lambda m="" return="m.Name"/>
+                    <z:lambda n.type="Integer" return="n + 1"/>
+                    <z:lambda x.type="int" y.type="int" return="x + y"/>
+                    <z:lambda a="Double" b="Single" return="a + b"/>
+                </z:await>
+            </zml>
 
-            y = x.ParseZml()
-            z = "@{ await " & $"Foo(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b);" & " }"
-            Assert.AreEqual(y, z)
+        y = x.ParseZml()
+        z = "@{ await " & $"Foo<int, uint>(3, 'a', {Qt}Ali{Qt}, m => m.Name, (int n) => n + 1, (int x, int y) => x + y, (double a, float b) => a + b);" & " }"
+        Assert.AreEqual(y, z)
 
         End Sub
 

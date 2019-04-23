@@ -4,6 +4,8 @@
         BlockStart = AddToCsList("{")
         BlockEnd = AddToCsList("}")
 
+        ' <z:displayfor var="modelItem" return="item.OrderDate" />
+
         Xml = New XElement(zml)
         FixSelfClosing()
         ParseImports()
@@ -22,6 +24,7 @@
         ParseForLoops()
         ParseComments()
         ParseViewData()
+        ParseDisplayfor()
         ParseDots()
         ParseLambdas()
         ParseInvokes()
@@ -36,11 +39,12 @@
         Next
 
         x = x.Replace(
-                 (LessThan, "<"), (GreaterThan, ">"),
-                 (Ampersand, "&"), (tempText, ""), (AtSymbole, "@"),
-                 (Qt + ChngQt, SnglQt),
-                 (ChngQt + Qt, SnglQt),
-                 (ChngQt, ""), (SnglQt + SnglQt, Qt)
+                   (LessThan, "<"), (GreaterThan, ">"),
+                   (Ampersand, "&"), (tempText, ""), (AtSymbole, "@"),
+                   (Qt + ChngQt, SnglQt),
+                   (ChngQt + Qt, SnglQt),
+                   (ChngQt, ""), (SnglQt + SnglQt, Qt),
+                   (doctypeTag, doctypeStr)
                  ).Trim(" ", vbCr, vbLf)
 
         Dim lines = x.Split({vbCr, vbLf}, StringSplitOptions.RemoveEmptyEntries)
@@ -89,7 +93,7 @@
 
         For Each tageHelper In tageHelpers
             Dim value = tageHelper.Value
-            If Not value.StartsWith("@") Then
+            If Not (value.StartsWith("@") Or value.StartsWith(AtSymbole)) Then
                 If value.StartsWith(ModelKeyword) Then
                     tageHelper.Value = "@" + value
                 Else
@@ -206,6 +210,24 @@
             ParseSetters()
         End If
 
+    End Sub
+    Private Sub ParseDisplayfor()
+
+        Dim displayfor = (From elm In Xml.Descendants()
+                          Where elm.Name = displayforTag).FirstOrDefault
+
+        If displayfor IsNot Nothing Then
+            Dim var = At(displayfor.Attribute(varAttr).Value)
+            Dim _return = ""
+            If displayfor.Nodes.Count > 0 AndAlso TypeOf displayfor.Nodes(0) Is XElement Then
+                _return = ParseNestedInvoke(displayfor.Nodes(0))
+            Else
+                _return = At(If(displayfor.Attribute(returnAttr)?.Value, displayfor.Value))
+            End If
+            Dim cs = $"@Html.DisplayFor({var} => {_return})"
+            displayfor.ReplaceWith(AddToCsList(cs, displayfor))
+            ParseDisplayfor()
+        End If
     End Sub
 
     Private Sub ParseDeclarations()
@@ -537,15 +559,15 @@
                 Dim children = _if.Nodes
                 Dim firstChild = TryCast(children(0), XElement)
                 If firstChild IsNot Nothing AndAlso firstChild.Name = thenTag Then
-                    Dim cs = "@if (" + ConvLog(_if.Attribute(conditionAttr).Value) + ")"
-                    Dim _then = GetCsHtml(cs, firstChild)
+                    Dim cs = "@if (" + ConvCond(_if.Attribute(conditionAttr).Value) + ")"
+                    Dim _then = GetCsHtml(cs, firstChild, True)
 
                     Dim _elseifs = ParseElseIfs(_if)
 
                     Dim _else As XElement
                     Dim lastChild As XElement = children(children.Count - 1)
                     If lastChild.Name = elseTag Then
-                        _else = GetCsHtml("else", lastChild)
+                        _else = GetCsHtml("else", lastChild, True)
                     End If
 
                     If _elseifs.Count = 0 Then
@@ -554,8 +576,8 @@
                         _if.ReplaceWith(CombineXml(_then, _elseifs, _else))
                     End If
                 Else
-                    Dim cs = "@if (" + ConvLog(_if.Attribute("condition").Value) + ")"
-                    _if.ReplaceWith(GetCsHtml(cs, _if.InnerXml, False))
+                    Dim cs = "@if (" + ConvCond(_if.Attribute("condition").Value) + ")"
+                    _if.ReplaceWith(GetCsHtml(cs, _if))
                 End If
             End If
 
@@ -572,8 +594,8 @@
         Dim cs = ""
 
         For Each _elseif In _elseifs
-            cs = "else if (" + ConvLog(_elseif.Attribute(conditionAttr).Value) + ")"
-            x.Add(GetCsHtml(cs, _elseif))
+            cs = "else if (" + ConvCond(_elseif.Attribute(conditionAttr).Value) + ")"
+            x.Add(GetCsHtml(cs, _elseif, True))
         Next
 
         Return x
@@ -607,7 +629,7 @@
             For Each attr In invoke.Attributes
                 Select Case attr.Name.ToString
                     Case propertyAttr
-                        cs = $"@{attr.Value}"
+                        cs = At($"@{attr.Value}")
                     Case indexerAttr
                         Dim indexer = attr.Value
                         Dim sb As New Text.StringBuilder()
@@ -632,34 +654,36 @@
                             cs = $"@{indexer}([args])"
                         End If
                     Case Else
-                        Dim method = If(invoke.Attribute(methodAttr)?.Value, invoke.Attributes()(0).Name.ToString()).TrimStart("@")
-                        Dim sb As New Text.StringBuilder()
-
-                        For Each node In invoke.Nodes
-                            Dim arg = TryCast(node, XElement)
-                            If arg Is Nothing Then Continue For
-
+                        Dim method = convVars(At(If(invoke.Attribute(methodAttr)?.Value, invoke.Attributes()(0).Name.ToString())))
+                        Dim sbArgs As New Text.StringBuilder()
+                        Dim sbTypeParams As New Text.StringBuilder()
+                        For Each arg As XElement In invoke.Nodes
                             Select Case arg.Name.ToString()
+                                Case typeparamTag
+                                    sbTypeParams.Append(convVars(At(If(arg.Value, arg.Attribute(typeAttr).Value))))
+                                    sbTypeParams.Append(", ")
                                 Case argTag
                                     Dim namedArg = arg.Attribute(nameAttr)?.Value
-                                    If namedArg <> "" Then sb.Append(namedArg + ": ")
+                                    If namedArg <> "" Then sbArgs.Append(namedArg + ": ")
                                     If arg.Nodes.Count > 0 AndAlso TypeOf arg.Nodes(0) Is XElement Then
-                                        sb.Append(ParseNestedInvoke(arg.Nodes(0)))
+                                        sbArgs.Append(ParseNestedInvoke(arg.Nodes(0)))
                                     Else
-                                        sb.Append(Quote(If(arg.Value, arg.Attribute(valueAttr).Value)))
+                                        sbArgs.Append(Quote(If(arg.Value, arg.Attribute(valueAttr).Value)))
                                     End If
+                                    sbArgs.Append(", ")
                                 Case Else
-                                    sb.Append(ParseNestedInvoke(arg))
+                                    sbArgs.Append(ParseNestedInvoke(arg))
+                                    sbArgs.Append(", ")
                             End Select
-                            sb.Append(", ")
                         Next
 
-                        Dim args = If(sb.Length = 0, "", sb.Remove(sb.Length - 2, 2).ToString())
+                        Dim args = If(sbArgs.Length = 0, "", sbArgs.Remove(sbArgs.Length - 2, 2).ToString())
+                        Dim typeParams = If(sbTypeParams.Length = 0, "", "<" & sbTypeParams.Remove(sbTypeParams.Length - 2, 2).ToString() & ">")
 
                         If invoke.Name.ToString = awaitTag Then
-                            cs = "@{ " & awaitKeyword & $" {method}({args})" + "; }"
+                            cs = "@{ " & awaitKeyword & $" {method}{typeParams}({args})" + "; }"
                         Else
-                            cs = $"@{method}({args})"
+                            cs = $"@{method}{typeParams}({args})"
                         End If
                 End Select
             Next
@@ -695,7 +719,7 @@
             If lambda.Nodes.Count > 0 AndAlso TypeOf lambda.Nodes(0) Is XElement Then
                 _return = ParseNestedInvoke(lambda.Nodes(0))
             Else
-                _return = If(lambda.Attribute(returnAttr)?.Value, lambda.Value)
+                _return = At(If(lambda.Attribute(returnAttr)?.Value, lambda.Value))
             End If
 
             Dim cs = ""

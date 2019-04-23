@@ -1,10 +1,5 @@
 @model RegisterViewModel
 @{ ViewData["Title"] = "Register"; }
-
-@*<!--This file is auto generated from the .zml file.
-Make cahnges only to the .zml file, and don't make any changes here,
-because they will be overwritten when the .zml file changes.-->*@
-
 <div class="brand-header-block">
   <ul class="container">
     <li class="active" style="margin-right: 65px;">Already have an account? <a asp-action="Signin">LOGIN</a></li>
@@ -51,5 +46,5 @@ because they will be overwritten when the .zml file changes.-->*@
 </div>
 @section Scripts
 {
-  @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+   await Html.RenderPartialAsync("_ValidationScriptsPartial"); 
 }

@@ -217,4 +217,27 @@ comment
         Assert.AreEqual(y, z)
 
     End Sub
+
+    <TestMethod>
+    Sub TestDisplayfor()
+        Dim x = <zml xmlns:z="zml">
+                    <z:displayfor var="m" return="m.Name"/>
+                </zml>
+
+        Dim y = x.ParseZml()
+        Dim z = "@Html.DisplayFor(m => m.Name)"
+        Assert.AreEqual(y, z)
+
+        x = <zml xmlns:z="zml">
+                <z:displayfor var="m">
+                    <z:invoke method="m.GetName">
+                        <z:arg>@m.Id</z:arg>
+                    </z:invoke>
+                </z:displayfor>
+            </zml>
+
+        y = x.ParseZml()
+        z = "@Html.DisplayFor(m => m.GetName(m.Id))"
+        Assert.AreEqual(y, z)
+    End Sub
 End Class
