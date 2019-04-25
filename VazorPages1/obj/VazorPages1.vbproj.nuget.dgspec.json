@@ -61,6 +61,10 @@
               "target": "Package",
               "version": "[2.2.0, )",
               "autoReferenced": true
+            },
+            "ZML.1.0": {
+              "target": "Package",
+              "version": "[1.0.0, )"
             }
           },
           "imports": [

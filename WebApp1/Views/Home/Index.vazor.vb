@@ -1,5 +1,6 @@
 ﻿Imports Microsoft.AspNetCore.Mvc.ViewFeatures
 Imports Vazor
+Imports ZML
 
 ' To add anew vzor view, right-click the folder in solution explorer
 ' click Add/New item, and chosse the "VazorView" item from the window

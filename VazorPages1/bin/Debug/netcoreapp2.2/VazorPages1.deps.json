@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    "signature": "4e8aafc8d54ac43152fc829c4baee1fa7ec42329"
   },
   "compilationOptions": {
     "languageVersion": "",
@@ -21,7 +21,8 @@
           "Microsoft.AspNetCore.App": "2.2.0",
           "Microsoft.AspNetCore.Razor.Design": "2.2.0",
           "Microsoft.NETCore.App": "2.2.0",
-          "Vazor1.5": "1.5.0"
+          "Vazor1.6": "1.6.0",
+          "ZML.1.0": "1.0.0"
         },
         "runtime": {
           "VazorPages1.dll": {}
@@ -30,15 +31,26 @@
           "VazorPages1.dll": {}
         }
       },
-      "Vazor1.5/1.5.0": {
+      "ZML.1.0/1.0.0": {
+        "runtime": {
+          "lib/netstandard2.0/ZML.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/ZML.dll": {}
+        }
+      },
+      "Vazor1.6/1.6.0": {
         "dependencies": {
           "Microsoft.Extensions.FileProviders.Abstractions": "2.2.0"
         },
         "runtime": {
-          "Vazor1.5.dll": {}
+          "Vazor1.6.dll": {}
         },
         "compile": {
-          "Vazor1.5.dll": {}
+          "Vazor1.6.dll": {}
         }
       },
       "Microsoft.AspNet.WebApi.Client/5.2.6": {
@@ -3243,7 +3255,14 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Vazor1.5/1.5.0": {
+    "ZML.1.0/1.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YxQPmMxhMWDI9GZkiCfVGqbnDutSKFnuFt1PdpIfvTeXVQtSUVr09T6o2wES5cYpW8/5xCr9VV5uD9s9qCirYg==",
+      "path": "zml.1.0/1.0.0",
+      "hashPath": "zml.1.0.1.0.0.nupkg.sha512"
+    },
+    "Vazor1.6/1.6.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

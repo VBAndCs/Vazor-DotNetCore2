@@ -15,7 +15,7 @@ Partial Public Class IndexView
 
         Return _
  _
-        <zml>
+        <zml xmlns:z="zml">
             <model type="List(Of WebApp1.Student)"/>
             <viewdata Title='"test"' Message='"OK"' Key='"value"'/>
 
@@ -30,18 +30,18 @@ Partial Public Class IndexView
                      End Function)() %>
             </ul>
             <!--Or use ZML tags directly-->
-            <if condition="Model.Count > 1 andalso not (Model.Count >= 10)">
+            <z:if condition="Model.Count > 1 andalso not (Model.Count >= 10)">
                 <p>Students details:</p>
                 <ul>
-                    <foreach var="m" in="Model">
+                    <z:foreach var="m" in="Model">
                         <li>
                         Id: @m.Id<br/>
                         Name: @m.Name<br/>
                             <p>Grade: @m.Grade</p>
                         </li>
-                    </foreach>
+                    </z:foreach>
                 </ul>
-            </if>
+            </z:if>
             <script>
                  var x = 5;
                 document.writeln("students count = @Model.Count");
