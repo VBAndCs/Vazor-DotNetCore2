@@ -6,6 +6,9 @@ Imports System.Reflection
 Imports System.Runtime.CompilerServices
 
 Public Module VazorExtensions
+    Public Const Ampersand = "__amp__;"
+    Public Const GreaterThan = "__gtn__;"
+    Public Const LessThan = "__ltn__;"
 
     <Extension>
     Public Function ToHtmlString(x As XElement, ParamArray tagsToRemove() As String) As String

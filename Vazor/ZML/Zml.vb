@@ -5,14 +5,15 @@ Public Class Zml
     Dim CsCode As New List(Of String)
     Dim BlockStart, BlockEnd As XElement
     Dim Xml As XElement
+    Const TempBody = "<zmlbody />"
     Const TempBodyStart = "<zmlbody>"
     Const TempBodyEnd = "</zmlbody>"
     Const ChngQt = "__chngqt__"
 
-    Private Function AddToCsList(item As String, Optional parent As XElement = Nothing) As XElement
-        If parent IsNot Nothing Then
-            If IsInsideCsBlock(parent) Then
-                item = item.TrimStart("@"c, "{"c).TrimEnd("}"c)
+    Private Function AddToCsList(item As String, Optional node As XElement = Nothing) As XElement
+        If node IsNot Nothing Then
+            If IsInsideCsBlock(node) Then
+                item = item.TrimStart("@"c, "{"c).TrimEnd("}"c).Trim()
             End If
         End If
 
@@ -75,9 +76,31 @@ Public Class Zml
         Next
 
 
-        ' FixConditions
+        x = FixConditions(x)
 
         Return x
+    End Function
+
+    Private Shared Function FixConditions(x As String) As String
+        Dim pos = 0
+        Dim endPos = 0
+        Dim sb As New Text.StringBuilder()
+
+        Do
+            pos = x.IndexOf(Qt, endPos)
+            If pos = -1 Then Exit Do
+            sb.Append(x.Substring(endPos, pos - endPos))
+            endPos = x.IndexOf(Qt, pos + 1) + 1
+            If endPos = 0 Then Exit Do
+            Dim s = x.Substring(pos, endPos - pos).
+                    Replace(("<", LessThan), (">", GreaterThan))
+            sb.Append(s)
+        Loop
+
+        If endPos = 0 Then Return x
+
+        sb.Append(x.Substring(endPos, x.Length - endPos))
+        Return sb.ToString()
     End Function
 
     ' Qute string values, except objects (starting with @) and chars (quted by ' ')
@@ -91,7 +114,7 @@ Public Class Zml
         ElseIf value.StartsWith(SnglQt) AndAlso value.EndsWith(SnglQt) Then
                 Return value ' value is char
         ElseIf value.StartsWith("#") AndAlso value.EndsWith("#") Then
-            Return $"DateTime.Parse({Qt}{value.Trim("#")}{Qt})"
+            Return $"DateTime.Parse({Qt}{value.Trim("#")}{Qt}, new System.Globalization.CultureInfo({Qt}en-US{Qt}))"
         ElseIf value = trueKeyword OrElse value = falseKeyword Then
             Return value ' value is boolean  
         ElseIf Double.TryParse(value, New Double()) Then

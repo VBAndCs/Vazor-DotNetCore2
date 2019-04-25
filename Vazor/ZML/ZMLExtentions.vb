@@ -6,13 +6,6 @@ Imports System.Runtime.CompilerServices
 
 Public Module ZMLExtentions
 
-    Public Const Ampersand = "__amp__;"
-    Public Const GreaterThan = "__gtn__;"
-    Public Const LessThan = "__ltn__;"
-    Public Const ZmlNamespacee = "xmlns:z=""zml"""
-    Public Const TempRoot = "<zml " & ZmlNamespacee & ">"
-    Public Const TempTagStart = "<zml>"
-    Public Const TempTagEnd = "</zml>"
     Public Const SnglQt = "'"
     Public Const Qt = """"
     Public Const Ln = vbCrLf
@@ -36,6 +29,8 @@ Public Module ZMLExtentions
 
     <Extension>
     Function Replace(s As String, ParamArray repPairs() As (repStr As String, repWithStr As String)) As String
+        If s = "" Then Return ""
+
         For Each x In repPairs
             s = s.Replace(x.repStr, x.repWithStr)
         Next
@@ -46,9 +41,9 @@ Public Module ZMLExtentions
     Private Function ToXml(x As String) As XElement
         x = Zml.FixAttr(x)
         Dim xml = XElement.Parse(
-                TempRoot +
+                Zml.TempRoot +
                  x +
-                TempTagEnd)
+                 Zml.TempTagEnd)
         'LoadOptions.PreserveWhitespace)
 
         Return xml
@@ -57,7 +52,7 @@ Public Module ZMLExtentions
     <Extension>
     Public Function GetInnerXML(el As XElement) As String
         Return InnerXml(el).ToString().
-                   Replace((TempRoot, ""), (TempTagStart, ""), (TempTagEnd, ""),
+                   Replace((Zml.TempRoot, ""), (Zml.TempTagStart, ""), (Zml.TempTagEnd, ""),
                    ("<zmlbody>", ""), ("</zmlbody>", "")).
                    Trim(" ", vbCr, vbLf)
     End Function

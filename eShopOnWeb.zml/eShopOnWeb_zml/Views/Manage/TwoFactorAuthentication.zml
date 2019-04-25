@@ -17,7 +17,7 @@
                 <p>You can <a asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
             </div>
         </z:elseif>
-        <z:elseif condition="Model.RecoveryCodesLeft __ltn__;= 3">
+        <z:elseif condition="Model.RecoveryCodesLeft <= 3">
             <div class="alert alert-warning">
                 <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
                 <p>You should <a asp-action="GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>

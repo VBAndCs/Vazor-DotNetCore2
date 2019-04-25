@@ -15,6 +15,7 @@
     Const commentTag = zns & "comment"
     Const forTag = zns & "for"
     Const foreachTag = zns & "foreach"
+    Const whileTag = zns & "while"
     Const ifTag = zns & "if"
     Const thenTag = zns & "then"
     Const elseifTag = zns & "elseif"
@@ -31,7 +32,11 @@
     Const viewdataTag = zns & "viewdata"
     Const displayforTag = zns & "displayfor"
     Const displaynameforTag = zns & "displaynamefor"
+    Const exitTag = zns & "exit"
+    Const breakTag = zns & "break"
+    Const continueTag = zns & "continue"
 
+    '-----------------------------------------
     Const nsAttr = "ns"
     Const addAttr = "add"
     Const pageAttr = "page"
@@ -55,7 +60,9 @@
     Const iftrueAttr = "iftrue"
     Const iffalseAttr = "iffalse"
     Const ifnullAttr = "ifnull"
+    Const labelAttr = "label"
 
+    '-----------------------------------------
     Const aspItems = "asp-items"
     Const aspFor = "asp-for"
     Const atModel = "@Model"
@@ -66,9 +73,16 @@
     Const awaitKeyword = "await"
     Const trueKeyword = "true"
     Const falseKeyword = "false"
+    Const gotoKeyword = "goto"
     Const tempText = "__empty__"
     Const AtSymbole = "__AT__"
-
+    Public Const Ampersand = "__amp__;"
+    Public Const GreaterThan = "__gtn__;"
+    Public Const LessThan = "__ltn__;"
+    Public Const ZmlNamespacee = "xmlns:z=""zml"""
+    Public Const TempRoot = "<zml " & ZmlNamespacee & ">"
+    Public Const TempTagStart = "<zml>"
+    Public Const TempTagEnd = "</zml>"
     Const doctypeStr = "<!DOCTYPE html>"
     Const doctypeTag = "<z:doctype html=""""/>"
 End Class

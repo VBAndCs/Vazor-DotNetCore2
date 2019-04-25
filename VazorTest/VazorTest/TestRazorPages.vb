@@ -257,4 +257,7 @@ comment
         z = "@Html.DisplayFor(m => m.GetName(m.Id))"
         Assert.AreEqual(y, z)
     End Sub
+
 End Class
+
+

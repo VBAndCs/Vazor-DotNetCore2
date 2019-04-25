@@ -22,6 +22,8 @@
         ParseIfStatements()
         ParseForEachLoops()
         ParseForLoops()
+        ParseWhileLoops()
+        ParseBreaks()
         ParseComments()
         ParseViewData()
         ParseHtmlHelpers()
@@ -58,7 +60,7 @@
                 offset += 2
             ElseIf absLine = TempTagEnd Then
                 offset -= 2
-            ElseIf absLine <> "" AndAlso absLine <> TempBodyStart AndAlso absLine <> TempBodyEnd Then
+            ElseIf absLine <> "" AndAlso absLine <> TempBodyStart AndAlso absLine <> TempBodyEnd AndAlso absLine <> TempBody Then
                 line = line.Replace((TempBodyStart, ""), (TempBodyEnd, ""))
                 If line.Length > offset AndAlso line.StartsWith(New String(" ", offset)) Then
                     sb.AppendLine(line.Substring(offset))
@@ -174,19 +176,24 @@
                       Where elm.Name = setTag).FirstOrDefault
 
         If setter IsNot Nothing Then
-            Dim x = ""
-
+            Dim cs As XElement
             Dim obj = setter.Attribute(objectAttr)
             If obj Is Nothing Then
                 ' Set multiple values
 
-                Dim sb As New Text.StringBuilder(Ln + "@{" + Ln)
-                For Each o In setter.Attributes
-                    sb.AppendLine($"{At(o.Name.ToString())} = {Quote(o.Value)};")
-                Next
-                sb.AppendLine("}" + Ln)
-                x = sb.ToString()
-
+                If setter.Attributes.Count = 1 Then
+                    Dim o = setter.Attributes()(0)
+                    cs = AddToCsList("@{ " & $"{At(o.Name.ToString())} = {Quote(o.Value)};" & " }", setter)
+                Else
+                    Dim settings = <zmlbody/>
+                    For Each o In setter.Attributes
+                        settings.Add(AddToCsList($"{At(o.Name.ToString())} = {Quote(o.Value)};"))
+                    Next
+                    cs = CombineXml(
+                            AddToCsList("@{", setter),
+                                 settings,
+                            AddToCsList("}", setter))
+                End If
             Else ' Set single value 
                 Dim key = setter.Attribute(keyAttr)
 
@@ -199,14 +206,14 @@
 
                 If key Is Nothing Then
                     ' Set single value without key
-                    x = "@{ " + $"{At(obj.Value)} = {value};" + " }" + Ln
+                    cs = AddToCsList("@{ " + $"{At(obj.Value)} = {value};" + " }", setter)
 
                 Else ' Set single value with key
-                    x = "@{ " + $"{At(obj.Value)}[{Quote(key.Value)}] = {value};" + " }" + Ln
+                    cs = AddToCsList("@{ " + $"{At(obj.Value)}[{Quote(key.Value)}] = {value};" + " }", setter)
                 End If
             End If
 
-            setter.ReplaceWith(AddToCsList(x, setter))
+            setter.ReplaceWith(cs)
             ParseSetters()
         End If
 
@@ -240,44 +247,45 @@
                         Where elm.Name = declareTag).FirstOrDefault
 
         If _declare IsNot Nothing Then
-            Dim cs = ""
+            Dim cs As XElement
             Dim var = _declare.Attribute(varAttr)
 
             If var Is Nothing Then
                 ' Set multiple values
 
-                Dim sb As New Text.StringBuilder()
-                sb.AppendLine("@{")
-                For Each o In _declare.Attributes
-                    sb.AppendLine($"  var {At(o.Name.ToString())} = {Quote(o.Value)};")
-                Next
-                sb.AppendLine("}")
-                cs = sb.ToString()
+                If _declare.Attributes.Count = 1 Then
+                    Dim o = _declare.Attributes()(0)
+                    cs = AddToCsList("@{ " & $"var {At(o.Name.ToString())} = {Quote(o.Value)};" & " }", _declare)
+                Else
+                    Dim settings = <zmlbody/>
+                    For Each o In _declare.Attributes
+                        settings.Add(AddToCsList($"var {At(o.Name.ToString())} = {Quote(o.Value)};"))
+                    Next
+                    cs = CombineXml(
+                            AddToCsList("@{", _declare),
+                                 settings,
+                            AddToCsList("}", _declare))
+                End If
 
             Else ' Set single value 
                 Dim type = If(convVars(_declare.Attribute(typeAttr)?.Value), varAttr)
                 Dim value = ""
-                Dim isNested = False
                 If _declare.Nodes.Count > 0 AndAlso TypeOf _declare.Nodes(0) Is XElement Then
                     value = ParseNestedInvoke(_declare.Nodes(0))
-                    isNested = True
                 Else
-                    value = If(_declare.Attribute(valueAttr)?.Value, _declare.Value)
+                    value = Quote(If(_declare.Attribute(valueAttr)?.Value, _declare.Value))
                 End If
                 Dim key = _declare.Attribute(keyAttr)
 
-                Dim blkSt = "@{ "
-                Dim blkEnd = " }"
-
                 If key Is Nothing Then
                     ' Set var value without key
-                    cs = blkSt + $"{type} {At(var.Value)} = {If(isNested, value, Quote(value))};" + blkEnd
+                    cs = AddToCsList("@{ " + $"{type} {At(var.Value)} = {value};" + " }", _declare)
                 Else ' Set single value with key
-                    cs = blkSt + $"{type} {At(var.Value)} = {At(value)}[{Quote(key.Value)}];" + blkEnd
+                    cs = AddToCsList("@{ " + $"{type} {At(var.Value)} = {At(value)}[{Quote(key.Value)}];" + " }", _declare)
                 End If
             End If
 
-            _declare.ReplaceWith(AddToCsList(cs, _declare))
+            _declare.ReplaceWith(cs)
             ParseDeclarations()
         End If
 
@@ -440,10 +448,12 @@
                     Where elm.Name = forTag)?.FirstOrDefault
 
         If _for IsNot Nothing Then
-            Dim var, _to, _step, _while, _let, type As XAttribute
+            Dim label, var, _to, _step, _while, _let, type As XAttribute
 
             For Each attr In _for.Attributes
                 Select Case attr.Name.ToString().ToLower()
+                    Case labelAttr
+                        label = attr
                     Case toAttr
                         _to = attr
                     Case stepAttr
@@ -496,19 +506,36 @@
                     cond = cond.Substring(0, cond.Length - 5) & "-1"
                 End If
             Else
-                cond = _while.Value.Replace(atModel + ".", ModelKeyword + ".")
-                inc = _let.Value.Replace(atModel + ".", ModelKeyword + ".")
+                cond = ConvCond(_while?.Value.Replace(atModel + ".", ModelKeyword + "."))
+                inc = If(_let?.Value, varName & "++").Replace(atModel + ".", ModelKeyword + ".")
             End If
 
             Dim typeName = If(convVars(type?.Value), varAttr)
 
             Dim cs = $"@for ({typeName} {varName} = {Quote(var.Value)}; {cond}; {inc})"
 
-            _for.ReplaceWith(GetCsHtml(cs, _for))
-
+            Dim x = AddLable(GetCsHtml(cs, _for), label?.Value)
+            _for.ReplaceWith(x)
             ParseForLoops()
         End If
     End Sub
+
+    Private Function AddLable(x As XElement, label As String) As XElement
+        If label <> "" Then
+
+            Dim body As XElement = (From n In x.Nodes
+                                    Where TryCast(n, XElement)?.Name.ToString() = "zmlbody").First
+
+            body.Add(AddToCsList("continue_" & label & ":"))
+
+            Dim be = BlockEnd.Name.ToString()
+            Dim BlkEnd As XElement = (From n In x.Nodes()
+                                      Where TryCast(n, XElement)?.Name.ToString() = be).First
+
+            BlkEnd.AddAfterSelf(AddToCsList("break_" & label & ":"))
+        End If
+        Return x
+    End Function
 
     Private Sub ParseForEachLoops()
         Dim foreach = (From elm In Xml.Descendants()
@@ -518,6 +545,7 @@
             Dim type = At(If(convVars(foreach.Attribute(typeAttr)?.Value), "var"))
             Dim _var = At(foreach.Attribute(varAttr)?.Value)
             Dim _in = foreach.Attribute(inAttr).Value.Replace(atModel + ".", ModelKeyword + ".")
+            Dim label = foreach.Attribute(labelAttr)?.Value
 
             If _var = "" Then
                 _var = (From attr In foreach.Attributes
@@ -525,10 +553,50 @@
             End If
 
             Dim cs = $"@foreach ({type} {_var} in {_in})"
-
-            foreach.ReplaceWith(GetCsHtml(cs, foreach))
+            Dim x = AddLable(GetCsHtml(cs, foreach), label)
+            foreach.ReplaceWith(x)
 
             ParseForEachLoops()
+        End If
+    End Sub
+
+    Private Sub ParseWhileLoops()
+        Dim _while = (From elm In Xml.Descendants()
+                      Where elm.Name = whileTag)?.FirstOrDefault
+
+        If _while IsNot Nothing Then
+            Dim cond = ConvCond(_while.Attribute(conditionAttr)?.Value)
+            Dim label = _while.Attribute(labelAttr)?.Value
+
+            Dim cs = $"@while ({cond})"
+            Dim x = AddLable(GetCsHtml(cs, _while), label)
+            _while.ReplaceWith(x)
+
+            ParseForEachLoops()
+        End If
+    End Sub
+
+    Sub ParseBreaks()
+        ParseBreak(exitTag, "break")
+        ParseBreak(breakTag, "break")
+        ParseBreak(continueTag, "continue")
+    End Sub
+
+    Private Sub ParseBreak(tagName As String, keyword As String)
+        Dim tag = (From elm In Xml.Descendants()
+                   Where elm.Name = tagName)?.FirstOrDefault
+
+        If tag IsNot Nothing Then
+            Dim label = tag.Attribute(labelAttr)?.Value
+            Dim cs = ""
+            If label = "" Then
+                cs = keyword & ";"
+            Else
+                cs = $"{gotoKeyword} {keyword}_{label};"
+            End If
+
+            tag.ReplaceWith(AddToCsList(cs))
+            ParseBreak(tagName, keyword)
         End If
     End Sub
 
@@ -583,6 +651,9 @@
                     Dim cs = "@if (" + ConvCond(_if.Attribute("condition").Value) + ")"
                     _if.ReplaceWith(GetCsHtml(cs, _if))
                 End If
+            Else
+                Dim cs = "@if (" + ConvCond(_if.Attribute("condition").Value) + ")"
+                _if.ReplaceWith(GetCsHtml(cs, _if))
             End If
 
             ParseIfStatements()

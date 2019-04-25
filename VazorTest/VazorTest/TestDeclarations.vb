@@ -19,73 +19,83 @@ Public Class TestDeclarations
                         obj="@Student"/>
                 </zml>
 
-        Dim s = x.ParseZml()
+        Dim y = x.ParseZml()
+        Dim z =
+$"@{{
+  var d = {Qt}4/1/2019{Qt};
+  var d2 = DateTime.Parse({Qt}4/1/2019{Qt}, new System.Globalization.CultureInfo({Qt}en-US{Qt}));
+  var n = 3;
+  var s = {Qt}3{Qt};
+  var y = arr[3];
+  var z = dict[{Qt}key{Qt}];
+  var myChar = 'a';
+  var name = {Qt}student{Qt};
+  var obj = Student;
+}}"
 
-        Assert.IsTrue(s.StartsWith("@{") And s.EndsWith("}"))
-        Dim lines = s.Trim("@", "{", "}", vbCr, vbLf).Replace(vbCrLf, vbLf).Split(vbLf, StringSplitOptions.RemoveEmptyEntries)
-        Assert.AreEqual(lines(0), $"var d = {Qt}4/1/2019{Qt};")
-        Assert.AreEqual(lines(1), $"var d2 = DateTime.Parse({Qt}4/1/2019{Qt});")
-        Assert.AreEqual(lines(2), "var n = 3;")
-        Assert.AreEqual(lines(3), $"var s = {Qt}3{Qt};")
-        Assert.AreEqual(lines(4), "var y = arr[3];")
-        Assert.AreEqual(lines(5), $"var z = dict[{Qt}key{Qt}];")
-        Assert.AreEqual(lines(6), "var myChar = 'a';")
-        Assert.AreEqual(lines(7), $"var name = {Qt}student{Qt};")
-        Assert.AreEqual(lines(8), "var obj = Student;")
+        Assert.AreEqual(y, z)
 
-        x = <zml xmlns:z="zml"><z:declare var="arr" value="new String(){}"/></zml>
-        Dim z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ var arr = {Qt}new String(){{}}{Qt}; }}")
+        x = <zml xmlns:z="zml">
+                <z:declare var="arr" value="new String(){}"/>
+            </zml>
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ var arr = {Qt}new String(){{}}{Qt}; }}")
 
-        x = <zml xmlns:z="zml"><z:declare var="arr" value="@new String[]{}"/></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ var arr = new String[]{{}}; }}")
+        x = <zml xmlns:z="zml">
+                <z:declare var="arr" value="@new String[]{}"/>
+            </zml>
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ var arr = new String[]{{}}; }}")
 
-        x = <zml xmlns:z="zml"><z:declare var="Name" key="Adam">dict</z:declare></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ var Name = dict[{Qt}Adam{Qt}]; }}")
+        x = <zml xmlns:z="zml">
+                <z:declare var="Name" key="Adam">dict</z:declare>
+            </zml>
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ var Name = dict[{Qt}Adam{Qt}]; }}")
 
         x = <zml xmlns:z="zml">
                 <z:declare var="Name" value="dict" key="Adam"/>
             </zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ var Name = dict[{Qt}Adam{Qt}]; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ var Name = dict[{Qt}Adam{Qt}]; }}")
 
-        x = <zml xmlns:z="zml"><z:declare var="Name" key="@Adam">@dict</z:declare></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ var Name = dict[Adam]; }}")
+        x = <zml xmlns:z="zml">
+                <z:declare var="Name" key="@Adam">@dict</z:declare>
+            </zml>
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ var Name = dict[Adam]; }}")
 
         x = <zml xmlns:z="zml">
                 <z:declare var="Sum">
                     <z:lambda a.type="int" b.type="integer" return="a + b"/>
                 </z:declare>
             </zml>
-        z = x.ParseZml()
+        y = x.ParseZml()
 
-        Assert.AreEqual(z, $"@{{ var Sum = (int a, int b) => a + b; }}")
+        Assert.AreEqual(y, $"@{{ var Sum = (int a, int b) => a + b; }}")
 
 
         ' Test Types
         ' ------------------------
         x = <zml xmlns:z="zml"><z:declare var="arr" type="int" value="new String(){}"/></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ int arr = {Qt}new String(){{}}{Qt}; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ int arr = {Qt}new String(){{}}{Qt}; }}")
 
         x = <zml xmlns:z="zml"><z:declare var="arr" type="Int32" value="@new String[]{}"/></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ Int32 arr = new String[]{{}}; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ Int32 arr = new String[]{{}}; }}")
 
         x = <zml xmlns:z="zml"><z:declare var="Name" type="Integer" key="Adam">dict</z:declare></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ int Name = dict[{Qt}Adam{Qt}]; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ int Name = dict[{Qt}Adam{Qt}]; }}")
 
         x = <zml xmlns:z="zml"><z:declare var="Name" type="Long" value="dict" key="Adam"/></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ long Name = dict[{Qt}Adam{Qt}]; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ long Name = dict[{Qt}Adam{Qt}]; }}")
 
         x = <zml xmlns:z="zml"><z:declare var="Name" type="List(Of Single, UInteger)" key="@Adam">@dict</z:declare></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ List<float, uint> Name = dict[Adam]; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ List<float, uint> Name = dict[Adam]; }}")
 
     End Sub
 
@@ -104,47 +114,53 @@ Public Class TestDeclarations
                         obj="@Student"/>
                 </zml>
 
-        Dim s = x.ParseZml()
-        Assert.IsTrue(s.StartsWith("@{") And s.EndsWith("}"))
-        Dim lines = s.Trim("@", "{", "}", vbCr, vbLf).Replace(vbCrLf, vbLf).Split(vbLf, StringSplitOptions.RemoveEmptyEntries)
-        Assert.AreEqual(lines(0), $"d = {Qt}4/1/2019{Qt};")
-        Assert.AreEqual(lines(1), $"d2 = DateTime.Parse({Qt}4/1/2019{Qt});")
-        Assert.AreEqual(lines(2), "n = 3;")
-        Assert.AreEqual(lines(3), $"s = {Qt}3{Qt};")
-        Assert.AreEqual(lines(4), "y = arr[3];")
-        Assert.AreEqual(lines(5), $"z = dict[{Qt}key{Qt}];")
-        Assert.AreEqual(lines(6), "myChar = 'a';")
-        Assert.AreEqual(lines(7), $"name = {Qt}student{Qt};")
-        Assert.AreEqual(lines(8), "obj = Student;")
+        Dim y = x.ParseZml()
+        Dim z =
+$"@{{
+  d = {Qt}4/1/2019{Qt};
+  d2 = DateTime.Parse({Qt}4/1/2019{Qt}, new System.Globalization.CultureInfo({Qt}en-US{Qt}));
+  n = 3;
+  s = {Qt}3{Qt};
+  y = arr[3];
+  z = dict[{Qt}key{Qt}];
+  myChar = 'a';
+  name = {Qt}student{Qt};
+  obj = Student;
+}}"
+        Assert.AreEqual(y, z)
 
-        x = <zml xmlns:z="zml"><z:set object="arr" value="new String(){}"/></zml>
-        Dim z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ arr = {Qt}new String(){{}}{Qt}; }}")
+        x = <zml xmlns:z="zml">
+                <z:set object="arr" value="new String(){}"/>
+            </zml>
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ arr = {Qt}new String(){{}}{Qt}; }}")
 
         x = <zml xmlns:z="zml"><z:set object="arr" value="@new String[]{}"/></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ arr = new String[]{{}}; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ arr = new String[]{{}}; }}")
 
         x = <zml xmlns:z="zml"><z:set object="dict" key="Name">Adam</z:set></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ dict[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ dict[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
 
         x = <zml xmlns:z="zml"><z:set object="dict" key="Name" value="Adam"/></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ dict[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ dict[{Qt}Name{Qt}] = {Qt}Adam{Qt}; }}")
 
-        x = <zml xmlns:z="zml"><z:set object="dict" key="@Name">@Adam</z:set></zml>
-        z = x.ParseZml()
-        Assert.AreEqual(z, $"@{{ dict[Name] = Adam; }}")
+        x = <zml xmlns:z="zml">
+                <z:set object="dict" key="@Name">@Adam</z:set>
+            </zml>
+        y = x.ParseZml()
+        Assert.AreEqual(y, $"@{{ dict[Name] = Adam; }}")
 
         x = <zml xmlns:z="zml">
                 <z:set object="Sum">
                     <z:lambda a.type="int" b.type="integer" return="a + b"/>
                 </z:set>
             </zml>
-        z = x.ParseZml()
+        y = x.ParseZml()
 
-        Assert.AreEqual(z, $"@{{ Sum = (int a, int b) => a + b; }}")
+        Assert.AreEqual(y, $"@{{ Sum = (int a, int b) => a + b; }}")
 
     End Sub
 

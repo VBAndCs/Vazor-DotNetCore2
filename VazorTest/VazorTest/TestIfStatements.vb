@@ -204,4 +204,27 @@ $"<p>
         Assert.AreEqual(y, z)
 
     End Sub
+
+    <TestMethod>
+    Sub TestConditions()
+        Dim x =
+$"<zml xmlns:z={Qt}zml{Qt}>
+       <z:if condition={Qt}a>0 And b <10 And c>=10 And d<= 3{Qt}>
+            <z:for i={Qt}0{Qt} while={Qt}i<count{Qt} let={Qt}i++{Qt}>
+
+            </z:for>
+       </z:if>
+</zml>"
+
+        Dim y = x.ParseZml()
+        Dim z =
+"@if (a>0 & b <10 & c>=10 & d<= 3)
+{
+  for (var i = 0; i<count; i++)
+  {
+  }
+}"
+        Assert.AreEqual(y, z)
+    End Sub
+
 End Class

@@ -8,7 +8,7 @@
         If type Is Nothing Then Return Nothing
         Dim t = type.Trim().ToLower()
         Select Case t
-            Case "byte", "sbyte", "short", "ushort", "long", "ulong", "double", "decimal", "string"
+            Case "byte", "sbyte", "short", "ushort", "long", "ulong", "double", "decimal", "string", "object"
                 Return t
             Case "integer"
                 Return "int"
