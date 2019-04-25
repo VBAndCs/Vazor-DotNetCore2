@@ -17,7 +17,7 @@ Partial Public Class IndexModel
         Return _
  _
         <zml xmlns:z="zml">
-            <viewdata Title='"test"' Message='"OK"' Key='"value"'/>
+            <z:viewdata Title='"test"' Message='"OK"' Key='"value"'/>
 
             <h3 fff=""> Browse Students</h3>
             <p>Select from <%= students.Count() %> students:</p>
