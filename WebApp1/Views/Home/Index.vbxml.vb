@@ -6,6 +6,8 @@
 ' To go back to edit vb code, close the file, and double click on
 ' "Index.vbxml.vb" in solution explorer.
 
+Imports <xmlns:z="zml">
+
 Partial Public Class IndexView
 
     Protected Function GetVbXml() As XElement
@@ -15,7 +17,7 @@ Partial Public Class IndexView
 
         Return _
  _
-        <zml xmlns:z="zml">
+        <zml>
             <z:model type="List(Of WebApp1.Student)"/>
             <z:viewdata Title='"test"' Message='"OK"' Key='"value"'/>
 

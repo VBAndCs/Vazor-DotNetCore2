@@ -4,6 +4,7 @@
 
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
+Imports ZML
 
 Public Module VazorExtensions
     Public Const Ampersand = "__amp__;"
@@ -106,5 +107,13 @@ Public Module VazorExtensions
         Return newHtml.ToString()
     End Function
 
+    <Extension>
+    Public Function ParseZML(x As XElement) As String
+        Return ZML.ParseZml(x)
+    End Function
 
+    <Extension>
+    Public Function ParseZML(s As String) As String
+        Return ZML.ParseZml(s)
+    End Function
 End Module

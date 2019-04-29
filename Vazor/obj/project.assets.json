@@ -251,13 +251,13 @@
           "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll": {}
         }
       },
-      "Unofficial.Microsoft.mshtml/7.0.3300": {
+      "ZML.1.0/1.1.2": {
         "type": "package",
         "compile": {
-          "lib/net40/Microsoft.mshtml.dll": {}
+          "lib/netstandard2.0/ZML.dll": {}
         },
         "runtime": {
-          "lib/net40/Microsoft.mshtml.dll": {}
+          "lib/netstandard2.0/ZML.dll": {}
         }
       }
     }
@@ -807,16 +807,18 @@
         "version.txt"
       ]
     },
-    "Unofficial.Microsoft.mshtml/7.0.3300": {
-      "sha512": "Nv4Bn/0y8ab6f5QnEXoDX49C0U4Iz2nPgHbyg35UV+cGoFS5QkPWNwp461cOEK1O0c/u8TXQ3THP3rdEHmhjtg==",
+    "ZML.1.0/1.1.2": {
+      "sha512": "7Hzs9BkuNkabwxGl9isSl+xJH1g9AVIqKmouxE1A81fz2i8Rk4g5dbwFiIqfyG2EkiMiSZbh/do2Lpd3yziG/g==",
       "type": "package",
-      "path": "unofficial.microsoft.mshtml/7.0.3300",
+      "path": "zml.1.0/1.1.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "lib/net40/Microsoft.mshtml.dll",
-        "unofficial.microsoft.mshtml.7.0.3300.nupkg.sha512",
-        "unofficial.microsoft.mshtml.nuspec"
+        "lib/netstandard2.0/ZML.deps.json",
+        "lib/netstandard2.0/ZML.dll",
+        "lib/netstandard2.0/ZML.pdb",
+        "zml.1.0.1.1.2.nupkg.sha512",
+        "zml.1.0.nuspec"
       ]
     }
   },
@@ -824,7 +826,7 @@
     ".NETCoreApp,Version=v2.2": [
       "Microsoft.Extensions.FileProviders.Abstractions >= 2.2.0",
       "Microsoft.NETCore.App >= 2.2.0",
-      "Unofficial.Microsoft.mshtml >= 7.0.3300"
+      "ZML.1.0 >= 1.1.2"
     ]
   },
   "packageFolders": {
@@ -878,9 +880,9 @@
             "version": "[2.2.0, )",
             "autoReferenced": true
           },
-          "Unofficial.Microsoft.mshtml": {
+          "ZML.1.0": {
             "target": "Package",
-            "version": "[7.0.3300, )"
+            "version": "[1.1.2, )"
           }
         },
         "imports": [
@@ -890,17 +892,5 @@
         "warn": true
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Unofficial.Microsoft.mshtml 7.0.3300' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.2'. This package may not be fully compatible with your project.",
-      "libraryId": "Unofficial.Microsoft.mshtml",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.2"
-      ]
-    }
-  ]
+  }
 }
