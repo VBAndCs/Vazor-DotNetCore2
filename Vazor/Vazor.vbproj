@@ -3,15 +3,16 @@
   <PropertyGroup>
     <RootNamespace>Vazor</RootNamespace>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AssemblyName>Vazor1.6</AssemblyName>
-    <Version>1.6.0</Version>
+    <AssemblyName>Vazor</AssemblyName>
+    <Version>1.7.0</Version>
     <Authors>Mohammed Hamdy Ghanem</Authors>
-    <Description>An vbxml Vazor for VB.NET And an zml Eazor for VB.NET, C# and all languages.
+    <Description>Vazor is a VB.NET Razor that uses vbxml code (VB and xml literals) with zml support to create ASP.NET MVC Core Views and Pages.
 </Description>
     <PackageProjectUrl>https://github.com/VBAndCs/Vazor-DotNetCore2</PackageProjectUrl>
     <RepositoryUrl>https://github.com/VBAndCs/Vazor-DotNetCore2</RepositoryUrl>
-    <PackageTags>VB.NET Razor ASP.NET Core</PackageTags>
-    <PackageReleaseNotes>Ver 1.5 added support for new ZML views.</PackageReleaseNotes>
+    <PackageTags>VB.NET Razor ASP.NET MVC Core XML ZML</PackageTags>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <Copyright>(c) Mohammed Hamdy Ghanem 2019</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

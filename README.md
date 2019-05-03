@@ -1,18 +1,24 @@
-﻿# Vazor 1.6
+﻿# Vazor 1.7
 Copyright (c) 2019 Mohammad Hamdy Ghanem
 These are a few lines of code for a programmer, but a giant leap for VB.NET apps!
 
 Vazor stands for VB.NET Razor. It allows you to write ASP.NET (both MVC Core and Razor Pages) applications with VB.NET including designing the views with vb.net code imbedded in XML literals which VB.NET supports!
-
-Adding ZML support in ver 1.6:
-
-
-Now, you can use ZML tags inside vbxml code, and call ParseZML to compile ZML tags C# Razor code.
+You can also use ZML tags inside vbxml code. 
 For more info, see [ZML repo](https://github.com/VBAndCs/ZML).
 
 
-# Project and Item Templates
+#Vazor NuGet:
+Use this command line in Pachage Manager:
+```
+Install-Package Vazor -Version 1.7.0 
+```
 
+Note that you need alos to install ZML NuGet:
+```
+Install-Package ZML.1.0 -Version 1.1.2
+```
+
+# Project and Item Templates:
 Download this file:
 
 https://github.com/VBAndCs/Vazor/blob/master/VazorTemplateSetup.zip?raw=true

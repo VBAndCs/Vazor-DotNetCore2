@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "a275c123fb47aeab2c3bb974c0199dfa6cfcbab6"
+    "signature": "bf8cb25e96c7476ad9d4ecf84bf818f954d6eb50"
   },
   "compilationOptions": {
     "languageVersion": "",
@@ -21,13 +21,25 @@
           "Microsoft.AspNetCore.App": "2.2.0",
           "Microsoft.AspNetCore.Razor.Design": "2.2.0",
           "Microsoft.NETCore.App": "2.2.0",
-          "Vazor1.6": "1.6.0"
+          "Vazor": "1.7.0",
+          "ZML.1.0": "1.1.2"
         },
         "runtime": {
           "VazorPages1.dll": {}
         },
         "compile": {
           "VazorPages1.dll": {}
+        }
+      },
+      "Vazor/1.7.0": {
+        "runtime": {
+          "lib/netcoreapp2.2/Vazor.dll": {
+            "assemblyVersion": "1.7.0.0",
+            "fileVersion": "1.7.0.0"
+          }
+        },
+        "compile": {
+          "lib/netcoreapp2.2/Vazor.dll": {}
         }
       },
       "ZML.1.0/1.1.2": {
@@ -39,18 +51,6 @@
         },
         "compile": {
           "lib/netstandard2.0/ZML.dll": {}
-        }
-      },
-      "Vazor1.6/1.6.0": {
-        "dependencies": {
-          "Microsoft.Extensions.FileProviders.Abstractions": "2.2.0",
-          "ZML.1.0": "1.1.2"
-        },
-        "runtime": {
-          "Vazor1.6.dll": {}
-        },
-        "compile": {
-          "Vazor1.6.dll": {}
         }
       },
       "Microsoft.AspNet.WebApi.Client/5.2.6": {
@@ -3255,17 +3255,19 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Vazor/1.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vEYhoVlQr5/spqGE56uPpkyMvH4OWciHTR+uILDNaJgOpJlFt517r08HRMaRJydGgbYC1tGYWif+hLFrs+wW4A==",
+      "path": "vazor/1.7.0",
+      "hashPath": "vazor.1.7.0.nupkg.sha512"
+    },
     "ZML.1.0/1.1.2": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-7Hzs9BkuNkabwxGl9isSl+xJH1g9AVIqKmouxE1A81fz2i8Rk4g5dbwFiIqfyG2EkiMiSZbh/do2Lpd3yziG/g==",
       "path": "zml.1.0/1.1.2",
       "hashPath": "zml.1.0.1.1.2.nupkg.sha512"
-    },
-    "Vazor1.6/1.6.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
     },
     "Microsoft.AspNet.WebApi.Client/5.2.6": {
       "type": "package",

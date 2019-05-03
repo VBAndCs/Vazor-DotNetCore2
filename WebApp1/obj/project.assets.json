@@ -4439,6 +4439,15 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
+      "Vazor/1.7.0": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp2.2/Vazor.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.2/Vazor.dll": {}
+        }
+      },
       "ZML.1.0/1.1.2": {
         "type": "package",
         "compile": {
@@ -4446,20 +4455,6 @@
         },
         "runtime": {
           "lib/netstandard2.0/ZML.dll": {}
-        }
-      },
-      "Vazor1.6/1.6.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v2.2",
-        "dependencies": {
-          "Microsoft.Extensions.FileProviders.Abstractions": "2.2.0",
-          "ZML.1.0": "1.1.2"
-        },
-        "compile": {
-          "bin/placeholder/Vazor1.6.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Vazor1.6.dll": {}
         }
       }
     }
@@ -12086,6 +12081,20 @@
         "system.xml.xpath.xdocument.nuspec"
       ]
     },
+    "Vazor/1.7.0": {
+      "sha512": "vEYhoVlQr5/spqGE56uPpkyMvH4OWciHTR+uILDNaJgOpJlFt517r08HRMaRJydGgbYC1tGYWif+hLFrs+wW4A==",
+      "type": "package",
+      "path": "vazor/1.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netcoreapp2.2/Vazor.deps.json",
+        "lib/netcoreapp2.2/Vazor.dll",
+        "lib/netcoreapp2.2/Vazor.pdb",
+        "vazor.1.7.0.nupkg.sha512",
+        "vazor.nuspec"
+      ]
+    },
     "ZML.1.0/1.1.2": {
       "sha512": "7Hzs9BkuNkabwxGl9isSl+xJH1g9AVIqKmouxE1A81fz2i8Rk4g5dbwFiIqfyG2EkiMiSZbh/do2Lpd3yziG/g==",
       "type": "package",
@@ -12099,11 +12108,6 @@
         "zml.1.0.1.1.2.nupkg.sha512",
         "zml.1.0.nuspec"
       ]
-    },
-    "Vazor1.6/1.6.0": {
-      "type": "project",
-      "path": "../Vazor/Vazor.vbproj",
-      "msbuildProject": "../Vazor/Vazor.vbproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -12111,7 +12115,8 @@
       "Microsoft.AspNetCore.App >= 2.2.0",
       "Microsoft.AspNetCore.Razor.Design >= 2.2.0",
       "Microsoft.NETCore.App >= 2.2.0",
-      "Vazor1.6 >= 1.6.0"
+      "Vazor >= 1.7.0",
+      "ZML.1.0 >= 1.1.2"
     ]
   },
   "packageFolders": {
@@ -12143,11 +12148,7 @@
       },
       "frameworks": {
         "netcoreapp2.2": {
-          "projectReferences": {
-            "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj": {
-              "projectPath": "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {
@@ -12175,6 +12176,14 @@
             "target": "Package",
             "version": "[2.2.0, )",
             "autoReferenced": true
+          },
+          "Vazor": {
+            "target": "Package",
+            "version": "[1.7.0, )"
+          },
+          "ZML.1.0": {
+            "target": "Package",
+            "version": "[1.1.2, )"
           }
         },
         "imports": [

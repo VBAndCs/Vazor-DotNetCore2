@@ -834,10 +834,10 @@
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
-    "version": "1.6.0",
+    "version": "1.7.0",
     "restore": {
       "projectUniqueName": "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj",
-      "projectName": "Vazor1.6",
+      "projectName": "Vazor",
       "projectPath": "F:\\_VS.NET\\Vazor\\Vazor\\Vazor.vbproj",
       "packagesPath": "C:\\Users\\MHG\\.nuget\\packages\\",
       "outputPath": "F:\\_VS.NET\\Vazor\\Vazor\\obj\\",

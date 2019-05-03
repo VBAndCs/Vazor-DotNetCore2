@@ -15,6 +15,9 @@
         Return VazorViewMapper.Add(New VazorPage(name, path, title, html, encoding))
     End Function
 
+    Public Overrides Function GetVbXml() As XElement
+        Throw New NotImplementedException()
+    End Function
 
     Public Overrides ReadOnly Property Content() As Byte()
 

@@ -1,0 +1,26 @@
+@* <!-- This cshtml file is auto-generated from the _ManageNav.zml file. 
+You must not do any changes here, because it can be overwritten 
+when the _ManageNav.zml file changes.
+Make all the changes you need to the _ManageNav.zml file.
+But even this is an auto-generated, DONT DELETE this file 
+from the soluton explorer, becuase there is a cshtml.vb file attached to, 
+and will also be deleted with all the code you wrote in it!  --> *@
+@inject SignInManager<ApplicationUser> SignInManager
+@{ var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any(); }
+<ul class="nav nav-pills nav-stacked">
+  <li class="@ManageNavPages.IndexNavClass(ViewContext)">
+    <a asp-action="MyAccount">Profile</a>
+  </li>
+  <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)">
+    <a asp-action="ChangePassword">Password</a>
+  </li>
+  @if (hasExternalLogins)
+  {
+    <li class="@ManageNavPages.ExternalLoginsNavClass(ViewContext)">
+      <a asp-action="ExternalLogins">External logins</a>
+    </li>
+  }
+  <li class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)">
+    <a asp-action="TwoFactorAuthentication">Two-factor authentication</a>
+  </li>
+</ul>
