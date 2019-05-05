@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.2": {
-      "Vazor/1.7.0": {
+      "Vazor/1.8.1": {
         "dependencies": {
           "Microsoft.Extensions.FileProviders.Abstractions": "2.2.0",
           "ZML.1.0": "1.1.2"
@@ -58,7 +58,7 @@
     }
   },
   "libraries": {
-    "Vazor/1.7.0": {
+    "Vazor/1.8.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

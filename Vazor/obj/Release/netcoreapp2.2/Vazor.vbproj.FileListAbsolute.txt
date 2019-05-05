@@ -6,3 +6,4 @@ F:\_VS.NET\Vazor\Vazor\obj\Release\netcoreapp2.2\Vazor.AssemblyInfoInputs.cache
 F:\_VS.NET\Vazor\Vazor\obj\Release\netcoreapp2.2\Vazor.AssemblyInfo.vb
 F:\_VS.NET\Vazor\Vazor\obj\Release\netcoreapp2.2\Vazor.dll
 F:\_VS.NET\Vazor\Vazor\obj\Release\netcoreapp2.2\Vazor.pdb
+F:\_VS.NET\Vazor\Vazor\obj\Release\netcoreapp2.2\Vazor.vbprojAssemblyReference.cache

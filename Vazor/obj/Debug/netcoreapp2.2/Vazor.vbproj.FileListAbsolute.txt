@@ -1,7 +1,6 @@
 F:\_VS.NET\Vazor\Vazor\obj\Debug\netcoreapp2.2\Vazor.vbproj.CoreCompileInputs.cache
 F:\_VS.NET\Vazor\Vazor\obj\Debug\netcoreapp2.2\Vazor.AssemblyInfoInputs.cache
 F:\_VS.NET\Vazor\Vazor\obj\Debug\netcoreapp2.2\Vazor.AssemblyInfo.vb
-F:\_VS.NET\Vazor\Vazor\obj\Debug\netcoreapp2.2\Vazor.vbprojAssemblyReference.cache
 F:\_VS.NET\Vazor\Vazor\bin\Debug\netcoreapp2.2\Vazor.deps.json
 F:\_VS.NET\Vazor\Vazor\bin\Debug\netcoreapp2.2\Vazor.dll
 F:\_VS.NET\Vazor\Vazor\bin\Debug\netcoreapp2.2\Vazor.pdb

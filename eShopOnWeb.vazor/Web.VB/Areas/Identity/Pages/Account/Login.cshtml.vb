@@ -10,6 +10,7 @@ Imports Microsoft.AspNetCore.Mvc
 Imports Microsoft.AspNetCore.Mvc.RazorPages
 Imports Microsoft.eShopWeb.Infrastructure.Identity
 Imports Microsoft.Extensions.Logging
+Imports Vazor
 
 Namespace Areas.Identity.Pages.Account
     <AllowAnonymous>
@@ -23,6 +24,16 @@ Namespace Areas.Identity.Pages.Account
             _signInManager = signInManager
             _logger = logger
         End Sub
+
+        Const Title = "Log in"
+
+        Public ReadOnly Property ViewName As String
+            Get
+                ViewData("Title") = Title
+                Dim html = Me.GetVbXml().ParseZML()
+                Return VazorPage.CreateNew("Login", "Areas\Identity\Pages\Account", Title, html)
+            End Get
+        End Property
 
         <BindProperty>
         Public Property Input As InputModel

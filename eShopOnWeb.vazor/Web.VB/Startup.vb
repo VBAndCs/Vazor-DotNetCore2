@@ -28,7 +28,7 @@ Imports Microsoft.EntityFrameworkCore
 Imports Vazor
 
 Public Class Startup
-        Private _services As IServiceCollection
+    Private _services As IServiceCollection
 
     Public Sub New(ByVal configuration As IConfiguration)
         Me.Configuration = configuration
@@ -36,43 +36,43 @@ Public Class Startup
 
     Public ReadOnly Property Configuration As IConfiguration
 
-        Public Sub ConfigureDevelopmentServices(ByVal services As IServiceCollection)
-            ConfigureInMemoryDatabases(services)
-        End Sub
+    Public Sub ConfigureDevelopmentServices(ByVal services As IServiceCollection)
+        ConfigureInMemoryDatabases(services)
+    End Sub
 
-        Private Sub ConfigureInMemoryDatabases(ByVal services As IServiceCollection)
+    Private Sub ConfigureInMemoryDatabases(ByVal services As IServiceCollection)
         services.AddDbContext(Of CatalogContext)(Sub(c) c.UseInMemoryDatabase("Catalog"))
         services.AddDbContext(Of AppIdentityDbContext)(Function(options) options.UseInMemoryDatabase("Identity"))
         ConfigureServices(services)
-        End Sub
+    End Sub
 
-        Public Sub ConfigureProductionServices(ByVal services As IServiceCollection)
+    Public Sub ConfigureProductionServices(ByVal services As IServiceCollection)
         services.AddDbContext(Of CatalogContext)(Sub(c) c.UseSqlServer(Configuration.GetConnectionString("CatalogConnection")))
         services.AddDbContext(Of AppIdentityDbContext)(Sub(options) options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")))
         ConfigureServices(services)
-        End Sub
+    End Sub
 
-        Public Sub ConfigureServices(ByVal services As IServiceCollection)
-            ConfigureCookieSettings(services)
-            CreateIdentityIfNotCreated(services)
-            services.AddScoped(GetType(IAsyncRepository(Of)), GetType(EfRepository(Of)))
-            services.AddScoped(Of ICatalogViewModelService, CachedCatalogViewModelService)()
-            services.AddScoped(Of IBasketService, BasketService)()
-            services.AddScoped(Of IBasketViewModelService, BasketViewModelService)()
-            services.AddScoped(Of IOrderService, OrderService)()
-            services.AddScoped(Of IOrderRepository, OrderRepository)()
-            services.AddScoped(Of CatalogViewModelService)()
-            services.Configure(Of CatalogSettings)(Configuration)
-            services.AddSingleton(Of IUriComposer)(New UriComposer(Configuration.[Get](Of CatalogSettings)()))
-            services.AddScoped(GetType(IAppLogger(Of)), GetType(LoggerAdapter(Of)))
-            services.AddTransient(Of IEmailSender, EmailSender)()
-            services.AddMemoryCache()
-            services.AddRouting(
+    Public Sub ConfigureServices(ByVal services As IServiceCollection)
+        ConfigureCookieSettings(services)
+        CreateIdentityIfNotCreated(services)
+        services.AddScoped(GetType(IAsyncRepository(Of)), GetType(EfRepository(Of)))
+        services.AddScoped(Of ICatalogViewModelService, CachedCatalogViewModelService)()
+        services.AddScoped(Of IBasketService, BasketService)()
+        services.AddScoped(Of IBasketViewModelService, BasketViewModelService)()
+        services.AddScoped(Of IOrderService, OrderService)()
+        services.AddScoped(Of IOrderRepository, OrderRepository)()
+        services.AddScoped(Of CatalogViewModelService)()
+        services.Configure(Of CatalogSettings)(Configuration)
+        services.AddSingleton(Of IUriComposer)(New UriComposer(Configuration.[Get](Of CatalogSettings)()))
+        services.AddScoped(GetType(IAppLogger(Of)), GetType(LoggerAdapter(Of)))
+        services.AddTransient(Of IEmailSender, EmailSender)()
+        services.AddMemoryCache()
+        services.AddRouting(
                 Sub(options)
                     options.ConstraintMap("slugify") = GetType(SlugifyParameterTransformer)
                 End Sub)
 
-            services.AddMvc(
+        services.AddMvc(
                 Sub(options)
                     options.Conventions.Add(New RouteTokenTransformerConvention(New SlugifyParameterTransformer()))
                 End Sub).AddRazorPagesOptions(
@@ -81,40 +81,40 @@ Public Class Startup
                                 options.AllowAreas = True
                             End Sub).SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
 
-            services.AddHttpContextAccessor()
-            services.AddSwaggerGen(Sub(c)
-                                       c.SwaggerDoc("v1", New Info With {
+        services.AddHttpContextAccessor()
+        services.AddSwaggerGen(Sub(c)
+                                   c.SwaggerDoc("v1", New Info With {
                                            .Title = "My API",
                                            .Version = "v1"
                                        })
-                                   End Sub)
+                               End Sub)
 
-            services.AddHealthChecks().AddCheck(Of HomePageHealthCheck)("home_page_health_check").AddCheck(Of ApiHealthCheck)("api_health_check")
-            services.Configure(Of ServiceConfig)(Sub(config)
-                                                     config.Services = New List(Of ServiceDescriptor)(services)
-                                                     config.Path = "/allservices"
-                                                 End Sub)
+        services.AddHealthChecks().AddCheck(Of HomePageHealthCheck)("home_page_health_check").AddCheck(Of ApiHealthCheck)("api_health_check")
+        services.Configure(Of ServiceConfig)(Sub(config)
+                                                 config.Services = New List(Of ServiceDescriptor)(services)
+                                                 config.Path = "/allservices"
+                                             End Sub)
 
         services.Configure(Of RazorViewEngineOptions)(
                  Sub(options) options.FileProviders.Add(New VazorViewProvider())
            )
 
         _services = services
-        End Sub
+    End Sub
 
-        Private Shared Sub CreateIdentityIfNotCreated(ByVal services As IServiceCollection)
-            Dim sp = services.BuildServiceProvider()
+    Private Shared Sub CreateIdentityIfNotCreated(ByVal services As IServiceCollection)
+        Dim sp = services.BuildServiceProvider()
 
-            Using scope = sp.CreateScope()
-                Dim existingUserManager = scope.ServiceProvider.GetService(Of UserManager(Of ApplicationUser))()
+        Using scope = sp.CreateScope()
+            Dim existingUserManager = scope.ServiceProvider.GetService(Of UserManager(Of ApplicationUser))()
 
-                If existingUserManager Is Nothing Then
-                    services.AddIdentity(Of ApplicationUser, IdentityRole)().AddDefaultUI(UIFramework.Bootstrap4).AddEntityFrameworkStores(Of AppIdentityDbContext)().AddDefaultTokenProviders()
-                End If
-            End Using
-        End Sub
+            If existingUserManager Is Nothing Then
+                services.AddIdentity(Of ApplicationUser, IdentityRole)().AddDefaultUI(UIFramework.Bootstrap4).AddEntityFrameworkStores(Of AppIdentityDbContext)().AddDefaultTokenProviders()
+            End If
+        End Using
+    End Sub
 
-        Private Shared Sub ConfigureCookieSettings(ByVal services As IServiceCollection)
+    Private Shared Sub ConfigureCookieSettings(ByVal services As IServiceCollection)
         services.Configure(Of CookiePolicyOptions)(Sub(options)
                                                        options.CheckConsentNeeded = Function(context) True
                                                        options.MinimumSameSitePolicy = SameSiteMode.None
@@ -131,7 +131,9 @@ Public Class Startup
     End Sub
 
     Public Sub Configure(ByVal app As IApplicationBuilder, ByVal env As IHostingEnvironment)
-        CreateVazorPages()
+
+        ZML.ZmlPages.Compile() ' Erase this statement when you fisnish converting all .zml files to vazor files
+        VazorSharedView.CreateAll()
 
         app.UseHealthChecks("/health", New HealthCheckOptions With {
             .ResponseWriter = Async Function(context, report)
@@ -172,12 +174,5 @@ Public Class Startup
 
     End Sub
 
-    Private Sub CreateVazorPages()
-        Pages.ViewImports.CreateNew()
-        Pages.ViewStart.CreateNew()
-        Pages.Shared.ProductView.CreateNew()
-        Pages.Shared.PaginationView.CreateNew()
-        Pages.Shared.Components.BasketComponent.DefaultView.CreateNew()
-
-    End Sub
 End Class
+

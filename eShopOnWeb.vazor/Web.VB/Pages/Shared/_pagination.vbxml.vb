@@ -2,14 +2,10 @@
 
 Namespace Pages.Shared
     Partial Public Class PaginationView
-        Inherits VazorView
+        Inherits VazorSharedView
 
         Public Sub New()
             MyBase.New("_pagination", "Pages\Shared", "Pagination")
-        End Sub
-
-        Public Shared Sub CreateNew()
-            VazorViewMapper.AddStatic(New PaginationView())
         End Sub
 
         Public Overrides Function GetVbXml() As XElement

@@ -17,13 +17,8 @@ Public Class ExternalLoginsView
 
     End Sub
 
-    ' Call CreateNew( ) in the "ExternalLogins" action method in your controller, and pass its return value the the Controller.View method:
-    '     View(ExternalLoginsView.CreateNew(yourModel, ViewData))
-
     Public Shared Function CreateNew(model As ExternalLoginsViewModel, viewData As ViewDataDictionary) As String
         Return VazorViewMapper.Add(New ExternalLoginsView(model, viewData))
     End Function
 
-    ' If you have no model, or if you don't use the ForEach template, 
-    ' use ToHtml method instead of ParseTemplate
 End Class

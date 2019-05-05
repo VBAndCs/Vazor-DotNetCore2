@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Vazor" Version="1.7.0" />
+    <PackageReference Include="Vazor" Version="1.8.3" />
     <PackageReference Include="ZML.1.0" Version="1.1.2" />
   </ItemGroup>
 

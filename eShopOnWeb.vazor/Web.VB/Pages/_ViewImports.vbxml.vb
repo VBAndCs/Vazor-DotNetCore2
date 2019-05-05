@@ -4,14 +4,10 @@ Imports Vazor
 Namespace Pages
 
     Public Class ViewImports
-        Inherits VazorView
+        Inherits VazorSharedView
 
         Public Sub New()
             MyBase.New("_ViewImports", "Pages", "ViewImports")
-        End Sub
-
-        Friend Shared Sub CreateNew()
-            VazorViewMapper.AddStatic(New ViewImports())
         End Sub
 
         Public Overrides Function GetVbXml() As XElement

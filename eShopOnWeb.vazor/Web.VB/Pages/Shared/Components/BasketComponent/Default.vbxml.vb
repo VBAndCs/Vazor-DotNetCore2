@@ -2,14 +2,10 @@
 
 Namespace Pages.Shared.Components.BasketComponent
     Public Class DefaultView
-        Inherits VazorView
+        Inherits VazorSharedView
 
         Public Sub New()
             MyBase.New("Default", "Pages\Shared\Components\BasketComponent", "Default")
-        End Sub
-
-        Friend Shared Sub CreateNew()
-            VazorViewMapper.AddStatic(New DefaultView())
         End Sub
 
         Public Overrides Function GetVbXml() As XElement

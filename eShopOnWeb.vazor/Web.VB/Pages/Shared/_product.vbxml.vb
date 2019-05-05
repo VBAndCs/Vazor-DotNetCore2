@@ -2,14 +2,10 @@
 
 Namespace Pages.Shared
     Partial Public Class ProductView
-        Inherits VazorView
+        Inherits VazorSharedView
 
         Public Sub New()
             MyBase.New("_product", "Pages\Shared", "Product")
-        End Sub
-
-        Public Shared Sub CreateNew()
-            VazorViewMapper.AddStatic(New ProductView())
         End Sub
 
         Public Overrides Function GetVbXml() As XElement

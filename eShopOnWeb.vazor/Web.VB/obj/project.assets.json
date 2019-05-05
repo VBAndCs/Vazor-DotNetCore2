@@ -4803,7 +4803,7 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "Vazor/1.7.0": {
+      "Vazor/1.8.3": {
         "type": "package",
         "compile": {
           "lib/netcoreapp2.2/Vazor.dll": {}
@@ -13163,17 +13163,17 @@
         "system.xml.xpath.xdocument.nuspec"
       ]
     },
-    "Vazor/1.7.0": {
-      "sha512": "vEYhoVlQr5/spqGE56uPpkyMvH4OWciHTR+uILDNaJgOpJlFt517r08HRMaRJydGgbYC1tGYWif+hLFrs+wW4A==",
+    "Vazor/1.8.3": {
+      "sha512": "2S7K6mP6iPGLu/IcHGS7xTQaggPXailpNADJqlNcGix2IQT/UMrXwMphnDZJpQ4Z4LR7VqRTa0dvzcA+x0qXpA==",
       "type": "package",
-      "path": "vazor/1.7.0",
+      "path": "vazor/1.8.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/netcoreapp2.2/Vazor.deps.json",
         "lib/netcoreapp2.2/Vazor.dll",
         "lib/netcoreapp2.2/Vazor.pdb",
-        "vazor.1.7.0.nupkg.sha512",
+        "vazor.1.8.3.nupkg.sha512",
         "vazor.nuspec"
       ]
     },
@@ -13214,7 +13214,7 @@
       "Microsoft.NETCore.Targets >= 2.1.0",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 2.2.3",
       "Swashbuckle.AspNetCore >= 4.0.1",
-      "Vazor >= 1.7.0",
+      "Vazor >= 1.8.3",
       "ZML.1.0 >= 1.1.2"
     ]
   },
@@ -13305,7 +13305,7 @@
           },
           "Vazor": {
             "target": "Package",
-            "version": "[1.7.0, )"
+            "version": "[1.8.3, )"
           },
           "ZML.1.0": {
             "target": "Package",

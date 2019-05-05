@@ -1,8 +1,8 @@
-﻿# Vazor 1.7
+﻿# Vazor 1.8.3
 Copyright (c) 2019 Mohammad Hamdy Ghanem
 These are a few lines of code for a programmer, but a giant leap for VB.NET apps!
 
-Vazor stands for VB.NET Razor. It allows you to write ASP.NET (both MVC Core and Razor Pages) applications with VB.NET including designing the views with vb.net code imbedded in XML literals which VB.NET supports!
+Vazor stands for VB.NET Razor. It allows you to write ASP.NET (both MVC Core and Razor Pages) applications with VB.NET, designing the views with vb.net code imbedded in XML literals (I call that vbxml) which VB.NET supports!
 You can also use ZML tags inside vbxml code. 
 For more info, see [ZML repo](https://github.com/VBAndCs/ZML).
 
@@ -10,15 +10,16 @@ For more info, see [ZML repo](https://github.com/VBAndCs/ZML).
 #Vazor NuGet:
 Use this command line in Pachage Manager:
 ```
-Install-Package Vazor -Version 1.7.0 
+Install-Package Vazor -Version 1.8.3
 ```
 
-Note that you need alos to install ZML NuGet:
+Note that you need also to install ZML NuGet:
 ```
 Install-Package ZML.1.0 -Version 1.1.2
 ```
 
-# Project and Item Templates:
+# Project and Item Templates: 
+Note that these templates need to be updated to use latest vazor version.
 Download this file:
 
 https://github.com/VBAndCs/Vazor/blob/master/VazorTemplateSetup.zip?raw=true
@@ -76,7 +77,7 @@ End Class
 I separated the vbxml code in a partial class, so the view design is separated from vazor code. You will find this in the Index.vbxml.vb file:
 ```VB.NET
 Partial Public Class IndexView
-    Protected Shared Shadows Function GetVbXml(view As IndexView) As XElement
+    public overrides Function GetVbXml(view As IndexView) As XElement
         Return _
  _
         <vbxml>
@@ -157,11 +158,11 @@ services.Configure(Of RazorViewEngineOptions)(
 )
  ```
 
-* If you converted the _Layout.cshtml view to a Vazor Layout class (as in the sample project), you must map it in the Startup.Configure method. The layout view has a static content, so we will have only one instance of it to use with all pages. Add this in the  Configure method:
-`Vazor.VazorViewMapper.AddStatic(New LayoutView())`
-You must do the same for any shared view class with a static content, that doesn't depend on the model data, and its html output is always the same. If the layout has a different title for each page, use `<Title>@ViewBag.Title</Title>` in vbxml code to let Razor evaluate this. Yes, this is a Vazor/Razor mixed view!
-If you used `<Title><%= ViewBag.Title% ></Title>` VB will try to evaluate it and will cause an exception because the ViewBag is empty at this moment. If you need to do more changes in the layout with every page, put them as a separate sections.
-
+* If you converted the _Layout.cshtml view to a Vazor Layout class (as in the sample project), let it inherit the VazorSharedView class defiended in Vazor 1.8.3, so you can create and map all shared views by using this single line of code in the Startup.Configure method:
+`Vazor.VazorSharedView.CreateAll( )`
+The layout view has a static content, so we will have only one instance of it to use with all pages.
+You must do the same for any shared view class with a static content, that doesn't contain any vb code, so its html output is always the same. If the layout has a different title for each page, use `<Title>@ViewBag.Title</Title>` in vbxml code to let Razor evaluate this. Yes, this is a Vazor/Razor mixed view!
+If you used `<Title><%= ViewBag.Title% ></Title>` VB will try to evaluate it and will cause an exception because the ViewBag is empty at this moment. 
 * To use the page View classes in MVC projects, map them in the controllers actions methods. For example, the IndexView class should be used in the Home.Index action method like this:
 ```VB.NET
 Public Function Index() As IActionResult

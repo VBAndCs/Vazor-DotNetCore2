@@ -32,6 +32,7 @@ Public Class Startup
 
     ' This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     Public Sub Configure(app As IApplicationBuilder, env As IHostingEnvironment)
+        Vazor.VazorSharedView.CreateAll()
 
         If (env.IsDevelopment()) Then
             app.UseDeveloperExceptionPage()
@@ -45,8 +46,6 @@ Public Class Startup
         app.UseStaticFiles()
         app.UseCookiePolicy()
         app.UseMvc()
-
-        LayoutView.CreateNew()
 
     End Sub
 End Class

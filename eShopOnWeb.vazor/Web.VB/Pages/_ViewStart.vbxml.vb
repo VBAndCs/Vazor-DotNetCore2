@@ -2,14 +2,10 @@
 
 Namespace Pages
     Partial Public Class ViewStart
-        Inherits VazorView
+        Inherits VazorSharedView
 
         Public Sub New()
             MyBase.New("_ViewStart", "Pages", "ViewStart")
-        End Sub
-
-        Public Shared Sub CreateNew()
-            VazorViewMapper.AddStatic(New ViewStart())
         End Sub
 
         Public Overrides Function GetVbXml() As XElement
