@@ -166,9 +166,9 @@ If you used `<Title><%= ViewBag.Title% ></Title>` VB will try to evaluate it and
 * To use the page View classes in MVC projects, map them in the controllers actions methods. For example, the IndexView class should be used in the Home.Index action method like this:
 ```VB.NET
 Public Function Index() As IActionResult
-   Dim iv = IndexView.CreateInstance(Students, ViewBag)
+   Dim iv = IndexView.CreateNew(Students, ViewBag)
    Dim instanceName = Vazor.VazorViewMapper.Add(iv)
-   Return View(instanceName)
+   Return View(instanceName, Students)
 End Function
 ```
 
